@@ -1,0 +1,198 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==================== AUTH & USERS ====================
+
+enum Role {
+  ADMIN
+  ENUMERATOR
+}
+
+model User {
+  id           String    @id @default(uuid())
+  username     String    @unique
+  passwordHash String    @map("password_hash")
+  fullName     String?   @map("full_name")
+  role         Role
+  isActive     Boolean   @default(true) @map("is_active")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  lastLoginAt  DateTime? @map("last_login_at")
+
+  baselineDesa BaselineDesa[]
+
+  @@map("users")
+}
+
+// ==================== MASTER WILAYAH ====================
+
+model WilayahProvinsi {
+  kode      String             @id
+  nama      String
+  kabupaten WilayahKabupaten[]
+
+  @@map("wilayah_provinsi")
+}
+
+model WilayahKabupaten {
+  kode         String             @id
+  nama         String
+  provinsiKode String             @map("provinsi_kode")
+  provinsi     WilayahProvinsi    @relation(fields: [provinsiKode], references: [kode])
+  kecamatan    WilayahKecamatan[]
+
+  @@index([provinsiKode])
+  @@map("wilayah_kabupaten")
+}
+
+model WilayahKecamatan {
+  kode          String           @id
+  nama          String
+  kabupatenKode String           @map("kabupaten_kode")
+  kabupaten     WilayahKabupaten @relation(fields: [kabupatenKode], references: [kode])
+  desa          WilayahDesa[]
+
+  @@index([kabupatenKode])
+  @@map("wilayah_kecamatan")
+}
+
+model WilayahDesa {
+  kode          String           @id
+  nama          String
+  kecamatanKode String           @map("kecamatan_kode")
+  kecamatan     WilayahKecamatan @relation(fields: [kecamatanKode], references: [kode])
+  baselineDesa  BaselineDesa?
+
+  // Dibuka saat form petani dibuat:
+  // kelompokTani KelompokTani[]
+  // petani       Petani[]
+
+  @@index([kecamatanKode])
+  @@map("wilayah_desa")
+}
+
+// ==================== BASELINE DESA ====================
+
+enum SatuanTutupan {
+  PERSEN
+  HA
+}
+
+model BaselineDesa {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  tahunPendataan Int     @map("tahun_pendataan")
+  sumberData     String? @map("sumber_data")
+
+  // Wilayah (relasi ke master — menggantikan kolom teks desa/kecamatan/kabupaten/provinsi)
+  // @unique = 1 desa hanya punya 1 baseline; kalau nanti perlu baseline ulang per tahun,
+  // ganti jadi @@unique([desaKode, tahunPendataan]) dan wilayah jadi BaselineDesa[]
+  desaKode String      @unique @map("desa_kode")
+  wilayah  WilayahDesa @relation(fields: [desaKode], references: [kode])
+
+  // A – Data Desa / Wilayah
+  luasWilayahHa           Float?  @map("luas_wilayah_ha")
+  jumlahPenduduk          Int?    @map("jumlah_penduduk")
+  jumlahKK                Int?    @map("jumlah_kk")
+  jumlahPetaniKopi        Int?    @map("jumlah_petani_kopi") // dipakai juga di bagian D saat export
+  luasArealKopiHa         Float?  @map("luas_areal_kopi_ha") // idem
+  luasKomoditiLainHa      Float?  @map("luas_komoditi_lain_ha")
+  latitude                Float?  @map("latitude")
+  longitude               Float?  @map("longitude")
+  topografi               String?
+  ketinggianMdpl          Float?  @map("ketinggian_mdpl")
+  bulanHujan              String? @map("bulan_hujan")
+  bulanKering             String? @map("bulan_kering")
+  suhuRataRataC           Float?  @map("suhu_rata_rata_c")
+  jenisTanah              String? @map("jenis_tanah")
+  aksesJalan              String? @map("akses_jalan")
+  jarakIbukotaKecamatanKm Float?  @map("jarak_ibukota_kecamatan_km")
+  jarakPasarKm            Float?  @map("jarak_pasar_km")
+  jarakKonservasiKm       Float?  @map("jarak_konservasi_km")
+  luasAPLHa               Float?  @map("luas_apl_ha")
+  namaKawasanKonservasi   String? @map("nama_kawasan_konservasi")
+
+  // D – Kondisi Bisnis Kopi
+  produktivitasKgHaTahun  Float?  @map("produktivitas_kg_ha_tahun")
+  hargaCherryRp           Int?    @map("harga_cherry_rp")
+  hargaGreenBeanRpKg      Int?    @map("harga_green_bean_rp_kg")
+  pembeliUtama            String? @map("pembeli_utama")
+  jumlahPedagangPengumpul Int?    @map("jumlah_pedagang_pengumpul")
+  koperasiAktifUnit       Int?    @map("koperasi_aktif_unit")
+  eksportir               String?
+  industriPengolahan      String? @map("industri_pengolahan")
+  permasalahanUtama       String? @map("permasalahan_utama")
+
+  // E – Kondisi Konservasi
+  berbatasanKonservasi      Boolean?       @map("berbatasan_konservasi")
+  luasPenyanggaHa           Float?         @map("luas_penyangga_ha")
+  tutupanHutan              Float?         @map("tutupan_hutan")
+  tutupanHutanSatuan        SatuanTutupan? @map("tutupan_hutan_satuan")
+  tutupanAgroforestry       Float?         @map("tutupan_agroforestry")
+  tutupanAgroforestrySatuan SatuanTutupan? @map("tutupan_agroforestry_satuan")
+  rawanLongsor              Boolean?       @map("rawan_longsor")
+  lokasiRawanLongsor        String?        @map("lokasi_rawan_longsor")
+  rawanErosi                Boolean?       @map("rawan_erosi")
+  lokasiRawanErosi          String?        @map("lokasi_rawan_erosi")
+  konflikSatwa              Boolean?       @map("konflik_satwa")
+  jenisSatwaKonflik         String?        @map("jenis_satwa_konflik")
+  praktikKonservasi         String?        @map("praktik_konservasi")
+
+  kebijakan   KebijakanDesa[]
+  kelembagaan KelembagaanDesa[]
+
+  createdBy   User   @relation(fields: [createdById], references: [id])
+  createdById String @map("created_by_id")
+
+  @@index([createdById])
+  @@map("baseline_desa")
+}
+
+enum JenisKebijakan {
+  RPJM_DESA
+  PERDES_PERTANIAN
+  PERDES_PERLINDUNGAN_HUTAN
+  PROGRAM_PERKEMBANGAN_KOPI
+  PROGRAM_KOPERASI
+  PROGRAM_PERHUTANAN_SOSIAL
+}
+
+model KebijakanDesa {
+  id         String         @id @default(uuid())
+  jenis      JenisKebijakan
+  ada        Boolean        @default(false)
+  keterangan String?
+  baseline   BaselineDesa   @relation(fields: [baselineId], references: [id], onDelete: Cascade)
+  baselineId String         @map("baseline_id")
+
+  @@unique([baselineId, jenis])
+  @@map("kebijakan_desa")
+}
+
+enum JenisLembaga {
+  KELOMPOK_TANI
+  GAPOKTAN
+  KOPERASI
+  BUMDES
+  PENYULUH
+  PENDAMPING
+}
+
+model KelembagaanDesa {
+  id         String       @id @default(uuid())
+  jenis      JenisLembaga
+  jumlah     Int?
+  kondisi    String?
+  baseline   BaselineDesa @relation(fields: [baselineId], references: [id], onDelete: Cascade)
+  baselineId String       @map("baseline_id")
+
+  @@map("kelembagaan_desa")
+}
