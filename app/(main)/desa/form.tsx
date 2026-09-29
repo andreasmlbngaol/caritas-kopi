@@ -44,8 +44,8 @@ export function DesaForm({
                             <Field label="Jumlah Petani Kopi" name="jumlahPetaniKopi" type="number" unit="orang" defaultValue={blankNum(defaults?.jumlahPetaniKopi)} />
                             <Field label="Luas Areal Kopi" name="luasArealKopiHa" type="number" unit="Ha" defaultValue={blankNum(defaults?.luasArealKopiHa)} />
                             <Field label="Luas Area Komoditi Lainnya" name="luasKomoditiLainHa" type="number" unit="Ha" defaultValue={blankNum(defaults?.luasKomoditiLainHa)} />
-                            <Field label="Latitude" name="latitude" type="number" hint="Pakai titik (.), mis. -7.1234" defaultValue={defaults?.latitude ?? ""} />
-                            <Field label="Longitude" name="longitude" type="number" hint="Pakai titik (.), mis. 110.4567" defaultValue={defaults?.longitude ?? ""} />
+                            <Field label="Latitude" name="latitude" type="number" allowNegative hint="Pakai titik (.), mis. -7.1234" defaultValue={defaults?.latitude ?? ""} />
+                            <Field label="Longitude" name="longitude" type="number" allowNegative hint="Pakai titik (.), mis. 110.4567" defaultValue={defaults?.longitude ?? ""} />
                         </Grid>
                     </SubSection>
                     <SubSection title="Kondisi Fisik & Iklim">

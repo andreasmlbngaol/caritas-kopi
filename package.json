@@ -6,15 +6,15 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
-  },
-  "prisma": {
-    "seed": "tsx prisma/seed.ts",
-    "import-wilayah": "tsx prisma/import-wilayah.ts"
+    "lint": "eslint",
+    "seed": "prisma db seed",
+    "seed:wilayah": "tsx prisma/seed-wilayah.ts",
+    "seed:all": "tsx prisma/seed-wilayah.ts && tsx prisma/seed.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.19.3",
     "@react-pdf/renderer": "^4.9.0",
+    "aws4fetch": "^1.0.20",
     "bcryptjs": "^3.0.3",
     "docx": "^9.7.1",
     "lucide-react": "^1.47.0",
@@ -22,6 +22,7 @@
     "next-auth": "^5.0.0-beta.32",
     "react": "19.2.8",
     "react-dom": "19.2.8",
+    "sharp": "^0.35.5",
     "zod": "^4.6.5"
   },
   "devDependencies": {

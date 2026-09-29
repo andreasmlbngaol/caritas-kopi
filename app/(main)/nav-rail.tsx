@@ -6,7 +6,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
     LayoutDashboard, UsersRound, MapPin, Users, LogOut,
-    PanelLeft, PanelLeftClose, Coffee,
+    PanelLeft, PanelLeftClose, Coffee, Network
 } from "lucide-react";
 import { logout } from "./actions";
 
@@ -19,6 +19,7 @@ const menus = [
     { href: "/", label: "Dashboard", icon: LayoutDashboard },
     { href: "/petani", label: "Petani", icon: UsersRound },   // ← dari Sprout
     { href: "/desa", label: "Desa", icon: MapPin },
+    { href: "/kelompok-tani", label: "Kelompok Tani", icon: Network },
     { href: "/admin/users", label: "Kelola Pengguna", icon: Users, adminOnly: true },
 ];
 
@@ -27,11 +28,18 @@ function initials(name: string) {
         .map((w) => w[0]).join("").toUpperCase();
 }
 
-export function NavRail({ user }: { user: NavUser }) {
-    const [expanded, setExpanded] = useState(true);
+export function NavRail({ user, defaultExpanded = false }: { user: NavUser; defaultExpanded?: boolean }) {
+    const [expanded, setExpanded] = useState(defaultExpanded);
     const pathname = usePathname();
 
     const visibleMenus = menus.filter((m) => !m.adminOnly || user.role === "ADMIN");
+
+    function toggle() {
+        const next = !expanded;
+        setExpanded(next);
+        // Persist lintas navigasi & sesi (1 tahun)
+        document.cookie = `nav-expanded=${next ? "1" : "0"}; path=/; max-age=31536000; samesite=lax`;
+    }
 
     return (
         <aside
@@ -50,7 +58,7 @@ export function NavRail({ user }: { user: NavUser }) {
                     </div>
                 )}
                 <button
-                    onClick={() => setExpanded((v) => !v)}
+                    onClick={toggle}
                     aria-label={expanded ? "Ciutkan sidebar" : "Luaskan sidebar"}
                     className="rounded-lg p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700"
                 >

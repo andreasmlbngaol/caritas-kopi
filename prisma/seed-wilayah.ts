@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { readFileSync } from "fs";
 import { PrismaClient } from "@/app/generated/prisma/client";
 

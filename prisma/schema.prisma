@@ -26,6 +26,7 @@ model User {
   lastLoginAt  DateTime? @map("last_login_at")
 
   baselineDesa BaselineDesa[]
+  petani       Petani[]
 
   @@map("users")
 }
@@ -68,10 +69,8 @@ model WilayahDesa {
   kecamatanKode String           @map("kecamatan_kode")
   kecamatan     WilayahKecamatan @relation(fields: [kecamatanKode], references: [kode])
   baselineDesa  BaselineDesa?
-
-  // Dibuka saat form petani dibuat:
-  // kelompokTani KelompokTani[]
-  // petani       Petani[]
+  kelompokTani  KelompokTani[]
+  petani        Petani[]
 
   @@index([kecamatanKode])
   @@map("wilayah_desa")
@@ -92,9 +91,6 @@ model BaselineDesa {
   tahunPendataan Int     @map("tahun_pendataan")
   sumberData     String? @map("sumber_data")
 
-  // Wilayah (relasi ke master — menggantikan kolom teks desa/kecamatan/kabupaten/provinsi)
-  // @unique = 1 desa hanya punya 1 baseline; kalau nanti perlu baseline ulang per tahun,
-  // ganti jadi @@unique([desaKode, tahunPendataan]) dan wilayah jadi BaselineDesa[]
   desaKode String      @unique @map("desa_kode")
   wilayah  WilayahDesa @relation(fields: [desaKode], references: [kode])
 
@@ -102,8 +98,8 @@ model BaselineDesa {
   luasWilayahHa           Float?  @map("luas_wilayah_ha")
   jumlahPenduduk          Int?    @map("jumlah_penduduk")
   jumlahKK                Int?    @map("jumlah_kk")
-  jumlahPetaniKopi        Int?    @map("jumlah_petani_kopi") // dipakai juga di bagian D saat export
-  luasArealKopiHa         Float?  @map("luas_areal_kopi_ha") // idem
+  jumlahPetaniKopi        Int?    @map("jumlah_petani_kopi")
+  luasArealKopiHa         Float?  @map("luas_areal_kopi_ha")
   luasKomoditiLainHa      Float?  @map("luas_komoditi_lain_ha")
   latitude                Float?  @map("latitude")
   longitude               Float?  @map("longitude")
@@ -195,4 +191,260 @@ model KelembagaanDesa {
   baselineId String       @map("baseline_id")
 
   @@map("kelembagaan_desa")
+}
+
+// ==================== BASELINE PETANI ====================
+
+enum JenisKelamin {
+  L
+  P
+}
+
+enum StatusKepemilikanLahan {
+  MS
+  SW
+  BH
+  TA
+  L
+}
+
+enum SistemBudidaya {
+  AF
+  MK
+}
+
+enum JawabanGap {
+  YA
+  TIDAK
+  KADANG
+}
+
+enum SatuanProduksi {
+  KG
+  SOLUP
+  BAMBU
+  KALENG
+}
+
+enum JenisProdukDijual {
+  CHERRY
+  GABAH_BASAH
+  GABAH_KERING
+  GB_WET_HULL
+  GB_NATURAL
+  GB_HONEY
+  GB_FULL_WASH
+  GB_WINE
+  LAINNYA
+}
+
+enum KategoriPasar {
+  KOMERSIAL
+  KOMERSIAL_BERSERTIFIKAT
+  SPECIALTY
+  ORGANIK
+  LAINNYA
+}
+
+enum JenisPraktikGap {
+  PEMANGKASAN_KOPI
+  PEMANGKASAN_NAUNGAN
+  PENGENDALIAN_GULMA
+  PEMUPUKAN
+  PEREMAJAAN_TANAMAN
+  PENGENDALIAN_PBKO
+  PENGENDALIAN_KARAT_DAUN
+  PESTISIDA_SESUAI_DOSIS
+  PENYIMPANAN_PESTISIDA
+  TERAS_SENGKEDAN
+  COVER_CROP
+  RORAK_RESAPAN
+  LIMBAH_PULP
+  PANEN_SELEKTIF
+  SORTASI_CHERRY
+  PENJEMURAN_BERSIH
+  PENYIMPANAN_HASIL
+  TANPA_BAKAR_LAHAN
+  TANPA_KIMIA_TERLARANG
+  APD_PESTISIDA
+  TANPA_PEKERJA_ANAK
+}
+
+enum JenisKondisiKebun {
+  KEPEMILIKAN_JELAS
+  BATAS_KONSERVASI
+  BATAS_HUTAN_LINDUNG
+  DEKAT_SUNGAI
+  DEKAT_MATA_AIR
+  POHON_NAUNGAN
+  KONSERVASI_TANAH
+  PERNAH_BAKAR_LAHAN
+  KONFLIK_SATWA
+  EROSI_LONGSOR
+}
+
+model KelompokTani {
+  id        String      @id @default(uuid())
+  nama      String
+  kode      String?
+  desaKode  String      @map("desa_kode")
+  desa      WilayahDesa @relation(fields: [desaKode], references: [kode])
+  petani    Petani[]
+  createdAt DateTime    @default(now()) @map("created_at")
+
+  @@unique([desaKode, kode])
+  @@map("kelompok_tani")
+}
+
+model Petani {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  kodePetani String? @unique @map("kode_petani")
+
+  // A – Identitas
+  namaLengkap           String        @map("nama_lengkap")
+  namaPanggilan         String?       @map("nama_panggilan")
+  jenisKelamin          JenisKelamin? @map("jenis_kelamin")
+  tanggalLahir          DateTime?     @map("tanggal_lahir")
+  alamatDomisili        String?       @map("alamat_domisili")
+  telepon               String?
+  tanggalPendaftaran    DateTime?     @map("tanggal_pendaftaran")
+  namaPetugasPendaftar  String?       @map("nama_petugas_pendaftar")
+  kontakDaruratNama     String?       @map("kontak_darurat_nama")
+  kontakDaruratTelepon  String?       @map("kontak_darurat_telepon")
+  kontakDaruratHubungan String?       @map("kontak_darurat_hubungan")
+
+  desaKode       String        @map("desa_kode")
+  desa           WilayahDesa   @relation(fields: [desaKode], references: [kode])
+  kelompokTaniId String?       @map("kelompok_tani_id")
+  kelompokTani   KelompokTani? @relation(fields: [kelompokTaniId], references: [id])
+
+  plot         PlotPetani[]
+  praktikGap   PraktikGap[]
+  produksi     RiwayatProduksi[]
+  produk       ProdukDijual[]
+  pasar        PasarPetani[]
+  kondisiKebun KondisiKebun[]
+
+  createdBy   User   @relation(fields: [createdById], references: [id])
+  createdById String @map("created_by_id")
+
+  @@index([createdById])
+  @@index([desaKode])
+  @@map("petani")
+}
+
+model PlotPetani {
+  id       String @id @default(uuid())
+  nomor    Int
+  petani   Petani @relation(fields: [petaniId], references: [id], onDelete: Cascade)
+  petaniId String @map("petani_id")
+
+  namaHamparan        String?                 @map("nama_hamparan")
+  varietas            String?
+  tahunTanam          Int?                    @map("tahun_tanam")
+  kodeGps             String?                 @map("kode_gps")
+  elevasiMdpl         Float?                  @map("elevasi_mdpl")
+  kemiringanPersen    Float?                  @map("kemiringan_persen")
+  luasKopiHa          Float?                  @map("luas_kopi_ha")
+  fotoKey             String?                 @map("foto_key")
+  fotoLatitude        Float?                  @map("foto_latitude")
+  fotoLongitude       Float?                  @map("foto_longitude")
+  statusKepemilikan   StatusKepemilikanLahan? @map("status_kepemilikan")
+  sistemBudidaya      SistemBudidaya?         @map("sistem_budidaya")
+  areaKonservasi      String?                 @map("area_konservasi")
+  tanamanBaru         Int?                    @map("tanaman_baru")
+  pohonProduktif      Int?                    @map("pohon_produktif")
+  pohonTidakProduktif Int?                    @map("pohon_tidak_produktif")
+  pestisidaNama         String?                 @map("pestisida_nama")
+  pestisidaBulanTahun   String?                 @map("pestisida_bulan_tahun") // "YYYY-MM" dari input type=month
+
+  naungan TanamanNaungan[]
+
+  @@index([petaniId])
+  @@map("plot_petani")
+}
+
+model TanamanNaungan {
+  id               String      @id @default(uuid())
+  plot             PlotPetani  @relation(fields: [plotId], references: [id], onDelete: Cascade)
+  plotId           String      @map("plot_id")
+  jenis            String?
+  jumlah           Int?
+  fungsi           String?
+  pemangkasan      Boolean?    // Apakah dilakukan pemangkasan
+  produksiPerTahun String?     @map("produksi_per_tahun")
+  tahunTanam       Int?        @map("tahun_tanam")
+
+  @@index([plotId])
+  @@map("tanaman_naungan")
+}
+
+model PraktikGap {
+  id         String          @id @default(uuid())
+  jenis      JenisPraktikGap
+  jawaban    JawabanGap?
+  keterangan String?
+  petani     Petani          @relation(fields: [petaniId], references: [id], onDelete: Cascade)
+  petaniId   String          @map("petani_id")
+
+  @@unique([petaniId, jenis])
+  @@map("praktik_gap")
+}
+
+model RiwayatProduksi {
+  id            String          @id @default(uuid())
+  tahun         Int
+  satuan        SatuanProduksi?
+  cherry        Float?
+  gabahBasah    Float?          @map("gabah_basah")
+  gabahKering   Float?          @map("gabah_kering")
+  greenBean     Float?          @map("green_bean")
+  produktivitas Float?
+  petani        Petani          @relation(fields: [petaniId], references: [id], onDelete: Cascade)
+  petaniId      String          @map("petani_id")
+
+  @@unique([petaniId, tahun])
+  @@map("riwayat_produksi")
+}
+
+model ProdukDijual {
+  id            String            @id @default(uuid())
+  jenis         JenisProdukDijual
+  labelCustom   String?           @map("label_custom")
+  dijual        Boolean           @default(false)
+  volumeKgTahun Float?            @map("volume_kg_tahun")
+  petani        Petani            @relation(fields: [petaniId], references: [id], onDelete: Cascade)
+  petaniId      String            @map("petani_id")
+
+  @@index([petaniId])
+  @@map("produk_dijual")
+}
+
+model PasarPetani {
+  id            String        @id @default(uuid())
+  kategori      KategoriPasar
+  labelCustom   String?       @map("label_custom")
+  aktif         Boolean       @default(false)
+  persentase    Float?
+  profilPenjual String?       @map("profil_penjual")
+  petani        Petani        @relation(fields: [petaniId], references: [id], onDelete: Cascade)
+  petaniId      String        @map("petani_id")
+
+  @@index([petaniId])
+  @@map("pasar_petani")
+}
+
+model KondisiKebun {
+  id         String            @id @default(uuid())
+  jenis      JenisKondisiKebun
+  jawaban    Boolean           @default(false)
+  keterangan String?
+  petani     Petani            @relation(fields: [petaniId], references: [id], onDelete: Cascade)
+  petaniId   String            @map("petani_id")
+
+  @@unique([petaniId, jenis])
+  @@map("kondisi_kebun")
 }
