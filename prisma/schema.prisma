@@ -1,6 +1,7 @@
 generator client {
-  provider = "prisma-client"
-  output   = "../app/generated/prisma"
+  provider      = "prisma-client"
+  output        = "../app/generated/prisma"
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
 }
 
 datasource db {
@@ -358,8 +359,8 @@ model PlotPetani {
   tanamanBaru         Int?                    @map("tanaman_baru")
   pohonProduktif      Int?                    @map("pohon_produktif")
   pohonTidakProduktif Int?                    @map("pohon_tidak_produktif")
-  pestisidaNama         String?                 @map("pestisida_nama")
-  pestisidaBulanTahun   String?                 @map("pestisida_bulan_tahun") // "YYYY-MM" dari input type=month
+  pestisidaNama       String?                 @map("pestisida_nama")
+  pestisidaBulanTahun String?                 @map("pestisida_bulan_tahun") // "YYYY-MM" dari input type=month
 
   naungan TanamanNaungan[]
 
@@ -368,15 +369,15 @@ model PlotPetani {
 }
 
 model TanamanNaungan {
-  id               String      @id @default(uuid())
-  plot             PlotPetani  @relation(fields: [plotId], references: [id], onDelete: Cascade)
-  plotId           String      @map("plot_id")
+  id               String     @id @default(uuid())
+  plot             PlotPetani @relation(fields: [plotId], references: [id], onDelete: Cascade)
+  plotId           String     @map("plot_id")
   jenis            String?
   jumlah           Int?
   fungsi           String?
-  pemangkasan      Boolean?    // Apakah dilakukan pemangkasan
-  produksiPerTahun String?     @map("produksi_per_tahun")
-  tahunTanam       Int?        @map("tahun_tanam")
+  pemangkasan      Boolean? // Apakah dilakukan pemangkasan
+  produksiPerTahun String?    @map("produksi_per_tahun")
+  tahunTanam       Int?       @map("tahun_tanam")
 
   @@index([plotId])
   @@map("tanaman_naungan")
