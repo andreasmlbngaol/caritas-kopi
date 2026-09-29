@@ -5,10 +5,11 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-    LayoutDashboard, UsersRound, MapPin, Users, LogOut,
-    PanelLeft, PanelLeftClose, Coffee, Network
+    LayoutDashboard, MapPin, LogOut,
+    PanelLeft, PanelLeftClose, UserRound, UserRoundGroup, Key
 } from "lucide-react";
 import { logout } from "./actions";
+import Image from "next/image";
 
 type NavUser = {
     name: string;
@@ -17,10 +18,10 @@ type NavUser = {
 
 const menus = [
     { href: "/", label: "Dashboard", icon: LayoutDashboard },
-    { href: "/petani", label: "Petani", icon: UsersRound },   // ← dari Sprout
+    { href: "/petani", label: "Petani", icon: UserRound },   // ← dari Sprout
     { href: "/desa", label: "Desa", icon: MapPin },
-    { href: "/kelompok-tani", label: "Kelompok Tani", icon: Network },
-    { href: "/admin/users", label: "Kelola Pengguna", icon: Users, adminOnly: true },
+    { href: "/kelompok-tani", label: "Kelompok Tani", icon: UserRoundGroup },
+    { href: "/admin/users", label: "Kelola Pengguna", icon: Key, adminOnly: true },
 ];
 
 function initials(name: string) {
@@ -44,17 +45,21 @@ export function NavRail({ user, defaultExpanded = false }: { user: NavUser; defa
     return (
         <aside
             className={`sticky top-0 flex h-screen shrink-0 flex-col bg-white transition-[width] duration-300 ease-in-out ${
-                expanded ? "w-64" : "w-[72px]"
+                expanded ? "w-64" : "w-18"
             }`}
         >
             {/* Header: logo jade + toggle */}
             <div className={`flex h-16 items-center ${expanded ? "justify-between px-4" : "justify-center"}`}>
                 {expanded && (
                     <div className="flex items-center gap-2.5">
-                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-jade-800 text-white">
-                            <Coffee size={16} />
-                        </div>
-                        <span className="text-sm font-semibold tracking-tight">Baseline Kopi</span>
+                        <Image
+                            src="/caritas_icon.webp"
+                            alt="Logo Caritas"
+                            width={32}
+                            height={32}
+                            className="h-8 w-8 rounded-lg object-contain"
+                        />
+                        <span className="text-sm font-semibold tracking-tight">Database Kopi</span>
                     </div>
                 )}
                 <button

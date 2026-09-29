@@ -24,10 +24,8 @@ export default async function DesaPage() {
         <main className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-8">
             <header className="flex items-start justify-between gap-4">
                 <div>
-                    <h1 className="text-lg font-semibold tracking-tight">Data Baseline Desa</h1>
-                    <p className="mt-1 text-sm text-gray-500">
-                        {isAdmin ? "Semua data dari seluruh enumerator." : "Data yang Anda inputkan."}
-                    </p>
+                    <h1 className="text-lg font-semibold tracking-tight">Data Desa</h1>
+                    {isAdmin && <p className="mt-1 text-sm text-gray-500">Semua data dari seluruh enumerator.</p>}
                 </div>
                 <Link
                     href="/desa/baru"
@@ -51,7 +49,7 @@ export default async function DesaPage() {
                             <th className="px-5 py-3.5">Desa</th>
                             <th className="px-5 py-3.5">Kecamatan</th>
                             {isAdmin && <th className="px-5 py-3.5">Penginput</th>}
-                            <th className="px-5 py-3.5">Tanggal Input</th>
+                            {/*<th className="px-5 py-3.5">Tanggal Input</th>*/}
                             <th className="px-5 py-3.5 text-right">Aksi</th>
                         </tr>
                         </thead>
@@ -72,9 +70,9 @@ export default async function DesaPage() {
                                         {d.createdBy.fullName ?? d.createdBy.username}
                                     </td>
                                 )}
-                                <td className="whitespace-nowrap px-5 py-3.5 text-gray-500">
-                                    {d.createdAt.toLocaleDateString("id-ID")}
-                                </td>
+                                {/*<td className="whitespace-nowrap px-5 py-3.5 text-gray-500">*/}
+                                {/*    {d.createdAt.toLocaleDateString("id-ID")}*/}
+                                {/*</td>*/}
                                 <td className="px-5 py-3.5">
                                     <div className="flex items-center justify-end gap-1">
                                         <a

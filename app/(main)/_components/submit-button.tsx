@@ -19,7 +19,7 @@ function labelFor(
     return el.name;
 }
 
-export function SubmitButton({ label = "Simpan Data Baseline" }: { label?: string }) {
+export function SubmitButton({ label = "Simpan Data" }: { label?: string }) {
     const { pending } = useFormStatus(); // harus dirender di dalam <form>
     const [missing, setMissing] = useState<Missing | null>(null);
     const formRef = useRef<HTMLFormElement | null>(null);

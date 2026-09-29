@@ -84,7 +84,7 @@ export default async function PetaniDetailPage({
                     <div>
                         <h1 className="text-lg font-semibold tracking-tight">{p.namaLengkap}</h1>
                         <p className="mt-0.5 text-sm text-gray-500">
-                            {p.kodePetani ?? "Tanpa kode"} · {p.desa.nama}, Kec. {kec.nama}, {kab.nama}, {kab.provinsi.nama}
+                            {p.kodePetani ?? "Tanpa kode"} | {p.desa.nama}, Kec. {kec.nama}, {kab.nama}, {kab.provinsi.nama}
                         </p>
                     </div>
                 </div>

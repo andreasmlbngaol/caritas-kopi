@@ -27,7 +27,11 @@ export default async function KelompokTaniPage({
                 ],
             }
             : {},
-        orderBy: [{ desa: { nama: "asc" } }, { nama: "asc" }],
+        orderBy: [
+            { kode: "asc" },
+            { desa: { nama: "asc" } },
+            { nama: "asc" }
+        ],
         include: {
             desa: { include: { kecamatan: true } },
             _count: { select: { petani: true } },
