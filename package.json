@@ -12,6 +12,7 @@
     "seed:all": "tsx prisma/seed-wilayah.ts && tsx prisma/seed.ts"
   },
   "dependencies": {
+    "@prisma/adapter-pg": "^7.10.0",
     "@prisma/client": "^6.19.3",
     "@react-pdf/renderer": "^4.9.0",
     "aws4fetch": "^1.0.20",
@@ -20,6 +21,7 @@
     "lucide-react": "^1.47.0",
     "next": "16.3.5",
     "next-auth": "^5.0.0-beta.32",
+    "pg": "^8.23.0",
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "sharp": "^0.35.5",
@@ -29,6 +31,7 @@
     "@tailwindcss/postcss": "^4",
     "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20",
+    "@types/pg": "^8.23.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "dotenv": "^18.0.3",
