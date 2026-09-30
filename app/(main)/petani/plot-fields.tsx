@@ -400,14 +400,14 @@ function PlotCard({
                 </div>
 
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    <MiniField
-                        label="Kegiatan Pestisida Terakhir" name={p("pestisidaNama")}
-                        placeholder="mis. Basmilang" defaultValue={blankStr(d?.pestisidaNama)}
-                    />
                     <MonthPicker
                         label="Bulan & Tahun Pestisida Terakhir"
                         name={p("pestisidaBulanTahun")}
                         defaultValue={d?.pestisidaBulanTahun ?? ""}
+                    />
+                    <MiniField
+                        label="Jenis Pestisida Terakhir" name={p("pestisidaNama")}
+                        placeholder="mis. Basmilang" defaultValue={blankStr(d?.pestisidaNama)}
                     />
                 </div>
 

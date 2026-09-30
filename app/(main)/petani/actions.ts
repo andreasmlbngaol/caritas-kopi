@@ -295,7 +295,7 @@ function buildKodePetani(formData: FormData): string | null {
     const s1 = get(formData, "kp1");
     const s2 = get(formData, "kp2");
     const s3 = get(formData, "kp3");
-    if (!s1 && !s2 && !s3) return null;
+    if (!s2 && !s3) return null;
     if (!s1 || !s2 || !s3) throw new Error("Kode petani belum lengkap (harus 3 bagian).");
     return `${s1}-${s2}-${s3}`.toUpperCase();
 }
