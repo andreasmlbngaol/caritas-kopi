@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 import { NavRail } from "./nav-rail";
 import React from "react";
 import { NumberWheelGuard } from "./number-wheel-guard";
+import { NavigationProgress } from "./_components/navigation-progress";
 
 export default async function MainLayout({
                                              children,
@@ -25,6 +26,7 @@ export default async function MainLayout({
             />
             <div className="min-w-0 flex-1">{children}</div>
             <NumberWheelGuard />
+            <NavigationProgress />
         </div>
     );
 }
