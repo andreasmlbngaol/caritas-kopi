@@ -218,14 +218,19 @@ function produksiRows(formData: FormData) {
         const satuan = (SATUAN_VALUES as readonly string[]).includes(s ?? "")
             ? (s as SatuanProduksi)
             : ("KG" as SatuanProduksi);
+        const cherry = num.parse(formData.get(`prod_${tahun}_cherry`));
+        const gabahBasah = num.parse(formData.get(`prod_${tahun}_gabahBasah`));
+        const gabahKering = num.parse(formData.get(`prod_${tahun}_gabahKering`));
+        const greenBean = num.parse(formData.get(`prod_${tahun}_greenBean`));
+
         return {
             tahun,
             satuan,
-            cherry: num.parse(formData.get(`prod_${tahun}_cherry`)),
-            gabahBasah: num.parse(formData.get(`prod_${tahun}_gabahBasah`)),
-            gabahKering: num.parse(formData.get(`prod_${tahun}_gabahKering`)),
-            greenBean: num.parse(formData.get(`prod_${tahun}_greenBean`)),
-            produktivitas: num.parse(formData.get(`prod_${tahun}_produktivitas`)),
+            cherry,
+            gabahBasah,
+            gabahKering,
+            greenBean,
+            produktivitas: cherry + gabahBasah + gabahKering + greenBean,
         };
     });
 }

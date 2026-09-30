@@ -10,15 +10,15 @@ import { ProdukFields } from "./produk-fields";
 import { PasarFields } from "./pasar-fields";
 import { DatePicker } from "../_components/date-picker";
 import {
-    JENIS_KELAMIN, KONDISI_KEBUN, SATUAN_PRODUKSI, TAHUN_ESTIMASI, TAHUN_PRODUKSI,
+    JENIS_KELAMIN, KONDISI_KEBUN,
 } from "./constants";
 import type { getPetani } from "./queries";
 import {UnsavedGuard} from "@/app/(main)/_components/unsaved-guard";
+import { ProduksiFields } from "./produksi-fields";
 
 export type PetaniDefaults = NonNullable<Awaited<ReturnType<typeof getPetani>>>;
 
 // Konversi balik untuk prefill edit: nilai ternormalisasi → input kosong
-const blankNum = (v: number | null | undefined) => (v == null || v === 0 ? "" : v);
 const blankStr = (v: string | null | undefined) => (v == null || v === "-" ? "" : v);
 const toDateInput = (d: Date | null | undefined) => (d ? d.toISOString().slice(0, 10) : "");
 
@@ -38,26 +38,9 @@ export function PetaniForm({
         )
         : undefined;
 
-    const prod = (tahun: number) => defaults?.produksi.find((p) => p.tahun === tahun);
     const kd = (jenis: string) => defaults?.kondisiKebun.find((x) => x.jenis === jenis);
 
     // Helper dipanggil sebagai fungsi (bukan <Komponen/>) agar input tidak remount
-    function prodNumField(tahun: number, f: string, label: string, val?: number | null) {
-        const nm = `prod_${tahun}_${f}`;
-        return (
-            <div>
-                <label htmlFor={nm} className="mb-1 block text-xs font-medium text-gray-600">
-                    {label}
-                </label>
-                <input
-                    id={nm} name={nm} type="number" step="any" min={0} inputMode="decimal"
-                    data-label={label}
-                    defaultValue={blankNum(val)} className={inputCls}
-                />
-            </div>
-        );
-    }
-
     return (
         <ActionForm action={action} className="space-y-6">
             <UnsavedGuard />
@@ -128,44 +111,7 @@ export function PetaniForm({
 
             {/* D – RIWAYAT ESTIMASI PRODUKSI (kartu per tahun) */}
             <Section title="D – Riwayat Estimasi Produksi">
-                <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-                    {TAHUN_PRODUKSI.map((tahun) => {
-                        const d = prod(tahun);
-                        return (
-                            <div
-                                key={tahun} data-group={`Produksi ${tahun}`}
-                                className="rounded-xl bg-gray-50/60 p-4 ring-1 ring-inset ring-gray-200"
-                            >
-                                <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-gray-500">
-                                    {tahun}
-                                    {tahun === TAHUN_ESTIMASI && (
-                                        <span className="ml-1.5 font-normal normal-case text-gray-400">(estimasi)</span>
-                                    )}
-                                </h3>
-                                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                                    <div>
-                                        <label htmlFor={`prod_${tahun}_satuan`} className="mb-1 block text-xs font-medium text-gray-600">
-                                            Satuan
-                                        </label>
-                                        <select
-                                            id={`prod_${tahun}_satuan`} name={`prod_${tahun}_satuan`}
-                                            data-label="Satuan" defaultValue={d?.satuan ?? "KG"} className={inputCls}
-                                        >
-                                            {SATUAN_PRODUKSI.map((s) => (
-                                                <option key={s.value} value={s.value}>{s.label}</option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                    {prodNumField(tahun, "cherry", "Cherry", d?.cherry)}
-                                    {prodNumField(tahun, "gabahBasah", "Gabah Basah / Labu", d?.gabahBasah)}
-                                    {prodNumField(tahun, "gabahKering", "Gabah Kering", d?.gabahKering)}
-                                    {prodNumField(tahun, "greenBean", "Green Bean", d?.greenBean)}
-                                    {prodNumField(tahun, "produktivitas", "Produktivitas", d?.produktivitas)}
-                                </div>
-                            </div>
-                        );
-                    })}
-                </div>
+                <ProduksiFields defaults={defaults?.produksi} />
             </Section>
 
             {/* E – PENJUALAN */}
