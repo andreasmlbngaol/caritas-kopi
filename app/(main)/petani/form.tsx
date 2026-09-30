@@ -13,6 +13,7 @@ import {
     JENIS_KELAMIN, KONDISI_KEBUN, SATUAN_PRODUKSI, TAHUN_ESTIMASI, TAHUN_PRODUKSI,
 } from "./constants";
 import type { getPetani } from "./queries";
+import {UnsavedGuard} from "@/app/(main)/_components/unsaved-guard";
 
 export type PetaniDefaults = NonNullable<Awaited<ReturnType<typeof getPetani>>>;
 
@@ -59,6 +60,7 @@ export function PetaniForm({
 
     return (
         <ActionForm action={action} className="space-y-6">
+            <UnsavedGuard />
             {/* A – DATA IDENTITAS PETANI */}
             <Section title="A – Data Identitas Petani">
                 <div className="space-y-6">

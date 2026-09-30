@@ -5,6 +5,7 @@ import { MusimFields } from "./musim-fields";
 import { KEBIJAKAN, LEMBAGA } from "./constants";
 import { SubmitButton } from "./submit-button";
 import type { getBaselineDesa } from "./queries";
+import {UnsavedGuard} from "@/app/(main)/_components/unsaved-guard";
 
 export type DesaDefaults = NonNullable<Awaited<ReturnType<typeof getBaselineDesa>>>;
 
@@ -24,6 +25,7 @@ export function DesaForm({
 
     return (
         <form action={action} className="space-y-6">
+            <UnsavedGuard />
             {/* A – DATA DESA / WILAYAH */}
             <Section title="A – Data Desa / Wilayah">
                 <div className="space-y-6">
