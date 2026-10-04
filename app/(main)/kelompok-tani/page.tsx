@@ -5,21 +5,33 @@ export const metadata: Metadata = { title: "Kelompok Tani" };
 
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { Prisma } from "@/app/generated/prisma/client";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Plus, Pencil, Search } from "lucide-react";
 import { pageWide } from "../layout-cls";
 import { DeleteButton } from "./delete-button";
+import { SortHeader, parseSort, nestedOrderBy } from "../_components/sort";
+
+const SORT_COLUMNS = ["nama", "kode", "desa.nama", "petaniCount"] as const;
 
 export default async function KelompokTaniPage({
                                                    searchParams,
                                                }: {
-    searchParams: Promise<{ q?: string }>;
+    searchParams: Promise<{ q?: string; sort?: string; dir?: string }>;
 }) {
     const session = await auth();
     if (!session?.user) redirect("/login");
 
-    const { q = "" } = await searchParams;
+    const sp = await searchParams;
+    const { q = "" } = sp;
+    const { sort, dir } = parseSort(sp, SORT_COLUMNS, "kode", "asc");
+
+    // "petaniCount" = jumlah petani (relasi _count), sisanya field/relasi biasa.
+    const orderBy: Prisma.KelompokTaniOrderByWithRelationInput =
+        sort === "petaniCount"
+            ? { petani: { _count: dir } }
+            : nestedOrderBy(sort, dir);
 
     const items = await prisma.kelompokTani.findMany({
         where: q
@@ -31,11 +43,7 @@ export default async function KelompokTaniPage({
                 ],
             }
             : {},
-        orderBy: [
-            { kode: "asc" },
-            { desa: { nama: "asc" } },
-            { nama: "asc" }
-        ],
+        orderBy,
         include: {
             desa: { include: { kecamatan: true } },
             _count: { select: { petani: true } },
@@ -60,6 +68,8 @@ export default async function KelompokTaniPage({
             </header>
 
             <form action="/kelompok-tani" className="mt-6 flex gap-2">
+                <input type="hidden" name="sort" value={sort} />
+                <input type="hidden" name="dir" value={dir} />
                 <div className="relative flex-1 sm:max-w-sm">
                     <Search size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500" />
                     <input
@@ -86,10 +96,10 @@ export default async function KelompokTaniPage({
                     <table className="w-full min-w-[640px] text-sm">
                         <thead>
                         <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500">
-                            <th className="px-5 py-3.5">Nama Kelompok</th>
-                            <th className="px-5 py-3.5">Kode</th>
-                            <th className="px-5 py-3.5">Desa</th>
-                            <th className="px-5 py-3.5">Jumlah Petani</th>
+                            <SortHeader column="nama" label="Nama Kelompok" sort={sort} dir={dir} params={{ q }} basePath="/kelompok-tani" />
+                            <SortHeader column="kode" label="Kode" sort={sort} dir={dir} params={{ q }} basePath="/kelompok-tani" />
+                            <SortHeader column="desa.nama" label="Desa" sort={sort} dir={dir} params={{ q }} basePath="/kelompok-tani" />
+                            <SortHeader column="petaniCount" label="Jumlah Petani" sort={sort} dir={dir} params={{ q }} basePath="/kelompok-tani" />
                             <th className="px-5 py-3.5 text-right">Aksi</th>
                         </tr>
                         </thead>

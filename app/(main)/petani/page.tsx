@@ -5,25 +5,38 @@ export const metadata: Metadata = { title: "Data Petani" };
 
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { Prisma } from "@/app/generated/prisma/client";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Plus, FileText, FileDown, Pencil, Search, ChevronLeft, ChevronRight } from "lucide-react";
 import { pageWide } from "../layout-cls";
 import { DeleteButton } from "./delete-button";
+import { SortHeader, parseSort, nestedOrderBy } from "../_components/sort";
 
 const PER_PAGE = 20;
+
+// Kolom yang bisa diurutkan + pemetaan ke orderBy Prisma.
+const SORT_COLUMNS = [
+    "namaLengkap",
+    "kodePetani",
+    "desa.nama",
+    "kelompokTani.nama",
+    "createdBy.fullName",
+] as const;
 
 export default async function PetaniPage({
                                              searchParams,
                                          }: {
-    searchParams: Promise<{ q?: string; page?: string }>;
+    searchParams: Promise<{ q?: string; page?: string; sort?: string; dir?: string }>;
 }) {
     const session = await auth();
     if (!session?.user) redirect("/login");
 
     const isAdmin = session.user.role === "ADMIN";
-    const { q = "", page = "1" } = await searchParams;
+    const sp = await searchParams;
+    const { q = "", page = "1" } = sp;
     const pageNum = Math.max(1, Number(page) || 1);
+    const { sort, dir } = parseSort(sp, SORT_COLUMNS, "namaLengkap");
 
     const where = {
         ...(isAdmin ? {} : { createdById: session.user.id }),
@@ -42,7 +55,7 @@ export default async function PetaniPage({
         prisma.petani.count({ where }),
         prisma.petani.findMany({
             where,
-            orderBy: { createdAt: "desc" },
+            orderBy: nestedOrderBy<Prisma.PetaniOrderByWithRelationInput>(sort, dir),
             skip: (pageNum - 1) * PER_PAGE,
             take: PER_PAGE,
             include: {
@@ -54,7 +67,9 @@ export default async function PetaniPage({
     ]);
 
     const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
-    const pageUrl = (p: number) => `/petani?q=${encodeURIComponent(q)}&page=${p}`;
+    const pageUrl = (p: number) =>
+        `/petani?${new URLSearchParams({ q, sort, dir, page: String(p) })}`;
+    const sortParams = { q };
 
     return (
         <main className={pageWide}>
@@ -72,6 +87,8 @@ export default async function PetaniPage({
             </header>
 
             <form action="/petani" className="mt-6 flex gap-2">
+                <input type="hidden" name="sort" value={sort} />
+                <input type="hidden" name="dir" value={dir} />
                 <div className="relative flex-1 sm:max-w-sm">
                     <Search size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500" />
                     <input
@@ -99,11 +116,11 @@ export default async function PetaniPage({
                         <table className="w-full min-w-[720px] text-sm">
                             <thead>
                             <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500">
-                                <th className="px-5 py-3.5">Nama</th>
-                                <th className="px-5 py-3.5">Kode Petani</th>
-                                <th className="px-5 py-3.5">Desa</th>
-                                <th className="px-5 py-3.5">Kelompok</th>
-                                {isAdmin && <th className="px-5 py-3.5">Penginput</th>}
+                                <SortHeader column="namaLengkap" label="Nama" sort={sort} dir={dir} params={sortParams} basePath="/petani" />
+                                <SortHeader column="kodePetani" label="Kode Petani" sort={sort} dir={dir} params={sortParams} basePath="/petani" />
+                                <SortHeader column="desa.nama" label="Desa" sort={sort} dir={dir} params={sortParams} basePath="/petani" />
+                                <SortHeader column="kelompokTani.nama" label="Kelompok" sort={sort} dir={dir} params={sortParams} basePath="/petani" />
+                                {isAdmin && <SortHeader column="createdBy.fullName" label="Penginput" sort={sort} dir={dir} params={sortParams} basePath="/petani" />}
                                 {/*<th className="px-5 py-3.5">Tanggal Input</th>*/}
                                 <th className="px-5 py-3.5 text-right">Aksi</th>
                             </tr>

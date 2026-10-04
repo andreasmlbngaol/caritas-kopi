@@ -4,20 +4,29 @@ export const metadata: Metadata = { title: "Data Desa" };
 
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { Prisma } from "@/app/generated/prisma/client";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Plus, FileText, FileDown, Pencil } from "lucide-react";
 import { DeleteButton } from "./delete-button";
+import { SortHeader, parseSort, nestedOrderBy } from "../_components/sort";
 
-export default async function DesaPage() {
+const SORT_COLUMNS = ["wilayah.nama", "wilayah.kecamatan.nama", "createdBy.fullName"] as const;
+
+export default async function DesaPage({
+                                            searchParams,
+                                        }: {
+    searchParams: Promise<{ sort?: string; dir?: string }>;
+}) {
     const session = await auth();
     if (!session?.user) redirect("/login");
 
     const isAdmin = session.user.role === "ADMIN";
+    const { sort, dir } = parseSort(await searchParams, SORT_COLUMNS, "wilayah.nama");
 
     const items = await prisma.baselineDesa.findMany({
         where: isAdmin ? {} : { createdById: session.user.id },
-        orderBy: { createdAt: "desc" },
+        orderBy: nestedOrderBy<Prisma.BaselineDesaOrderByWithRelationInput>(sort, dir),
         include: {
             createdBy: { select: { fullName: true, username: true } },
             wilayah: { include: { kecamatan: true } },
@@ -50,9 +59,9 @@ export default async function DesaPage() {
                     <table className="w-full min-w-[560px] text-sm">
                         <thead>
                         <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500">
-                            <th className="px-5 py-3.5">Desa</th>
-                            <th className="px-5 py-3.5">Kecamatan</th>
-                            {isAdmin && <th className="px-5 py-3.5">Penginput</th>}
+                            <SortHeader column="wilayah.nama" label="Desa" sort={sort} dir={dir} params={{}} basePath="/desa" />
+                            <SortHeader column="wilayah.kecamatan.nama" label="Kecamatan" sort={sort} dir={dir} params={{}} basePath="/desa" />
+                            {isAdmin && <SortHeader column="createdBy.fullName" label="Penginput" sort={sort} dir={dir} params={{}} basePath="/desa" />}
                             {/*<th className="px-5 py-3.5">Tanggal Input</th>*/}
                             <th className="px-5 py-3.5 text-right">Aksi</th>
                         </tr>
