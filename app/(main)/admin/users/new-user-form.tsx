@@ -55,7 +55,7 @@ export function NewUserForm() {
                     >
                         {isPending ? "Menyimpan..." : "Tambah"}
                     </button>
-                    <p className="text-xs text-gray-400">
+                    <p className="text-xs text-gray-500">
                         Password dibuat otomatis setelah disimpan.
                     </p>
                 </div>

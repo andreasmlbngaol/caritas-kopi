@@ -30,7 +30,7 @@ function Card({ title, children }: { title: string; children: React.ReactNode })
 function KV({ label, value }: { label: string; value: React.ReactNode }) {
     return (
         <div>
-            <dt className="text-[11px] font-semibold uppercase tracking-wider text-gray-400">{label}</dt>
+            <dt className="text-[11px] font-semibold uppercase tracking-wider text-gray-500">{label}</dt>
             <dd className="mt-0.5 text-sm text-gray-900">{value}</dd>
         </div>
     );
@@ -78,7 +78,7 @@ export default async function PetaniDetailPage({
         <main className={pageWide}>
             <header className="flex items-start justify-between gap-4">
                 <div className="flex items-center gap-3">
-                    <Link href="/petani" title="Kembali ke daftar" className="rounded-xl p-2 text-gray-400 transition-colors hover:bg-white hover:text-gray-900 hover:shadow-sm hover:ring-1 hover:ring-gray-950/5">
+                    <Link href="/petani" aria-label="Kembali ke daftar" className="rounded-xl p-2 text-gray-500 transition-colors hover:bg-white hover:text-gray-900 hover:shadow-sm hover:ring-1 hover:ring-gray-950/5">
                         <ArrowLeft size={18} />
                     </Link>
                     <div>
@@ -105,7 +105,7 @@ export default async function PetaniDetailPage({
                 </a>
                 <Link
                         href={`/petani/${p.id}/edit`} title="Edit"
-                        className="rounded-lg p-2 text-gray-400 transition-colors hover:bg-white hover:text-jade-800 hover:shadow-sm hover:ring-1 hover:ring-gray-950/5"
+                        className="rounded-lg p-2 text-gray-500 transition-colors hover:bg-white hover:text-jade-800 hover:shadow-sm hover:ring-1 hover:ring-gray-950/5"
                     >
                         <Pencil size={16} />
                     </Link>
@@ -180,7 +180,7 @@ export default async function PetaniDetailPage({
                                         <div className="mt-4 overflow-x-auto">
                                             <table className="w-full min-w-[640px] text-sm">
                                                 <thead>
-                                                <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-400">
+                                                <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500">
                                                     <th className="py-1.5 pr-3">Jenis Naungan/Sela/Tegakan</th>
                                                     <th className="py-1.5 pr-3">Jumlah</th>
                                                     <th className="py-1.5 pr-3">Fungsi</th>
@@ -215,7 +215,7 @@ export default async function PetaniDetailPage({
                     <div className="space-y-6">
                         {GAP_GROUPS.map((g) => (
                             <div key={g.kelompok}>
-                                <h3 className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-gray-400">
+                                <h3 className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-gray-500">
                                     {g.kelompok}
                                 </h3>
                                 <div className="divide-y divide-gray-100">
@@ -240,7 +240,7 @@ export default async function PetaniDetailPage({
                     <div className="overflow-x-auto">
                         <table className="w-full min-w-[720px] text-sm">
                             <thead>
-                            <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-400">
+                            <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500">
                                 <th className="py-2 pr-3">Tahun</th>
                                 <th className="py-2 pr-3">Satuan</th>
                                 <th className="py-2 pr-3">Cherry</th>
@@ -276,7 +276,7 @@ export default async function PetaniDetailPage({
                 <Card title="E - Penjualan">
                     <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                         <div>
-                            <h3 className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-gray-400">
+                            <h3 className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-gray-500">
                                 E.1 - Jenis Produk yang Dijual
                             </h3>
                             <div className="divide-y divide-gray-100">
@@ -292,7 +292,7 @@ export default async function PetaniDetailPage({
                             </div>
                         </div>
                         <div>
-                            <h3 className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-gray-400">
+                            <h3 className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-gray-500">
                                 E.2 - Kategori Pasar
                             </h3>
                             <div className="divide-y divide-gray-100">

@@ -1,4 +1,8 @@
 // app/(main)/analitik/gap/page.tsx
+import type { Metadata } from "next";
+
+export const metadata: Metadata = { title: "Analitik GAP" };
+
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { pageWide } from "../../layout-cls";
@@ -84,7 +88,7 @@ export default async function GapPage() {
                         <div className="overflow-x-auto">
                             <table className="w-full min-w-[640px] text-sm">
                                 <thead>
-                                    <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-400">
+                                    <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500">
                                         <th className="py-2 pr-3">Praktik</th>
                                         <th className="py-2 pr-3 text-right">Ya</th>
                                         <th className="py-2 pr-3 text-right">Kadang</th>

@@ -105,10 +105,10 @@ export function DatePicker({
                     onClick={() => setOpen((o) => !o)}
                     className="flex w-full items-center justify-between gap-2 rounded-xl bg-white px-3 py-2.5 text-left text-sm ring-1 ring-inset ring-gray-300 outline-none transition focus:ring-2 focus:ring-inset focus:ring-jade-700"
                 >
-                    <span className={display ? "text-gray-900" : "text-gray-400"}>
+                    <span className={display ? "text-gray-900" : "text-gray-500"}>
                         {display || placeholder}
                     </span>
-                    <Calendar size={15} className="shrink-0 text-gray-400" />
+                    <Calendar size={15} className="shrink-0 text-gray-500" />
                 </button>
                 {value && !required && (
                     <button
@@ -145,7 +145,7 @@ export function DatePicker({
                                             <option key={y} value={y}>{y}</option>
                                         ))}
                                     </select>
-                                    <ChevronDown size={12} className="pointer-events-none absolute right-1 top-1/2 -translate-y-1/2 text-gray-400" />
+                                    <ChevronDown size={12} className="pointer-events-none absolute right-1 top-1/2 -translate-y-1/2 text-gray-500" />
                                 </div>
                             ) : (
                                 <span className="text-sm font-semibold text-gray-900">{view.y}</span>
@@ -160,7 +160,7 @@ export function DatePicker({
                     </div>
 
                     {/* Nama hari */}
-                    <div className="mb-1 grid grid-cols-7 text-center text-[11px] font-medium text-gray-400">
+                    <div className="mb-1 grid grid-cols-7 text-center text-[11px] font-medium text-gray-500">
                         {HARI.map((h) => (
                             <span key={h} className="py-1">{h}</span>
                         ))}

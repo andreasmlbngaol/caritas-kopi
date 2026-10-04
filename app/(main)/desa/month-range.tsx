@@ -23,7 +23,7 @@ function MonthSelect({
             <select
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
-                className={`${inputCls} appearance-none pr-8 ${value ? "" : "text-gray-400"}`}
+                className={`${inputCls} appearance-none pr-8 ${value ? "" : "text-gray-500"}`}
             >
                 <option value="">{placeholder}</option>
                 {BULAN.map((b) => (
@@ -34,7 +34,7 @@ function MonthSelect({
             </select>
             <ChevronDown
                 size={14}
-                className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400"
+                className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-500"
             />
         </div>
     );

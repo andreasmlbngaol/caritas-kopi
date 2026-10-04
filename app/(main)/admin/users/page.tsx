@@ -1,3 +1,7 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = { title: "Kelola Pengguna" };
+
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
@@ -36,7 +40,7 @@ export default async function UsersPage() {
             <section className="mt-6 overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-gray-950/5">
                 <table className="w-full text-sm">
                     <thead>
-                    <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-400">
+                    <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500">
                         <th className="px-5 py-3.5">Pengguna</th>
                         <th className="px-5 py-3.5">Role</th>
                         <th className="px-5 py-3.5">Status</th>
@@ -54,7 +58,7 @@ export default async function UsersPage() {
                                     </div>
                                     <div>
                                         <p className="font-medium leading-tight">{user.fullName ?? "-"}</p>
-                                        <p className="text-xs text-gray-400">@{user.username}</p>
+                                        <p className="text-xs text-gray-500">@{user.username}</p>
                                     </div>
                                 </div>
                             </td>

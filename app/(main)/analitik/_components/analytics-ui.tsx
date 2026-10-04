@@ -34,13 +34,13 @@ export function StatTile({
             highlight ? "bg-jade-800 text-white" : "bg-white ring-1 ring-gray-950/5"
         }`}>
             <p className={`text-[11px] font-semibold uppercase tracking-wider ${
-                highlight ? "text-jade-200" : "text-gray-400"
+                highlight ? "text-jade-200" : "text-gray-500"
             }`}>{label}</p>
             <p className="mt-2 text-3xl font-semibold tracking-tight">
                 {typeof value === "number" ? idNum.format(value) : value}
-                {unit && <span className={`ml-1 text-base font-medium ${highlight ? "text-jade-200" : "text-gray-400"}`}>{unit}</span>}
+                {unit && <span className={`ml-1 text-base font-medium ${highlight ? "text-jade-200" : "text-gray-500"}`}>{unit}</span>}
             </p>
-            {hint && <p className={`mt-1 text-xs ${highlight ? "text-jade-100/80" : "text-gray-400"}`}>{hint}</p>}
+            {hint && <p className={`mt-1 text-xs ${highlight ? "text-jade-100/80" : "text-gray-500"}`}>{hint}</p>}
         </div>
     );
 }
@@ -69,7 +69,7 @@ export function RankList({
     unit?: string;
     max?: number;
 }) {
-    if (items.length === 0) return <p className="text-sm text-gray-400">Tidak ada data.</p>;
+    if (items.length === 0) return <p className="text-sm text-gray-500">Tidak ada data.</p>;
     const max = maxOverride ?? Math.max(...items.map((i) => i.jumlah), 1);
     return (
         <ol className="space-y-3">
@@ -82,7 +82,7 @@ export function RankList({
                         <div className="flex items-baseline justify-between gap-3">
                             <span className="truncate text-gray-700">{i.nama}</span>
                             <span className="shrink-0 font-medium tabular-nums text-gray-900">
-                                {fmt(i.jumlah)}{unit && <span className="ml-0.5 text-xs font-normal text-gray-400">{unit}</span>}
+                                {fmt(i.jumlah)}{unit && <span className="ml-0.5 text-xs font-normal text-gray-500">{unit}</span>}
                             </span>
                         </div>
                         <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-gray-100">

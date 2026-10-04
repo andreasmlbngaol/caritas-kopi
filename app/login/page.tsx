@@ -6,6 +6,7 @@ import { Suspense } from "react";
 import { login } from "./actions";
 import Image from "next/image";
 import { Sprout, MapPin, TrendingUp, ShieldCheck } from "lucide-react";
+import { ThemeToggle } from "@/app/_components/theme-toggle";
 
 const FEATURES = [
     { icon: Sprout, title: "Data petani & GAP" },
@@ -56,7 +57,12 @@ function LoginForm() {
 export default function LoginPage() {
     return (
         <main className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-10">
-            <div className="grid w-full max-w-4xl overflow-hidden rounded-3xl bg-white shadow-sm ring-1 ring-gray-950/5 lg:grid-cols-2">
+            <div className="relative grid w-full max-w-4xl overflow-hidden rounded-3xl bg-white shadow-sm ring-1 ring-gray-950/5 lg:grid-cols-2">
+                {/* Toggle tema di pojok kanan atas kartu */}
+                <div className="absolute right-3 top-3 z-10">
+                    <ThemeToggle collapsed />
+                </div>
+
                 {/* Kiri: brand + daftar fitur */}
                 <aside className="hidden bg-jade-900 p-10 text-white lg:flex lg:flex-col">
                     <div className="flex items-center gap-3">

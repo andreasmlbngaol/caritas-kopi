@@ -1,4 +1,8 @@
 // app/(main)/analitik/pasar/page.tsx
+import type { Metadata } from "next";
+
+export const metadata: Metadata = { title: "Analitik Pasar & Produk" };
+
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { pageWide } from "../../layout-cls";
@@ -56,7 +60,7 @@ export default async function PasarPage() {
                     <div className="overflow-x-auto">
                         <table className="w-full min-w-[420px] text-sm">
                             <thead>
-                                <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-400">
+                                <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500">
                                     <th className="py-2 pr-3">Produk</th>
                                     <th className="py-2 pr-3 text-right">Petani</th>
                                     <th className="py-2 pr-3 text-right">Volume (kg)</th>
@@ -82,7 +86,7 @@ export default async function PasarPage() {
                     <div className="overflow-x-auto">
                         <table className="w-full min-w-[420px] text-sm">
                             <thead>
-                                <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-400">
+                                <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500">
                                     <th className="py-2 pr-3">Kategori</th>
                                     <th className="py-2 pr-3 text-right">Petani</th>
                                     <th className="py-2 pr-3 text-right">Rata-rata porsi</th>

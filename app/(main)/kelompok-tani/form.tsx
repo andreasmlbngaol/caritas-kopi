@@ -43,18 +43,18 @@ export function KelompokTaniForm({
                                         name="kode1" placeholder="KR" data-label="Kode kelompok bagian 1"
                                         defaultValue={seg[0] ?? ""} className={`${inputCls} w-24 uppercase`}
                                     />
-                                    <p className="mt-1 text-[11px] text-gray-400">Kode wilayah</p>
+                                    <p className="mt-1 text-[11px] text-gray-500">Kode wilayah</p>
                                 </div>
-                                <span className="pb-5 text-gray-400">-</span>
+                                <span className="pb-5 text-gray-500">-</span>
                                 <div>
                                     <input
                                         name="kode2" placeholder="KR01" data-label="Kode kelompok bagian 2"
                                         defaultValue={seg.slice(1).join("-")} className={`${inputCls} w-28 uppercase`}
                                     />
-                                    <p className="mt-1 text-[11px] text-gray-400">Nomor urut</p>
+                                    <p className="mt-1 text-[11px] text-gray-500">Nomor urut</p>
                                 </div>
                             </div>
-                            <p className="mt-1 text-[11px] text-gray-400">
+                            <p className="mt-1 text-[11px] text-gray-500">
                                 Contoh: KR-KR01. Boleh dikosongkan; kalau diisi harus unik per desa.
                             </p>
                         </div>

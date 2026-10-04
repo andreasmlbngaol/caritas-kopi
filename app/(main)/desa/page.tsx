@@ -1,3 +1,7 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = { title: "Data Desa" };
+
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
@@ -45,7 +49,7 @@ export default async function DesaPage() {
                 <div className="mt-8 overflow-x-auto rounded-2xl bg-white shadow-sm ring-1 ring-gray-950/5">
                     <table className="w-full min-w-[560px] text-sm">
                         <thead>
-                        <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-400">
+                        <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500">
                             <th className="px-5 py-3.5">Desa</th>
                             <th className="px-5 py-3.5">Kecamatan</th>
                             {isAdmin && <th className="px-5 py-3.5">Penginput</th>}
@@ -92,7 +96,7 @@ export default async function DesaPage() {
                                         <Link
                                             href={`/desa/${d.id}/edit`}
                                             title="Edit"
-                                            className="rounded-lg p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-jade-800"
+                                            className="rounded-lg p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-jade-800"
                                         >
                                             <Pencil size={16} />
                                         </Link>

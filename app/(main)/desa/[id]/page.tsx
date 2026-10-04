@@ -7,7 +7,7 @@ import { buildDesaExportModel } from "../export-model";
 import { DeleteButton } from "../delete-button";
 
 const thCls =
-    "px-4 py-2.5 text-left text-[11px] font-semibold uppercase tracking-wider text-gray-400";
+    "px-4 py-2.5 text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500";
 const labelCls = "bg-gray-50 px-4 py-2.5 text-xs font-medium text-gray-500";
 const valueCls = "whitespace-pre-line px-4 py-2.5 text-sm";
 
@@ -71,8 +71,8 @@ export default async function DesaDetailPage({
                 <div className="flex items-center gap-3">
                     <Link
                         href="/desa"
-                        title="Kembali ke daftar"
-                        className="rounded-xl p-2 text-gray-400 transition-colors hover:bg-white hover:text-gray-900 hover:shadow-sm hover:ring-1 hover:ring-gray-950/5"
+                        aria-label="Kembali ke daftar"
+                        className="rounded-xl p-2 text-gray-500 transition-colors hover:bg-white hover:text-gray-900 hover:shadow-sm hover:ring-1 hover:ring-gray-950/5"
                     >
                         <ArrowLeft size={18} />
                     </Link>
@@ -104,7 +104,7 @@ export default async function DesaDetailPage({
                     <Link
                         href={`/desa/${id}/edit`}
                         title="Edit"
-                        className="rounded-lg p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-jade-800"
+                        className="rounded-lg p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-jade-800"
                     >
                         <Pencil size={16} />
                     </Link>

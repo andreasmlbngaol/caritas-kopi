@@ -38,7 +38,7 @@ function LainnyaCard({
                 <span className="text-xs font-medium text-gray-500">Produk Lainnya {index + 1}</span>
                 <button
                     type="button" onClick={onRemove} title="Hapus"
-                    className="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-600"
+                    className="rounded-lg p-1.5 text-gray-500 transition-colors hover:bg-red-50 hover:text-red-600"
                 >
                     <X size={14} />
                 </button>

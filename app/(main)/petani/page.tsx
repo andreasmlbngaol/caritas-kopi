@@ -1,4 +1,8 @@
 // app/(main)/petani/page.tsx
+import type { Metadata } from "next";
+
+export const metadata: Metadata = { title: "Data Petani" };
+
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
@@ -69,7 +73,7 @@ export default async function PetaniPage({
 
             <form action="/petani" className="mt-6 flex gap-2">
                 <div className="relative flex-1 sm:max-w-sm">
-                    <Search size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+                    <Search size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500" />
                     <input
                         name="q" defaultValue={q} placeholder="Cari nama / kode petani / kode kelompok…"
                         className="w-full rounded-xl bg-white py-2.5 pl-10 pr-3 text-sm ring-1 ring-inset ring-gray-300 outline-none transition placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-jade-700"
@@ -94,7 +98,7 @@ export default async function PetaniPage({
                     <div className="mt-6 overflow-x-auto rounded-2xl bg-white shadow-sm ring-1 ring-gray-950/5">
                         <table className="w-full min-w-[720px] text-sm">
                             <thead>
-                            <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-400">
+                            <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500">
                                 <th className="px-5 py-3.5">Nama</th>
                                 <th className="px-5 py-3.5">Kode Petani</th>
                                 <th className="px-5 py-3.5">Desa</th>
@@ -118,12 +122,12 @@ export default async function PetaniPage({
                                     <td className="whitespace-nowrap px-5 py-3.5 text-gray-500">{p.kodePetani ?? "-"}</td>
                                     <td className="px-5 py-3.5 text-gray-500">
                                         {p.desa.nama}
-                                        <span className="block text-xs text-gray-400">Kec. {p.desa.kecamatan.nama}</span>
+                                        <span className="block text-xs text-gray-500">Kec. {p.desa.kecamatan.nama}</span>
                                     </td>
                                     <td className="px-5 py-3.5 text-gray-500">
                                         {p.kelompokTani ? p.kelompokTani.nama : "-"}
                                         {p.kelompokTani?.kode && (
-                                            <span className="block text-xs text-gray-400">{p.kelompokTani.kode}</span>
+                                            <span className="block text-xs text-gray-500">{p.kelompokTani.kode}</span>
                                         )}
                                     </td>
                                     {isAdmin && (
@@ -152,7 +156,7 @@ export default async function PetaniPage({
                                             </a>
                                     <Link
                                                 href={`/petani/${p.id}/edit`} title="Edit"
-                                                className="rounded-lg p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-jade-800"
+                                                className="rounded-lg p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-jade-800"
                                             >
                                                 <Pencil size={16} />
                                             </Link>

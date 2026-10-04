@@ -14,7 +14,7 @@ export default async function PetaniBaruPage() {
     return (
         <main className={pageForm}>
             <header className="flex items-center gap-3">
-                <Link href="/petani" title="Kembali ke daftar" className="rounded-xl p-2 text-gray-400 transition-colors hover:bg-white hover:text-gray-900 hover:shadow-sm hover:ring-1 hover:ring-gray-950/5">
+                <Link href="/petani" aria-label="Kembali ke daftar" className="rounded-xl p-2 text-gray-500 transition-colors hover:bg-white hover:text-gray-900 hover:shadow-sm hover:ring-1 hover:ring-gray-950/5">
                     <ArrowLeft size={18} />
                 </Link>
                 <h1 className="text-lg font-semibold tracking-tight">Formulir Data Baseline Petani</h1>

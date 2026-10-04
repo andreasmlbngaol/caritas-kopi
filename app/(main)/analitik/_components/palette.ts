@@ -7,7 +7,7 @@ export const ACCENT = "#1f8a64"; // jade-500
 export const ACCENT_STRONG = "#0f5c42"; // jade-700
 export const GRID = "#e1e0d9";
 export const AXIS = "#c3c2b7";
-export const MUTED = "#898781";
+export const MUTED = "#6b6a64"; // label/axis - kontras >= 4.5:1 di atas putih
 export const INK = "#0b0b0b";
 
 // Untuk bar seri tunggal (magnitudo) - satu hue, lebih tua = lebih besar.

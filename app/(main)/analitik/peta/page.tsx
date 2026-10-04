@@ -1,4 +1,8 @@
 // app/(main)/analitik/peta/page.tsx
+import type { Metadata } from "next";
+
+export const metadata: Metadata = { title: "Peta Sebaran" };
+
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { pageWide } from "../../layout-cls";
@@ -49,7 +53,7 @@ export default async function PetaPage() {
                         <div className="overflow-x-auto">
                             <table className="w-full min-w-[560px] text-sm">
                                 <thead>
-                                    <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-400">
+                                    <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500">
                                         <th className="py-2 pr-3">Desa</th>
                                         <th className="py-2 pr-3">Kecamatan</th>
                                         <th className="py-2 pr-3 text-right">Koordinat</th>

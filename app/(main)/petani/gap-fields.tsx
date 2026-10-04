@@ -37,7 +37,7 @@ export function GapFields({ defaults }: { defaults?: GapDefaults }) {
         <div className="space-y-6">
             {GAP_GROUPS.map((g) => (
                 <div key={g.kelompok}>
-                    <h3 className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-gray-400">
+                    <h3 className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-gray-500">
                         {g.kelompok}
                     </h3>
                     <div className="space-y-3">

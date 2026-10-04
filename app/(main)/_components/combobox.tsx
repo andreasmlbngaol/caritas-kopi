@@ -1,7 +1,7 @@
 // app/(main)/_components/combobox.tsx
 "use client";
 
-import { useMemo, useState } from "react";
+import { useId, useMemo, useState } from "react";
 import { Check, ChevronDown } from "lucide-react";
 import { inputCls } from "./ui";
 
@@ -22,6 +22,7 @@ export function Combobox({
     const [open, setOpen] = useState(false);
     const [query, setQuery] = useState("");
     const [hi, setHi] = useState(0);
+    const listId = useId();
 
     const selected = options.find((o) => o.value === value);
 
@@ -75,6 +76,9 @@ export function Combobox({
                 <input
                     role="combobox"
                     aria-expanded={open}
+                    aria-controls={open ? listId : undefined}
+                    aria-autocomplete="list"
+                    aria-label={label}
                     disabled={disabled}
                     value={open ? query : selected?.label ?? ""}
                     placeholder={open ? "Ketik untuk mencari…" : placeholder}
@@ -85,21 +89,23 @@ export function Combobox({
                 />
                 <ChevronDown
                     size={16}
-                    className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
+                    className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
                 />
             </div>
 
             {open && !disabled && (
                 <>
                     <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-                    <div className="absolute z-50 mt-1.5 max-h-64 w-full overflow-auto rounded-xl bg-white p-1 shadow-lg ring-1 ring-gray-950/5">
+                    <div id={listId} role="listbox" className="absolute z-50 mt-1.5 max-h-64 w-full overflow-auto rounded-xl bg-white p-1 shadow-lg ring-1 ring-gray-950/5">
                         {filtered.length === 0 ? (
-                            <p className="px-3 py-2 text-sm text-gray-400">Tidak ditemukan</p>
+                            <p className="px-3 py-2 text-sm text-gray-500">Tidak ditemukan</p>
                         ) : (
                             filtered.map((o, i) => (
                                 <button
                                     key={o.value}
                                     type="button"
+                                    role="option"
+                                    aria-selected={o.value === value}
                                     onClick={() => pick(o)}
                                     onMouseEnter={() => setHi(i)}
                                     className={`flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2 text-left text-sm ${

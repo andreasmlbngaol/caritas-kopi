@@ -65,7 +65,7 @@ function MiniField({
                 defaultValue={defaultValue}
                 className={inputCls}
             />
-            {hint && <p className="mt-1 text-[11px] text-gray-400">{hint}</p>}
+            {hint && <p className="mt-1 text-[11px] text-gray-500">{hint}</p>}
         </div>
     );
 }
@@ -116,7 +116,7 @@ function VarietasFields({ plotIndex, defaults }: { plotIndex: number; defaults?:
                             <button
                                 type="button" title="Hapus varietas"
                                 onClick={() => setRows((s) => s.filter((x) => x.key !== r.key))}
-                                className="shrink-0 rounded-lg p-2 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-600"
+                                className="shrink-0 rounded-lg p-2 text-gray-500 transition-colors hover:bg-red-50 hover:text-red-600"
                             >
                                 <X size={14} />
                             </button>
@@ -236,7 +236,7 @@ function NaunganCard({
                 <span className="text-xs font-medium text-gray-500">Naungan / Sela / Tegakan {index + 1}</span>
                 <button
                     type="button" onClick={onRemove} title="Hapus"
-                    className="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-600"
+                    className="rounded-lg p-1.5 text-gray-500 transition-colors hover:bg-red-50 hover:text-red-600"
                 >
                     <X size={14} />
                 </button>
@@ -295,10 +295,10 @@ function MonthPicker({
                 onClick={() => setOpen((o) => !o)}
                 className="flex w-full items-center justify-between gap-2 rounded-xl bg-white px-3 py-2.5 text-left text-sm ring-1 ring-inset ring-gray-300 outline-none transition focus:ring-2 focus:ring-inset focus:ring-jade-700"
             >
-                <span className={display ? "text-gray-900" : "text-gray-400"}>
+                <span className={display ? "text-gray-900" : "text-gray-500"}>
                     {display || "Pilih bulan…"}
                 </span>
-                <Calendar size={15} className="shrink-0 text-gray-400" />
+                <Calendar size={15} className="shrink-0 text-gray-500" />
             </button>
             {open && (
                 <div className="absolute z-50 mt-1.5 w-64 rounded-xl bg-white p-3 shadow-lg ring-1 ring-gray-950/5">
@@ -366,7 +366,7 @@ function PlotCard({
                 </h3>
                 <button
                     type="button" onClick={onRemove} title="Hapus plot"
-                    className="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-600"
+                    className="rounded-lg p-1.5 text-gray-500 transition-colors hover:bg-red-50 hover:text-red-600"
                 >
                     <X size={15} />
                 </button>
@@ -413,7 +413,7 @@ function PlotCard({
 
                 {/* B.2 - Tanaman naungan/sela/tegakan */}
                 <div className="border-t border-gray-200 pt-4">
-                    <h4 className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-gray-400">
+                    <h4 className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-gray-500">
                         Tanaman Naungan / Sela / Tegakan
                     </h4>
                     <div className="space-y-3">
@@ -461,7 +461,7 @@ export function PlotFields({ defaults }: { defaults?: PlotDefaults[] }) {
                     <Plus size={15} /> Tambah Plot
                 </button>
                 {plots.length === 0 && (
-                    <p className="text-xs text-gray-400">
+                    <p className="text-xs text-gray-500">
                         Belum ada plot - klik &#34;Tambah Plot&#34;, atau simpan tanpa plot bila survei menyusul.
                     </p>
                 )}

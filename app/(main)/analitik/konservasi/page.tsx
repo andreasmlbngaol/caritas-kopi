@@ -1,4 +1,8 @@
 // app/(main)/analitik/konservasi/page.tsx
+import type { Metadata } from "next";
+
+export const metadata: Metadata = { title: "Analitik Konservasi" };
+
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { pageWide } from "../../layout-cls";
@@ -51,7 +55,7 @@ export default async function KonservasiPage() {
                     <div className="overflow-x-auto">
                         <table className="w-full min-w-[420px] text-sm">
                             <thead>
-                                <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-400">
+                                <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500">
                                     <th className="py-2 pr-3">Kondisi</th>
                                     <th className="py-2 pr-3 text-right">Petani</th>
                                     <th className="py-2 pr-3 text-right">Porsi</th>
@@ -82,7 +86,7 @@ export default async function KonservasiPage() {
 
                 <ChartCard title="Kawasan konservasi terkait">
                     {k.kawasan.length === 0 ? (
-                        <p className="text-sm text-gray-400">Tidak ada data.</p>
+                        <p className="text-sm text-gray-500">Tidak ada data.</p>
                     ) : (
                         <ul className="space-y-2.5">
                             {k.kawasan.map((n) => (
@@ -93,7 +97,7 @@ export default async function KonservasiPage() {
                             ))}
                         </ul>
                     )}
-                    <p className="mt-4 text-xs text-gray-400">Rata-rata jarak desa ke kawasan konservasi: {fmt(k.jarakKonservasiRata, 1)} km.</p>
+                    <p className="mt-4 text-xs text-gray-500">Rata-rata jarak desa ke kawasan konservasi: {fmt(k.jarakKonservasiRata, 1)} km.</p>
                 </ChartCard>
             </div>
         </main>

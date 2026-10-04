@@ -54,7 +54,7 @@ function YearCard({ tahun, d }: { tahun: number; d?: ProduksiDefaults[number] })
             <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-gray-500">
                 {tahun}
                 {tahun === TAHUN_ESTIMASI && (
-                    <span className="ml-1.5 font-normal normal-case text-gray-400">(estimasi)</span>
+                    <span className="ml-1.5 font-normal normal-case text-gray-500">(estimasi)</span>
                 )}
             </h3>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
@@ -85,7 +85,7 @@ function YearCard({ tahun, d }: { tahun: number; d?: ProduksiDefaults[number] })
                     >
                         {idNum.format(total)}
                     </div>
-                    <p className="mt-1 text-[11px] text-gray-400">Total 4 kolom sebelumnya</p>
+                    <p className="mt-1 text-[11px] text-gray-500">Total 4 kolom sebelumnya</p>
                 </div>
             </div>
         </div>

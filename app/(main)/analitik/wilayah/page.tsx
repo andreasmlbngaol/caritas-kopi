@@ -1,4 +1,8 @@
 // app/(main)/analitik/wilayah/page.tsx
+import type { Metadata } from "next";
+
+export const metadata: Metadata = { title: "Analitik Wilayah & Kelembagaan" };
+
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { pageWide } from "../../layout-cls";
@@ -87,7 +91,7 @@ export default async function WilayahPage() {
                         <FreqBlock title="Jenis tanah" items={w.jenisTanah} />
                         <FreqBlock title="Akses jalan" items={w.aksesJalan} />
                     </div>
-                    <p className="mt-4 text-xs text-gray-400">
+                    <p className="mt-4 text-xs text-gray-500">
                         Rata-rata ketinggian {fmt(w.rataKetinggian)} mdpl · suhu {fmt(w.rataSuhu, 1)} °C.
                     </p>
                 </ChartCard>
@@ -107,7 +111,7 @@ export default async function WilayahPage() {
                     <div className="overflow-x-auto">
                         <table className="w-full min-w-[640px] text-sm">
                             <thead>
-                                <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-400">
+                                <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500">
                                     <th className="py-2 pr-3">Desa</th>
                                     <th className="py-2 pr-3">Kecamatan</th>
                                     <th className="py-2 pr-3 text-right">Petani terdata</th>
@@ -135,13 +139,13 @@ function FreqBlock({ title, items, color = "#1f8a64" }: { title: string; items: 
     if (items.length === 0) return null;
     return (
         <div>
-            <h3 className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-gray-400">{title}</h3>
+            <h3 className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-gray-500">{title}</h3>
             <div className="flex flex-wrap gap-x-4 gap-y-1.5">
                 {items.map((i) => (
                     <span key={i.nama} className="flex items-center gap-1.5 text-sm text-gray-700">
                         <span className="h-1.5 w-1.5 rounded-full" style={{ background: color }} />
                         {i.nama}
-                        <span className="text-xs font-medium text-gray-400">{fmt(i.jumlah)}</span>
+                        <span className="text-xs font-medium text-gray-500">{fmt(i.jumlah)}</span>
                     </span>
                 ))}
             </div>

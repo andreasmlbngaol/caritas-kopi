@@ -1,4 +1,8 @@
 // app/(main)/analitik/agronomi/page.tsx
+import type { Metadata } from "next";
+
+export const metadata: Metadata = { title: "Analitik Agronomi Plot" };
+
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { pageWide } from "../../layout-cls";
@@ -65,7 +69,7 @@ export default async function AgronomiPage() {
                     <div className="overflow-x-auto">
                         <table className="w-full min-w-[420px] text-sm">
                             <thead>
-                                <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-400">
+                                <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500">
                                     <th className="py-2 pr-3">Jenis</th>
                                     <th className="py-2 pr-3 text-right">Plot</th>
                                     <th className="py-2 pr-3 text-right">Total pohon</th>
@@ -81,7 +85,7 @@ export default async function AgronomiPage() {
                                         <td className="py-2 pr-3 text-right tabular-nums text-gray-500">{fmt(n.dipangkas)}</td>
                                     </tr>
                                 ))}
-                                {a.naungan.length === 0 && <tr><td colSpan={4} className="py-3 text-gray-400">Belum ada data naungan.</td></tr>}
+                                {a.naungan.length === 0 && <tr><td colSpan={4} className="py-3 text-gray-500">Belum ada data naungan.</td></tr>}
                             </tbody>
                         </table>
                     </div>
@@ -90,7 +94,7 @@ export default async function AgronomiPage() {
                     <div className="overflow-x-auto">
                         <table className="w-full min-w-[420px] text-sm">
                             <thead>
-                                <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-400">
+                                <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500">
                                     <th className="py-2 pr-3">Nama pestisida</th>
                                     <th className="py-2 pr-3 text-right">Plot</th>
                                 </tr>
@@ -102,7 +106,7 @@ export default async function AgronomiPage() {
                                         <td className="py-2 pr-3 text-right tabular-nums">{fmt(p.jumlah)}</td>
                                     </tr>
                                 ))}
-                                {a.pestisida.length === 0 && <tr><td colSpan={2} className="py-3 text-gray-400">Belum ada data pestisida.</td></tr>}
+                                {a.pestisida.length === 0 && <tr><td colSpan={2} className="py-3 text-gray-500">Belum ada data pestisida.</td></tr>}
                             </tbody>
                         </table>
                     </div>

@@ -1,4 +1,8 @@
 // app/(main)/page.tsx
+import type { Metadata } from "next";
+
+export const metadata: Metadata = { title: "Dashboard" };
+
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
@@ -82,11 +86,11 @@ export default async function HomePage() {
                         <Link key={s.label} href={s.href}
                             className="group rounded-2xl bg-white p-5 shadow-sm ring-1 ring-gray-950/5 transition-all hover:-translate-y-0.5 hover:shadow-md hover:ring-jade-700/40">
                             <div className="flex items-center justify-between">
-                                <p className="text-[11px] font-semibold uppercase tracking-wider text-gray-400">{s.label}</p>
+                                <p className="text-[11px] font-semibold uppercase tracking-wider text-gray-500">{s.label}</p>
                                 <s.icon size={18} className="text-jade-700" />
                             </div>
                             <p className="mt-2 text-3xl font-semibold tracking-tight">{idNum.format(s.value)}</p>
-                            <p className="mt-2 flex items-center gap-1 text-xs font-medium text-gray-400 transition-colors group-hover:text-jade-700">
+                            <p className="mt-2 flex items-center gap-1 text-xs font-medium text-gray-500 transition-colors group-hover:text-jade-700">
                                 Lihat data
                                 <ArrowUpRight size={13} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                             </p>

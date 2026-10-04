@@ -79,7 +79,7 @@ export function WilayahKelompokFields({
                         {!desaKode ? (
                             <div>
                                 <span className="mb-1.5 block text-xs font-medium text-gray-600">Kelompok Tani</span>
-                                <div className={`${inputCls} flex items-center text-gray-400`}>
+                                <div className={`${inputCls} flex items-center text-gray-500`}>
                                     Pilih desa terlebih dahulu…
                                 </div>
                             </div>
@@ -120,15 +120,15 @@ export function WilayahKelompokFields({
                                                 name="kt_kode_1" value={ktKode1} onChange={(e) => onKtKode1(e.target.value)}
                                                 placeholder="KR" data-label="Kode kelompok bagian 1" className={`${inputCls} w-24`}
                                             />
-                                            <p className="mt-1 text-[11px] text-gray-400">Kode wilayah</p>
+                                            <p className="mt-1 text-[11px] text-gray-500">Kode wilayah</p>
                                         </div>
-                                        <span className="pb-5 text-gray-400">-</span>
+                                        <span className="pb-5 text-gray-500">-</span>
                                         <div>
                                             <input
                                                 name="kt_kode_2" value={ktKode2} onChange={(e) => setKtKode2(e.target.value.toUpperCase())}
                                                 placeholder="KR01" data-label="Kode kelompok bagian 2" className={`${inputCls} w-28`}
                                             />
-                                            <p className="mt-1 text-[11px] text-gray-400">Nomor urut</p>
+                                            <p className="mt-1 text-[11px] text-gray-500">Nomor urut</p>
                                         </div>
                                     </div>
                                 </div>
@@ -152,26 +152,26 @@ export function WilayahKelompokFields({
                                     name="kp1" value={kp1} onChange={(e) => setKp1(e.target.value.toUpperCase())}
                                     placeholder="CAR" data-label="Kode petani bagian 1" className={`${inputCls} w-20`}
                                 />
-                                <p className="mt-1 text-[11px] text-gray-400">Lembaga</p>
+                                <p className="mt-1 text-[11px] text-gray-500">Lembaga</p>
                             </div>
-                            <span className="pb-5 text-gray-400">-</span>
+                            <span className="pb-5 text-gray-500">-</span>
                             <div>
                                 <input
                                     name="kp2" value={kp2} onChange={(e) => setKp2(e.target.value.toUpperCase())}
                                     placeholder="KR" data-label="Kode petani bagian 2" className={`${inputCls} w-24`}
                                 />
-                                <p className="mt-1 text-[11px] text-gray-400">Kode wilayah</p>
+                                <p className="mt-1 text-[11px] text-gray-500">Kode wilayah</p>
                             </div>
-                            <span className="pb-5 text-gray-400">-</span>
+                            <span className="pb-5 text-gray-500">-</span>
                             <div>
                                 <input
                                     name="kp3" value={kp3} onChange={(e) => setKp3(e.target.value.toUpperCase())}
                                     placeholder="001" data-label="Kode petani bagian 3" className={`${inputCls} w-24`}
                                 />
-                                <p className="mt-1 text-[11px] text-gray-400">Nomor urut</p>
+                                <p className="mt-1 text-[11px] text-gray-500">Nomor urut</p>
                             </div>
                         </div>
-                        <p className="mt-1 text-[11px] text-gray-400">Contoh: CAR-KR-001</p>
+                        <p className="mt-1 text-[11px] text-gray-500">Contoh: CAR-KR-001</p>
                     </div>
                 </div>
             </div>
