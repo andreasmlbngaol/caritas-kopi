@@ -2,11 +2,12 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { Coffee } from "lucide-react";
 
 export function NavigationProgress() {
     const pathname = usePathname();
+    const searchParams = useSearchParams();
     const [progress, setProgress] = useState(0);
     const [visible, setVisible] = useState(false);
     const navigatingRef = useRef(false);
@@ -45,11 +46,13 @@ export function NavigationProgress() {
         );
     }
 
-    // Selesai saat rute benar-benar berpindah
+    // Selesai saat rute benar-benar berpindah. Pantau pathname DAN query
+    // (sorting/filter mengubah searchParams tanpa ganti pathname).
+    const query = searchParams.toString();
     useEffect(() => {
         if (navigatingRef.current) done();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [pathname]);
+    }, [pathname, query]);
 
     useEffect(() => {
         function onClick(e: MouseEvent) {

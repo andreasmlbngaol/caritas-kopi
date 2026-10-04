@@ -15,6 +15,12 @@ function getSnapshot() {
     return document.documentElement.classList.contains("dark");
 }
 
+// Hook tema gelap: pantau kelas `dark` pada <html> (diubah skrip pra-paint &
+// tombol toggle). Dipakai juga oleh chart/map agar warna SVG ikut tema.
+export function useIsDark() {
+    return useSyncExternalStore(subscribe, getSnapshot, () => false);
+}
+
 // Tombol ganti tema terang/gelap. Preferensi disimpan di localStorage;
 // kelas `dark` diset sebelum paint oleh skrip di root layout.
 export function ThemeToggle({
@@ -24,7 +30,7 @@ export function ThemeToggle({
     collapsed?: boolean;
     className?: string;
 }) {
-    const dark = useSyncExternalStore(subscribe, getSnapshot, () => false);
+    const dark = useIsDark();
 
     function toggle() {
         const next = !dark;

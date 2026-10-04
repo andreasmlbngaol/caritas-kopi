@@ -64,6 +64,16 @@
 .dark .text-jade-100 { color: #b7ecd4; }
 .dark .text-jade-100\/80 { color: rgba(183, 236, 212, 0.8); }
 
+/* Peta Leaflet selalu berlatar terang (tile OSM) - jangan balik token abu di
+   dalam popup/tooltip agar teks tetap gelap dan terbaca. */
+.dark .leaflet-popup-content,
+.dark .leaflet-tooltip {
+  color: #111827;
+  --color-gray-500: #6b7280;
+  --color-gray-700: #374151;
+  --color-gray-900: #111827;
+}
+
 html { color-scheme: light; }
 html.dark { color-scheme: dark; }
 
