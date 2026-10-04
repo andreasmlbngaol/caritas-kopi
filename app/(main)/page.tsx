@@ -156,6 +156,7 @@ export default async function HomePage() {
                         xKey="tahun"
                         lines={[
                             { key: "cherry", label: "Cherry" },
+                            { key: "gabahBasah", label: "Gabah basah" },
                             { key: "gabahKering", label: "Gabah kering" },
                             { key: "greenBean", label: "Green bean" },
                         ]}

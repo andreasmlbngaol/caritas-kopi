@@ -57,7 +57,7 @@ export async function getRingkasan() {
         prisma.baselineDesa.aggregate({ _sum: { jumlahPetaniKopi: true } }),
         prisma.riwayatProduksi.groupBy({
             by: ["tahun"],
-            _sum: { cherry: true, greenBean: true, gabahKering: true },
+            _sum: { cherry: true, gabahBasah: true, greenBean: true, gabahKering: true },
             orderBy: { tahun: "asc" },
         }),
         prisma.baselineDesa.aggregate({
@@ -76,6 +76,7 @@ export async function getRingkasan() {
         produksiTerbaru: {
             cherry: num(terbaru?._sum.cherry),
             greenBean: num(terbaru?._sum.greenBean),
+            gabahBasah: num(terbaru?._sum.gabahBasah),
             gabahKering: num(terbaru?._sum.gabahKering),
         },
         hargaRataCherry: num(harga._avg.hargaCherryRp),
@@ -85,6 +86,7 @@ export async function getRingkasan() {
             tahun: String(t.tahun),
             cherry: num(t._sum.cherry),
             greenBean: num(t._sum.greenBean),
+            gabahBasah: num(t._sum.gabahBasah),
             gabahKering: num(t._sum.gabahKering),
         })),
     };
@@ -132,25 +134,26 @@ export async function getProduksi() {
         }),
         prisma.riwayatProduksi.findMany({
             select: {
-                tahun: true, cherry: true, gabahKering: true, greenBean: true,
+                tahun: true, cherry: true, gabahBasah: true, gabahKering: true, greenBean: true,
                 petani: { select: { desa: { select: { nama: true } } } },
             },
         }),
     ]);
 
     const tahunTerbaru = byTahun.at(-1)?.tahun ?? null;
-    const perDesa = new Map<string, { nama: string; cherry: number; gabahKering: number; greenBean: number }>();
+    const perDesa = new Map<string, { nama: string; cherry: number; gabahBasah: number; gabahKering: number; greenBean: number }>();
     for (const r of terbaruRows) {
         if (r.tahun !== tahunTerbaru) continue;
         const nama = r.petani.desa.nama;
-        const e = perDesa.get(nama) ?? { nama, cherry: 0, gabahKering: 0, greenBean: 0 };
+        const e = perDesa.get(nama) ?? { nama, cherry: 0, gabahBasah: 0, gabahKering: 0, greenBean: 0 };
         e.cherry += num(r.cherry);
+        e.gabahBasah += num(r.gabahBasah);
         e.gabahKering += num(r.gabahKering);
         e.greenBean += num(r.greenBean);
         perDesa.set(nama, e);
     }
     const topDesa = [...perDesa.values()]
-        .map((d) => ({ ...d, total: d.cherry + d.gabahKering + d.greenBean }))
+        .map((d) => ({ ...d, total: d.cherry + d.gabahBasah + d.gabahKering + d.greenBean }))
         .sort((a, b) => b.total - a.total)
         .slice(0, 7);
 
