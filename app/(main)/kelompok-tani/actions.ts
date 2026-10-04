@@ -91,7 +91,7 @@ export async function updateKelompokTani(
 }
 
 // ---------- DELETE ----------
-// Tidak redirect — DeleteButton me-refresh halaman. Melempar error bila masih dipakai.
+// Tidak redirect - DeleteButton me-refresh halaman. Melempar error bila masih dipakai.
 export async function deleteKelompokTani(id: string) {
     const session = await auth();
     if (!session?.user) throw new Error("Unauthorized");

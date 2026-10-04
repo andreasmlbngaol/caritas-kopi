@@ -53,7 +53,7 @@ export default async function UsersPage() {
                                         {(user.fullName ?? user.username).slice(0, 2).toUpperCase()}
                                     </div>
                                     <div>
-                                        <p className="font-medium leading-tight">{user.fullName ?? "—"}</p>
+                                        <p className="font-medium leading-tight">{user.fullName ?? "-"}</p>
                                         <p className="text-xs text-gray-400">@{user.username}</p>
                                     </div>
                                 </div>

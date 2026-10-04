@@ -175,7 +175,7 @@ export function PetaniPdf({ m }: { m: PetaniExportModel }) {
                         ))}
                     </View>
 
-                    {/* Tabel terpisah untuk blok petugas — dipisah satu baris kosong */}
+                    {/* Tabel terpisah untuk blok petugas - dipisah satu baris kosong */}
                     <View style={[s.table, { marginTop: 10 }]}>
                         <View style={s.row} wrap={false}>
                             <Cell width="38%" fill={C.redFill} bold color={C.red}>Kode Petani / ID_Petani</Cell>

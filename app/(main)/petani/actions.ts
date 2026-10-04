@@ -84,7 +84,7 @@ const schema = z.object({
     kontakDaruratHubungan: str,
 });
 
-// B.1 — varietas ditangani terpisah (multi-entry, digabung ", ")
+// B.1 - varietas ditangani terpisah (multi-entry, digabung ", ")
 const plotSchema = z.object({
     namaHamparan: str,
     tahunTanam: intOpt,
@@ -105,7 +105,7 @@ const plotSchema = z.object({
     pestisidaBulanTahun: strOpt, // "YYYY-MM" dari input type=month
 });
 
-// B.2 — Tanaman naungan/sela/tegakan
+// B.2 - Tanaman naungan/sela/tegakan
 const naunganSchema = z.object({
     jenis: str,
     jumlah: intNum,
@@ -197,7 +197,7 @@ function plotRows(formData: FormData) {
     return rows;
 }
 
-// C – GAP: default TIDAK sesuai permintaan
+// C - GAP: default TIDAK sesuai permintaan
 function gapRows(formData: FormData) {
     return GAP_ITEMS.map((g) => {
         const v = get(formData, `gap_${g.jenis}`) ?? "TIDAK";
@@ -467,7 +467,7 @@ export async function updatePetani(
 }
 
 // ---------- DELETE ----------
-// Tetap melempar error — ditangkap DeleteButton dan ditampilkan di modal
+// Tetap melempar error - ditangkap DeleteButton dan ditampilkan di modal
 export async function deletePetani(id: string) {
     const session = await auth();
     if (!session?.user) throw new Error("Unauthorized");

@@ -26,7 +26,7 @@ export function DeleteButton({
         setError(null);
         try {
             await action(id);
-            // action me-redirect — baris ini hanya jalan sebagai fallback
+            // action me-redirect - baris ini hanya jalan sebagai fallback
             setOpen(false);
             router.refresh(); // untuk action yang tidak redirect (mis. kelola kelompok tani)
         } catch (e) {

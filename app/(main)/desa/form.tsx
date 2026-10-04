@@ -26,8 +26,8 @@ export function DesaForm({
     return (
         <form action={action} className="space-y-6">
             <UnsavedGuard />
-            {/* A – DATA DESA / WILAYAH */}
-            <Section title="A – Data Desa / Wilayah">
+            {/* A - DATA DESA / WILAYAH */}
+            <Section title="A - Data Desa / Wilayah">
                 <div className="space-y-6">
                     <SubSection title="Wilayah Administratif">
                         <WilayahSelect defaultDesaKode={defaults?.desaKode} />
@@ -72,8 +72,8 @@ export function DesaForm({
                 </div>
             </Section>
 
-            {/* B – KEBIJAKAN LOKAL */}
-            <Section title="B – Kebijakan Lokal">
+            {/* B - KEBIJAKAN LOKAL */}
+            <Section title="B - Kebijakan Lokal">
                 <div className="space-y-3">
                     {KEBIJAKAN.map((k) => (
                         <YesNoRow
@@ -90,8 +90,8 @@ export function DesaForm({
                 </div>
             </Section>
 
-            {/* C – KELEMBAGAAN */}
-            <Section title="C – Kelembagaan">
+            {/* C - KELEMBAGAAN */}
+            <Section title="C - Kelembagaan">
                 <div className="space-y-3">
                     {LEMBAGA.map((l) => (
                         <div key={l.jenis} data-group={l.label} className="grid grid-cols-1 items-center gap-3 sm:grid-cols-[140px_120px_1fr]">
@@ -103,8 +103,8 @@ export function DesaForm({
                 </div>
             </Section>
 
-            {/* D – KONDISI BISNIS KOPI */}
-            <Section title="D – Kondisi Bisnis Kopi Saat Ini">
+            {/* D - KONDISI BISNIS KOPI */}
+            <Section title="D - Kondisi Bisnis Kopi Saat Ini">
                 <p className="mb-4 rounded-lg bg-gray-50 px-3 py-2 text-xs text-gray-500">
                     Jumlah petani kopi dan luas kebun kopi otomatis memakai isian bagian A.
                 </p>
@@ -123,8 +123,8 @@ export function DesaForm({
                 </Grid>
             </Section>
 
-            {/* E – KONDISI KONSERVASI */}
-            <Section title="E – Kondisi Konservasi">
+            {/* E - KONDISI KONSERVASI */}
+            <Section title="E - Kondisi Konservasi">
                 <div className="space-y-4">
                     <YesNoField name="berbatasanKonservasi" label="Berbatasan dengan Kawasan Konservasi" defaultValue={defaults?.berbatasanKonservasi ?? false} />
                     <Grid>

@@ -50,7 +50,7 @@ export async function POST(req: Request) {
         contentType = "image/webp";
         ext = "webp";
     } catch {
-        // bukan format yang bisa dikonversi — lanjut pakai file asli
+        // bukan format yang bisa dikonversi - lanjut pakai file asli
     }
 
     const key = `petani/${crypto.randomUUID()}.${ext}`;

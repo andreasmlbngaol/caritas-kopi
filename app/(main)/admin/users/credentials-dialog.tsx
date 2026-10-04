@@ -35,7 +35,7 @@ export function CredentialsDialog({
             <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl">
                 <h2 className="text-sm font-semibold tracking-tight">Kredensial Akun</h2>
                 <p className="mt-1 text-xs text-gray-500">
-                    Simpan dan bagikan ke enumerator — password ini hanya ditampilkan sekali.
+                    Simpan dan bagikan ke enumerator - password ini hanya ditampilkan sekali.
                 </p>
 
                 <pre className="mt-4 whitespace-pre-wrap rounded-xl bg-gray-50 p-4 font-mono text-sm text-gray-800 ring-1 ring-inset ring-gray-200">

@@ -45,7 +45,7 @@ export function KelompokTaniForm({
                                     />
                                     <p className="mt-1 text-[11px] text-gray-400">Kode wilayah</p>
                                 </div>
-                                <span className="pb-5 text-gray-400">–</span>
+                                <span className="pb-5 text-gray-400">-</span>
                                 <div>
                                     <input
                                         name="kode2" placeholder="KR01" data-label="Kode kelompok bagian 2"

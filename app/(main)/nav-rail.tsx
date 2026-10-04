@@ -5,8 +5,9 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-    LayoutDashboard, MapPin, LogOut,
-    PanelLeft, PanelLeftClose, UserRound, UserRoundGroup, Key
+    LayoutDashboard, LogOut,
+    PanelLeft, PanelLeftClose, UserRound, UsersRound, Key,
+    Building2, Sprout, TrendingUp, ShoppingCart, Trees, Landmark, Map, Leaf,
 } from "lucide-react";
 import { logout } from "./actions";
 import Image from "next/image";
@@ -18,10 +19,21 @@ type NavUser = {
 
 const menus = [
     { href: "/", label: "Dashboard", icon: LayoutDashboard },
-    { href: "/petani", label: "Petani", icon: UserRound },   // ← dari Sprout
-    { href: "/desa", label: "Desa", icon: MapPin },
-    { href: "/kelompok-tani", label: "Kelompok Tani", icon: UserRoundGroup },
+    { href: "/petani", label: "Petani", icon: UserRound },
+    { href: "/desa", label: "Desa", icon: Building2 },
+    { href: "/kelompok-tani", label: "Kelompok Tani", icon: UsersRound },
     { href: "/admin/users", label: "Kelola Pengguna", icon: Key, adminOnly: true },
+];
+
+// Menu analitik - khusus ADMIN, dipisah per kategori domain.
+const analyticsMenus = [
+    { href: "/analitik/gap", label: "GAP", icon: Sprout },
+    { href: "/analitik/agronomi", label: "Agronomi Plot", icon: Leaf },
+    { href: "/analitik/produksi", label: "Produksi", icon: TrendingUp },
+    { href: "/analitik/pasar", label: "Pasar & Produk", icon: ShoppingCart },
+    { href: "/analitik/konservasi", label: "Konservasi", icon: Trees },
+    { href: "/analitik/wilayah", label: "Wilayah & Kelembagaan", icon: Landmark },
+    { href: "/analitik/peta", label: "Peta Sebaran", icon: Map },
 ];
 
 function initials(name: string) {
@@ -33,13 +45,39 @@ export function NavRail({ user, defaultExpanded = false }: { user: NavUser; defa
     const [expanded, setExpanded] = useState(defaultExpanded);
     const pathname = usePathname();
 
-    const visibleMenus = menus.filter((m) => !m.adminOnly || user.role === "ADMIN");
+    const isAdmin = user.role === "ADMIN";
+    const visibleMenus = menus.filter((m) => !m.adminOnly || isAdmin);
 
     function toggle() {
         const next = !expanded;
         setExpanded(next);
         // Persist lintas navigasi & sesi (1 tahun)
         document.cookie = `nav-expanded=${next ? "1" : "0"}; path=/; max-age=31536000; samesite=lax`;
+    }
+
+    function renderItem(menu: { href: string; label: string; icon: typeof LayoutDashboard }) {
+        const active =
+            pathname === menu.href ||
+            (menu.href !== "/" && pathname.startsWith(menu.href));
+        return (
+            <Link
+                key={menu.href}
+                href={menu.href}
+                title={expanded ? undefined : menu.label}
+                className={`group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors ${
+                    active
+                        ? "bg-gray-900 font-medium text-white"
+                        : "text-gray-500 hover:bg-gray-100 hover:text-gray-900"
+                } ${expanded ? "" : "justify-center px-0"}`}
+            >
+                <menu.icon
+                    size={19}
+                    strokeWidth={active ? 2.2 : 1.8}
+                    className={`shrink-0 ${active ? "text-jade-300" : ""}`}
+                />
+                {expanded && <span className="truncate">{menu.label}</span>}
+            </Link>
+        );
     }
 
     return (
@@ -72,41 +110,26 @@ export function NavRail({ user, defaultExpanded = false }: { user: NavUser; defa
             </div>
 
             {/* Menu */}
-            <nav className="flex-1 space-y-1 px-3 py-2">
+            <nav className="flex-1 space-y-1 overflow-x-visible overflow-y-auto px-3 py-2">
                 {expanded && (
                     <p className="px-3 pb-1 text-[11px] font-semibold uppercase tracking-wider text-gray-400">
                         Menu
                     </p>
                 )}
-                {visibleMenus.map((menu) => {
-                    const active =
-                        pathname === menu.href ||
-                        (menu.href !== "/" && pathname.startsWith(menu.href));
-                    return (
-                        <Link
-                            key={menu.href}
-                            href={menu.href}
-                            className={`group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors ${
-                                active
-                                    ? "bg-gray-900 font-medium text-white"
-                                    : "text-gray-500 hover:bg-gray-100 hover:text-gray-900"
-                            } ${expanded ? "" : "justify-center px-0"}`}
-                        >
-                            <menu.icon
-                                size={19}
-                                strokeWidth={active ? 2.2 : 1.8}
-                                className={`shrink-0 ${active ? "text-jade-300" : ""}`}
-                            />
-                            {expanded && <span className="truncate">{menu.label}</span>}
+                {visibleMenus.map((menu) => renderItem(menu))}
 
-                            {!expanded && (
-                                <span className="pointer-events-none absolute left-full top-1/2 z-50 ml-3 -translate-y-1/2 whitespace-nowrap rounded-lg bg-gray-900 px-2.5 py-1.5 text-xs font-medium text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100">
-                  {menu.label}
-                </span>
-                            )}
-                        </Link>
-                    );
-                })}
+                {isAdmin && (
+                    <>
+                        {expanded ? (
+                            <p className="px-3 pb-1 pt-4 text-[11px] font-semibold uppercase tracking-wider text-gray-400">
+                                Analitik
+                            </p>
+                        ) : (
+                            <div className="my-3 border-t border-gray-100" />
+                        )}
+                        {analyticsMenus.map((menu) => renderItem(menu))}
+                    </>
+                )}
             </nav>
 
             {/* Footer: kartu user + logout */}

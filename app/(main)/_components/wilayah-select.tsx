@@ -21,7 +21,7 @@ export function WilayahSelect({
                                   onDesaChange,
                               }: {
     defaultDesaKode?: string;
-    onDesaChange?: (desaKode: string) => void; // opsional — dipakai form petani
+    onDesaChange?: (desaKode: string) => void; // opsional - dipakai form petani
 }) {
     const [options, setOptions] = useState<Option[][]>([[], [], [], []]);
     const [selected, setSelected] = useState<string[]>(

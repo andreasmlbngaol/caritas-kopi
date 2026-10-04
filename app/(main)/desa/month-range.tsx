@@ -47,7 +47,7 @@ export function MonthRange({
     onChange?: (range: { start: number; end: number } | null) => void;
     defaultValue?: string | null;                       // ← baru
 }) {
-    const parts = defaultValue?.split(" – ") ?? [];
+    const parts = defaultValue?.split(" - ") ?? [];
     const p0 = parts[0] ?? "", p1 = parts[1] ?? "";
     const [dari, setDari] = useState(BULAN.includes(p0) ? p0 : "");
     const [sampai, setSampai] = useState(BULAN.includes(p1) ? p1 : "");
@@ -73,12 +73,12 @@ export function MonthRange({
             <input
                 type="hidden"
                 name={name}
-                value={dari && sampai ? `${dari} – ${sampai}` : ""}
+                value={dari && sampai ? `${dari} - ${sampai}` : ""}
                 data-label={label}
             />
             <div className="flex items-center gap-2">
                 <MonthSelect value={dari} onChange={(v) => update(v, sampai)} placeholder="Dari" />
-                <span className="text-gray-300">–</span>
+                <span className="text-gray-300">-</span>
                 <MonthSelect value={sampai} onChange={(v) => update(dari, v)} placeholder="Sampai" />
             </div>
         </div>

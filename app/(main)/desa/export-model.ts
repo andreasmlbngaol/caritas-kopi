@@ -32,7 +32,7 @@ export function buildDesaExportModel(b: FullBaseline) {
             ? `Hujan: ${b.bulanHujan ?? "-"}\nKering: ${b.bulanKering ?? "-"}`
             : "-";
 
-    // 12 baris × 2 pasang, mengikuti layout kolom kiri–kanan formulir
+    // 12 baris × 2 pasang, mengikuti layout kolom kiri-kanan formulir
     const sectionA: { left: [string, string]; right: [string, string] }[] = [
         { left: ["Desa", w.nama], right: ["Topografi", fmt(b.topografi)] },
         { left: ["Kecamatan", kec.nama], right: ["Ketinggian (mdpl)", num(b.ketinggianMdpl)] },

@@ -5,8 +5,8 @@ import { useEffect, useRef, useState } from "react";
 
 /**
  * Lindungi form dari kehilangan data:
- * 1. beforeunload — tutup tab / reload / tutup browser
- * 2. Cegat klik link internal (App Router) — tombol back, nav rail, dll.
+ * 1. beforeunload - tutup tab / reload / tutup browser
+ * 2. Cegat klik link internal (App Router) - tombol back, nav rail, dll.
  * Dipasang di dalam <form>. Dialog hanya muncul bila form sudah diubah
  * dan tidak sedang dalam proses submit.
  */
@@ -41,7 +41,7 @@ export function UnsavedGuard() {
             }
             if (!dirtyRef.current || submittingRef.current) return;
             if (e.defaultPrevented || e.button !== 0) return;
-            if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return; // buka tab baru — biarkan
+            if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return; // buka tab baru - biarkan
 
             const anchor = (e.target as HTMLElement).closest("a");
             if (!anchor) return;

@@ -42,7 +42,7 @@ function TickCell({ on }: { on: boolean }) {
         {on ? (
             <Check size={15} className="text-jade-700" strokeWidth={3} />
         ) : (
-            <span className="text-gray-300">–</span>
+            <span className="text-gray-300">-</span>
         )}
       </span>
         </td>
@@ -113,8 +113,8 @@ export default async function DesaDetailPage({
             </header>
 
             <div className="mt-8 space-y-6">
-                {/* A – 4 kolom seperti formulir */}
-                <Card title="A – Data Desa / Wilayah">
+                {/* A - 4 kolom seperti formulir */}
+                <Card title="A - Data Desa / Wilayah">
                     <div className="overflow-x-auto">
                         <table className="w-full min-w-[560px] text-sm">
                             <tbody className="divide-y divide-gray-100">
@@ -131,8 +131,8 @@ export default async function DesaDetailPage({
                     </div>
                 </Card>
 
-                {/* B – Kebijakan Lokal */}
-                <Card title="B – Kebijakan Lokal">
+                {/* B - Kebijakan Lokal */}
+                <Card title="B - Kebijakan Lokal">
                     <table className="w-full text-sm">
                         <thead>
                         <tr>
@@ -155,8 +155,8 @@ export default async function DesaDetailPage({
                     </table>
                 </Card>
 
-                {/* C – Kelembagaan */}
-                <Card title="C – Kelembagaan">
+                {/* C - Kelembagaan */}
+                <Card title="C - Kelembagaan">
                     <table className="w-full text-sm">
                         <thead>
                         <tr>
@@ -179,10 +179,10 @@ export default async function DesaDetailPage({
 
                 {/* D & E berdampingan di layar lebar */}
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-                    <Card title="D – Kondisi Bisnis Kopi Saat Ini">
+                    <Card title="D - Kondisi Bisnis Kopi Saat Ini">
                         <KVTable rows={m.sectionD} />
                     </Card>
-                    <Card title="E – Kondisi Konservasi">
+                    <Card title="E - Kondisi Konservasi">
                         <KVTable rows={m.sectionE} />
                     </Card>
                 </div>

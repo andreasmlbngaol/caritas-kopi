@@ -18,7 +18,7 @@ export type NaunganDefaults = {
 
 export type PlotDefaults = {
     namaHamparan: string | null;
-    varietas: string | null; // tersimpan digabung ", " — di form dipecah jadi multi-entry
+    varietas: string | null; // tersimpan digabung ", " - di form dipecah jadi multi-entry
     tahunTanam: number | null;
     kodeGps: string | null;
     elevasiMdpl: number | null;
@@ -81,7 +81,7 @@ function MiniSelect({
         <div>
             <label htmlFor={name} className="mb-1 block text-xs font-medium text-gray-600">{label}</label>
             <select id={name} name={name} data-label={label} defaultValue={defaultValue ?? ""} className={inputCls}>
-                <option value="">— pilih —</option>
+                <option value="">- pilih -</option>
                 {options.map((o) => (
                     <option key={o.value} value={o.value}>{o.label}</option>
                 ))}
@@ -200,7 +200,7 @@ function FotoUpload({
                             <input
                                 id={`plot_${index}_fotoLatitude`}
                                 name={`plot_${index}_fotoLatitude`} type="number" step="any" inputMode="decimal"
-                                placeholder="-7.1234" data-label="Koordinat foto – Latitude"
+                                placeholder="-7.1234" data-label="Koordinat foto - Latitude"
                                 defaultValue={defaultLat ?? ""} className={inputCls}
                             />
                         </div>
@@ -209,7 +209,7 @@ function FotoUpload({
                             <input
                                 id={`plot_${index}_fotoLongitude`}
                                 name={`plot_${index}_fotoLongitude`} type="number" step="any" inputMode="decimal"
-                                placeholder="110.4567" data-label="Koordinat foto – Longitude"
+                                placeholder="110.4567" data-label="Koordinat foto - Longitude"
                                 defaultValue={defaultLng ?? ""} className={inputCls}
                             />
                         </div>
@@ -220,7 +220,7 @@ function FotoUpload({
     );
 }
 
-// Satu kartu tanaman naungan — field berlabel, tersusun rapi
+// Satu kartu tanaman naungan - field berlabel, tersusun rapi
 function NaunganCard({
                          plotIndex, index, entry, onRemove,
                      }: {
@@ -411,7 +411,7 @@ function PlotCard({
                     />
                 </div>
 
-                {/* B.2 – Tanaman naungan/sela/tegakan */}
+                {/* B.2 - Tanaman naungan/sela/tegakan */}
                 <div className="border-t border-gray-200 pt-4">
                     <h4 className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-gray-400">
                         Tanaman Naungan / Sela / Tegakan
@@ -462,7 +462,7 @@ export function PlotFields({ defaults }: { defaults?: PlotDefaults[] }) {
                 </button>
                 {plots.length === 0 && (
                     <p className="text-xs text-gray-400">
-                        Belum ada plot — klik &#34;Tambah Plot&#34;, atau simpan tanpa plot bila survei menyusul.
+                        Belum ada plot - klik &#34;Tambah Plot&#34;, atau simpan tanpa plot bila survei menyusul.
                     </p>
                 )}
             </div>

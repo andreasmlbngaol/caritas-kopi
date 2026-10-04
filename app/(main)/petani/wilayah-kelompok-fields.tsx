@@ -58,7 +58,7 @@ export function WilayahKelompokFields({
     }
 
     // Prefix kode kelompok → nilai DEFAULT segmen tengah kode petani (hanya bila masih kosong;
-    // setelah itu independen — mengubah kode kelompok tidak mengubah kode petani)
+    // setelah itu independen - mengubah kode kelompok tidak mengubah kode petani)
     function onKtKode1(raw: string) {
         const v = raw.toUpperCase();
         setKtKode1(v);
@@ -74,7 +74,7 @@ export function WilayahKelompokFields({
                     Kode diisi oleh petugas/koordinator koperasi. Boleh dikosongkan dulu dan dilengkapi lewat edit.
                 </p>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    {/* Kelompok tani — terkunci sampai desa dipilih */}
+                    {/* Kelompok tani - terkunci sampai desa dipilih */}
                     <div>
                         {!desaKode ? (
                             <div>
@@ -122,7 +122,7 @@ export function WilayahKelompokFields({
                                             />
                                             <p className="mt-1 text-[11px] text-gray-400">Kode wilayah</p>
                                         </div>
-                                        <span className="pb-5 text-gray-400">–</span>
+                                        <span className="pb-5 text-gray-400">-</span>
                                         <div>
                                             <input
                                                 name="kt_kode_2" value={ktKode2} onChange={(e) => setKtKode2(e.target.value.toUpperCase())}
@@ -154,7 +154,7 @@ export function WilayahKelompokFields({
                                 />
                                 <p className="mt-1 text-[11px] text-gray-400">Lembaga</p>
                             </div>
-                            <span className="pb-5 text-gray-400">–</span>
+                            <span className="pb-5 text-gray-400">-</span>
                             <div>
                                 <input
                                     name="kp2" value={kp2} onChange={(e) => setKp2(e.target.value.toUpperCase())}
@@ -162,7 +162,7 @@ export function WilayahKelompokFields({
                                 />
                                 <p className="mt-1 text-[11px] text-gray-400">Kode wilayah</p>
                             </div>
-                            <span className="pb-5 text-gray-400">–</span>
+                            <span className="pb-5 text-gray-400">-</span>
                             <div>
                                 <input
                                     name="kp3" value={kp3} onChange={(e) => setKp3(e.target.value.toUpperCase())}

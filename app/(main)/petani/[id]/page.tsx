@@ -71,7 +71,7 @@ export default async function PetaniDetailPage({
     const pestisidaLabel = (nama: string | null, blnThn: string | null) => {
         if (!nama && !blnThn) return "-";
         const parts = [nama, blnThn ? fmtBulanTahun(blnThn) : null].filter(Boolean);
-        return parts.join(" – ");
+        return parts.join(" - ");
     };
 
     return (
@@ -115,7 +115,7 @@ export default async function PetaniDetailPage({
 
             <div className="mt-8 space-y-6">
                 {/* A */}
-                <Card title="A – Data Identitas Petani">
+                <Card title="A - Data Identitas Petani">
                     <KVGrid items={[
                         ["Nama Lengkap", p.namaLengkap],
                         ["Nama Panggilan", fmt(p.namaPanggilan)],
@@ -135,7 +135,7 @@ export default async function PetaniDetailPage({
                 </Card>
 
                 {/* B */}
-                <Card title="B – Data Fisik Lokasi Plot">
+                <Card title="B - Data Fisik Lokasi Plot">
                     {p.plot.length === 0 ? (
                         <p className="text-sm text-gray-500">Belum ada data plot.</p>
                     ) : (
@@ -211,7 +211,7 @@ export default async function PetaniDetailPage({
                 </Card>
 
                 {/* C */}
-                <Card title="C – Praktik GAP Kebun">
+                <Card title="C - Praktik GAP Kebun">
                     <div className="space-y-6">
                         {GAP_GROUPS.map((g) => (
                             <div key={g.kelompok}>
@@ -236,7 +236,7 @@ export default async function PetaniDetailPage({
                 </Card>
 
                 {/* D */}
-                <Card title="D – Riwayat Estimasi Produksi">
+                <Card title="D - Riwayat Estimasi Produksi">
                     <div className="overflow-x-auto">
                         <table className="w-full min-w-[720px] text-sm">
                             <thead>
@@ -273,11 +273,11 @@ export default async function PetaniDetailPage({
                 </Card>
 
                 {/* E */}
-                <Card title="E – Penjualan">
+                <Card title="E - Penjualan">
                     <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                         <div>
                             <h3 className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-gray-400">
-                                E.1 – Jenis Produk yang Dijual
+                                E.1 - Jenis Produk yang Dijual
                             </h3>
                             <div className="divide-y divide-gray-100">
                                 {p.produk.map((r) => (
@@ -293,7 +293,7 @@ export default async function PetaniDetailPage({
                         </div>
                         <div>
                             <h3 className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-gray-400">
-                                E.2 – Kategori Pasar
+                                E.2 - Kategori Pasar
                             </h3>
                             <div className="divide-y divide-gray-100">
                                 {p.pasar.map((r) => (
@@ -313,7 +313,7 @@ export default async function PetaniDetailPage({
                 </Card>
 
                 {/* F */}
-                <Card title="F – Kondisi Kebun">
+                <Card title="F - Kondisi Kebun">
                     <div className="divide-y divide-gray-100">
                         {KONDISI_KEBUN.map((k) => {
                             const row = p.kondisiKebun.find((x) => x.jenis === k.jenis);

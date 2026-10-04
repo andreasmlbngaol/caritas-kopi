@@ -44,8 +44,8 @@ export function PetaniForm({
     return (
         <ActionForm action={action} className="space-y-6">
             <UnsavedGuard />
-            {/* A – DATA IDENTITAS PETANI */}
-            <Section title="A – Data Identitas Petani">
+            {/* A - DATA IDENTITAS PETANI */}
+            <Section title="A - Data Identitas Petani">
                 <div className="space-y-6">
                     <SubSection title="Wilayah & Kode">
                         <WilayahKelompokFields
@@ -66,7 +66,7 @@ export function PetaniForm({
                                     id="jenisKelamin" name="jenisKelamin" data-label="Jenis Kelamin"
                                     defaultValue={defaults?.jenisKelamin ?? ""} className={inputCls}
                                 >
-                                    <option value="">— pilih —</option>
+                                    <option value="">- pilih -</option>
                                     {JENIS_KELAMIN.map((j) => (
                                         <option key={j.value} value={j.value}>{j.label}</option>
                                     ))}
@@ -99,35 +99,35 @@ export function PetaniForm({
                 </div>
             </Section>
 
-            {/* B – DATA FISIK LOKASI PLOT */}
-            <Section title="B – Data Fisik Lokasi Plot">
+            {/* B - DATA FISIK LOKASI PLOT */}
+            <Section title="B - Data Fisik Lokasi Plot">
                 <PlotFields defaults={defaults?.plot} />
             </Section>
 
-            {/* C – PRAKTIK GAP KEBUN */}
-            <Section title="C – Praktik GAP Kebun">
+            {/* C - PRAKTIK GAP KEBUN */}
+            <Section title="C - Praktik GAP Kebun">
                 <GapFields defaults={gapDefaults} />
             </Section>
 
-            {/* D – RIWAYAT ESTIMASI PRODUKSI (kartu per tahun) */}
-            <Section title="D – Riwayat Estimasi Produksi">
+            {/* D - RIWAYAT ESTIMASI PRODUKSI (kartu per tahun) */}
+            <Section title="D - Riwayat Estimasi Produksi">
                 <ProduksiFields defaults={defaults?.produksi} />
             </Section>
 
-            {/* E – PENJUALAN */}
-            <Section title="E – Penjualan">
+            {/* E - PENJUALAN */}
+            <Section title="E - Penjualan">
                 <div className="space-y-6">
-                    <SubSection title="E.1 – Jenis Produk yang Dijual">
+                    <SubSection title="E.1 - Jenis Produk yang Dijual">
                         <ProdukFields defaults={defaults?.produk} />
                     </SubSection>
-                    <SubSection title="E.2 – Kategori Pasar">
+                    <SubSection title="E.2 - Kategori Pasar">
                         <PasarFields defaults={defaults?.pasar} />
                     </SubSection>
                 </div>
             </Section>
 
-            {/* F – KONDISI KEBUN */}
-            <Section title="F – Kondisi Kebun">
+            {/* F - KONDISI KEBUN */}
+            <Section title="F - Kondisi Kebun">
                 <div className="space-y-3">
                     {KONDISI_KEBUN.map((k) => (
                         <YesNoRow

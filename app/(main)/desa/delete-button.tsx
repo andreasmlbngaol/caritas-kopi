@@ -1,4 +1,4 @@
-// app/(main)/desa/delete-button.tsx — wrapper API lama di atas DeleteButton generik
+// app/(main)/desa/delete-button.tsx - wrapper API lama di atas DeleteButton generik
 "use client";
 
 import { DeleteButton as DeleteButtonBase } from "../_components/delete-button";

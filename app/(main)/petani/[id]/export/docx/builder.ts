@@ -350,7 +350,7 @@ export async function buildPetaniDocx(m: PetaniExportModel): Promise<Buffer> {
 
     const doc = new Document({
         sections: [
-            // A (portrait) — Word otomatis page break antar section
+            // A (portrait) - Word otomatis page break antar section
             {
                 properties: { page: { size: { orientation: P } } },
                 children: [
@@ -374,7 +374,7 @@ export async function buildPetaniDocx(m: PetaniExportModel): Promise<Buffer> {
                 properties: { page: { size: { orientation: P } } },
                 children: [heading("C - PRAKTIK GAP KEBUN"), cTable],
             },
-            // D + E (portrait, satu section — tanpa break antar sesi)
+            // D + E (portrait, satu section - tanpa break antar sesi)
             {
                 properties: { page: { size: { orientation: P } } },
                 children: [

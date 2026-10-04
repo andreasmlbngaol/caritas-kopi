@@ -5,7 +5,7 @@ import {
 import type { ReactNode } from "react";
 import type { DesaExportModel } from "@/app/(main)/desa/export-model";
 
-// Kata tidak dipotong tanda hubung — "Kecamatan" turun utuh
+// Kata tidak dipotong tanda hubung - "Kecamatan" turun utuh
 Font.registerHyphenationCallback((word) => [word]);
 
 const C = { border: "#999", label: "#e5e5e5", header: "#e5e5e5" };
@@ -144,11 +144,11 @@ export function DesaPdf({ m }: { m: DesaExportModel }) {
             <Page size="A4" style={s.page}>
                 <Text style={s.title}>FORMULIR DATA BASELINE DESA</Text>
 
-                <Section title="A – DATA DESA / WILAYAH">
+                <Section title="A - DATA DESA / WILAYAH">
                     <FourColTable pairs={m.sectionA} />
                 </Section>
 
-                <Section title="B – KEBIJAKAN LOKAL">
+                <Section title="B - KEBIJAKAN LOKAL">
                     <View style={s.table}>
                         <View style={s.row} wrap={false}>
                             <Cell width="40%" fill={C.header} bold center>KEBIJAKAN LOKAL</Cell>
@@ -183,7 +183,7 @@ export function DesaPdf({ m }: { m: DesaExportModel }) {
                     </View>
                 </Section>
 
-                <Section title="C – KELEMBAGAAN">
+                <Section title="C - KELEMBAGAAN">
                     <View style={s.table}>
                         <View style={s.row} wrap={false}>
                             <Cell width="30%" fill={C.header} bold center>LEMBAGA</Cell>
@@ -203,11 +203,11 @@ export function DesaPdf({ m }: { m: DesaExportModel }) {
                 {/* D kiri, E kanan */}
                 <View wrap={false} style={{ marginTop: 14, flexDirection: "row", gap: 14 }}>
                     <View style={{ flex: 1 }}>
-                        <Text style={s.sectionTitle}>D – KONDISI BISNIS KOPI SAAT INI</Text>
+                        <Text style={s.sectionTitle}>D - KONDISI BISNIS KOPI SAAT INI</Text>
                         <KVTable rows={m.sectionD} labelWidth="55%" />
                     </View>
                     <View style={{ flex: 1 }}>
-                        <Text style={s.sectionTitle}>E – KONDISI KONSERVASI</Text>
+                        <Text style={s.sectionTitle}>E - KONDISI KONSERVASI</Text>
                         <KVTable rows={m.sectionE} labelWidth="55%" />
                     </View>
                 </View>

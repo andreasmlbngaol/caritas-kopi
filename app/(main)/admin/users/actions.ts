@@ -16,7 +16,7 @@ async function requireAdmin() {
 }
 
 // Password acak dari alfabet tanpa karakter ambigu (O/0, I/l/1, dst.)
-// dan tanpa simbol — aman di-copy ke chat tanpa masalah formatting
+// dan tanpa simbol - aman di-copy ke chat tanpa masalah formatting
 const ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789";
 
 function generatePassword(length = 10): string {

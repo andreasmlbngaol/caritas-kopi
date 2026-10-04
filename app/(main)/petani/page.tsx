@@ -168,7 +168,7 @@ export default async function PetaniPage({
 
                     {totalPages > 1 && (
                         <div className="mt-4 flex items-center justify-between text-sm text-gray-500">
-                            <span>{total} data — halaman {pageNum} dari {totalPages}</span>
+                            <span>{total} data - halaman {pageNum} dari {totalPages}</span>
                             <div className="flex gap-1">
                                 {pageNum > 1 && (
                                     <Link href={pageUrl(pageNum - 1)} className="rounded-lg p-2 transition-colors hover:bg-white hover:text-gray-900">

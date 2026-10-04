@@ -62,7 +62,7 @@ export function NavigationProgress() {
 
             const href = anchor.getAttribute("href");
             if (!href || !href.startsWith("/")) return;
-            if (href.includes("/export/")) return; // link unduh PDF/Word — bukan navigasi
+            if (href.includes("/export/")) return; // link unduh PDF/Word - bukan navigasi
             if (anchor.hasAttribute("data-no-progress")) return;
             // Klik menu halaman yang sedang aktif → tidak ada navigasi
             if (href === window.location.pathname + window.location.search) return;

@@ -52,7 +52,7 @@ export function Segmented({
     );
 }
 
-// Untuk bagian E desa — textfield reveal saat "Ya"
+// Untuk bagian E desa - textfield reveal saat "Ya"
 export function YesNoField({
                                name, label, revealName, revealPlaceholder, defaultValue = false, revealDefault,
                            }: {
@@ -88,7 +88,7 @@ export function YesNoField({
     );
 }
 
-// Untuk bagian B desa / F petani — baris: label | segmented | keterangan
+// Untuk bagian B desa / F petani - baris: label | segmented | keterangan
 export function YesNoRow({
                              name, label, labels, children, defaultValue = false,
                          }: {

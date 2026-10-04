@@ -12,7 +12,7 @@ import type {
 
 export type GapItem = { jenis: JenisPraktikGap; label: string };
 
-// ---------- C – Praktik GAP (21 item, 5 kelompok) ----------
+// ---------- C - Praktik GAP (21 item, 5 kelompok) ----------
 export const GAP_GROUPS: { kelompok: string; items: GapItem[] }[] = [
     {
         kelompok: "Pemeliharaan tanaman",
@@ -70,7 +70,7 @@ export const GAP_OPTIONS: { value: string; label: string }[] = [
     { value: "KADANG", label: "Kadang" },
 ];
 
-// ---------- F – Kondisi Kebun (10 item) ----------
+// ---------- F - Kondisi Kebun (10 item) ----------
 export const KONDISI_KEBUN: { jenis: JenisKondisiKebun; label: string }[] = [
     { jenis: "KEPEMILIKAN_JELAS", label: "Kepemilikan lahan jelas (SHM, Surat Desa, Surat Pinjam Lahan)" },
     { jenis: "BATAS_KONSERVASI", label: "Berbatasan dengan kawasan konservasi" },
@@ -84,19 +84,19 @@ export const KONDISI_KEBUN: { jenis: JenisKondisiKebun; label: string }[] = [
     { jenis: "EROSI_LONGSOR", label: "Terdapat erosi/longsor" },
 ];
 
-// ---------- E.1 – Jenis Produk (8 tetap; LAINNYA = baris dinamis) ----------
+// ---------- E.1 - Jenis Produk (8 tetap; LAINNYA = baris dinamis) ----------
 export const PRODUK: { jenis: JenisProdukDijual; label: string }[] = [
     { jenis: "CHERRY", label: "Cherry" },
     { jenis: "GABAH_BASAH", label: "Gabah Basah" },
     { jenis: "GABAH_KERING", label: "Gabah Kering" },
-    { jenis: "GB_WET_HULL", label: "Green Bean – Wet Hull" },
-    { jenis: "GB_NATURAL", label: "Green Bean – Natural Process" },
-    { jenis: "GB_HONEY", label: "Green Bean – Honey Process" },
-    { jenis: "GB_FULL_WASH", label: "Green Bean – Full Wash" },
-    { jenis: "GB_WINE", label: "Green Bean – Wine Process" },
+    { jenis: "GB_WET_HULL", label: "Green Bean - Wet Hull" },
+    { jenis: "GB_NATURAL", label: "Green Bean - Natural Process" },
+    { jenis: "GB_HONEY", label: "Green Bean - Honey Process" },
+    { jenis: "GB_FULL_WASH", label: "Green Bean - Full Wash" },
+    { jenis: "GB_WINE", label: "Green Bean - Wine Process" },
 ];
 
-// ---------- E.2 – Kategori Pasar (4 tetap; LAINNYA = baris dinamis) ----------
+// ---------- E.2 - Kategori Pasar (4 tetap; LAINNYA = baris dinamis) ----------
 export const PASAR: { kategori: KategoriPasar; label: string }[] = [
     { kategori: "KOMERSIAL", label: "Komersial" },
     { kategori: "KOMERSIAL_BERSERTIFIKAT", label: "Komersial Bersertifikat" },
@@ -104,7 +104,7 @@ export const PASAR: { kategori: KategoriPasar; label: string }[] = [
     { kategori: "ORGANIK", label: "Organik" },
 ];
 
-// ---------- D – Riwayat Produksi (tahun tetap sesuai formulir) ----------
+// ---------- D - Riwayat Produksi (tahun tetap sesuai formulir) ----------
 export const TAHUN_PRODUKSI: number[] = [2023, 2024, 2025, 2026];
 export const TAHUN_ESTIMASI = 2026; // diberi label "(estimasi)" di form
 
@@ -115,18 +115,18 @@ export const SATUAN_PRODUKSI: { value: SatuanProduksi; label: string }[] = [
     { value: "KALENG", label: "Kaleng" },
 ];
 
-// ---------- B.1 – Kode pada tabel plot ----------
+// ---------- B.1 - Kode pada tabel plot ----------
 export const STATUS_KEPEMILIKAN: { value: StatusKepemilikanLahan; label: string }[] = [
-    { value: "MS", label: "MS – Milik Sendiri" },
-    { value: "SW", label: "SW – Sewa" },
-    { value: "BH", label: "BH – Bagi Hasil" },
-    { value: "TA", label: "TA – Tanah Adat" },
-    { value: "L", label: "L – Lainnya" },
+    { value: "MS", label: "MS - Milik Sendiri" },
+    { value: "SW", label: "SW - Sewa" },
+    { value: "BH", label: "BH - Bagi Hasil" },
+    { value: "TA", label: "TA - Tanah Adat" },
+    { value: "L", label: "L - Lainnya" },
 ];
 
 export const SISTEM_BUDIDAYA: { value: SistemBudidaya; label: string }[] = [
-    { value: "AF", label: "AF – Agroforestry" },
-    { value: "MK", label: "MK – Monokultur" },
+    { value: "AF", label: "AF - Agroforestry" },
+    { value: "MK", label: "MK - Monokultur" },
 ];
 
 export const JENIS_KELAMIN: { value: JenisKelamin; label: string }[] = [

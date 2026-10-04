@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Database Kopi",
   description:
-      "Pendataan baseline desa dan petani kopi — kondisi wilayah, kelembagaan, bisnis kopi, dan konservasi",
+      "Pendataan baseline desa dan petani kopi - kondisi wilayah, kelembagaan, bisnis kopi, dan konservasi",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

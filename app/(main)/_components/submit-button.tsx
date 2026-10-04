@@ -72,7 +72,7 @@ export function SubmitButton({ label = "Simpan Data" }: { label?: string }) {
                         return;
                     }
                     if (el.value) return;
-                    optional.push(`${gname} – ${el.dataset.label ?? labelFor(el, form)}`);
+                    optional.push(`${gname} - ${el.dataset.label ?? labelFor(el, form)}`);
                     return;
                 }
 
@@ -141,7 +141,7 @@ export function SubmitButton({ label = "Simpan Data" }: { label?: string }) {
                         {missing.optional.length > 0 && (
                             <div className="mt-3">
                                 <p className="text-xs font-semibold text-gray-500">
-                                    Opsional — akan disimpan sebagai 0 / &#34;-&#34;:
+                                    Opsional - akan disimpan sebagai 0 / &#34;-&#34;:
                                 </p>
                                 <ul className="mt-1 max-h-48 space-y-1 overflow-auto rounded-xl bg-gray-50 p-3 text-xs text-gray-600">
                                     {missing.optional.map((m) => (
