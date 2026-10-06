@@ -6,6 +6,8 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { KEBIJAKAN, LEMBAGA } from "./constants";
+import { formatZodError } from "@/lib/zod-error";
+import type { ActionState } from "../_components/action-form";
 
 // ---------- Helpers zod ----------
 // Angka: kosong → 0
@@ -96,20 +98,22 @@ function kelembagaanRows(formData: FormData) {
 }
 
 // ---------- CREATE ----------
-export async function createBaselineDesa(formData: FormData) {
+export async function createBaselineDesa(
+    _prev: ActionState,
+    formData: FormData
+): Promise<ActionState> {
     const session = await auth();
-    if (!session?.user) throw new Error("Unauthorized");
+    if (!session?.user) return { error: "Unauthorized" };
 
     const parsed = schema.safeParse(Object.fromEntries(formData));
     if (!parsed.success) {
-        console.error(parsed.error.flatten());
-        throw new Error("Data tidak valid: " + parsed.error.issues[0].path.join("."));
+        return { error: formatZodError(parsed.error) };
     }
 
     const existing = await prisma.baselineDesa.findUnique({
         where: { desaKode: parsed.data.desaKode },
     });
-    if (existing) throw new Error("Baseline untuk desa ini sudah diinput.");
+    if (existing) return { error: "Baseline untuk desa ini sudah diinput." };
 
     await prisma.baselineDesa.create({
         data: {
@@ -125,27 +129,30 @@ export async function createBaselineDesa(formData: FormData) {
 }
 
 // ---------- UPDATE ----------
-export async function updateBaselineDesa(id: string, formData: FormData) {
+export async function updateBaselineDesa(
+    id: string,
+    _prev: ActionState,
+    formData: FormData
+): Promise<ActionState> {
     const session = await auth();
-    if (!session?.user) throw new Error("Unauthorized");
+    if (!session?.user) return { error: "Unauthorized" };
 
     const existing = await prisma.baselineDesa.findUnique({ where: { id } });
-    if (!existing) throw new Error("Data tidak ditemukan");
+    if (!existing) return { error: "Data tidak ditemukan" };
     if (session.user.role !== "ADMIN" && existing.createdById !== session.user.id) {
-        throw new Error("Forbidden");
+        return { error: "Forbidden" };
     }
 
     const parsed = schema.safeParse(Object.fromEntries(formData));
     if (!parsed.success) {
-        console.error(parsed.error.flatten());
-        throw new Error("Data tidak valid: " + parsed.error.issues[0].path.join("."));
+        return { error: formatZodError(parsed.error) };
     }
 
     if (parsed.data.desaKode !== existing.desaKode) {
         const dup = await prisma.baselineDesa.findUnique({
             where: { desaKode: parsed.data.desaKode },
         });
-        if (dup) throw new Error("Baseline untuk desa tujuan sudah ada.");
+        if (dup) return { error: "Baseline untuk desa tujuan sudah ada." };
     }
 
     await prisma.$transaction([
@@ -166,14 +173,15 @@ export async function updateBaselineDesa(id: string, formData: FormData) {
 }
 
 // ---------- DELETE ----------
+// Kembalikan { error } bila gagal - pesan throw disensor Next.js di produksi.
 export async function deleteBaselineDesa(id: string) {
     const session = await auth();
-    if (!session?.user) throw new Error("Unauthorized");
+    if (!session?.user) return { error: "Unauthorized" };
 
     const existing = await prisma.baselineDesa.findUnique({ where: { id } });
-    if (!existing) throw new Error("Data tidak ditemukan");
+    if (!existing) return { error: "Data tidak ditemukan" };
     if (session.user.role !== "ADMIN" && existing.createdById !== session.user.id) {
-        throw new Error("Forbidden");
+        return { error: "Forbidden" };
     }
 
     // kebijakan & kelembagaan ikut terhapus otomatis (onDelete: Cascade di schema)

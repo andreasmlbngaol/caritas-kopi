@@ -4,6 +4,7 @@ import { WilayahSelect } from "./wilayah-select";
 import { MusimFields } from "./musim-fields";
 import { KEBIJAKAN, LEMBAGA } from "./constants";
 import { SubmitButton } from "./submit-button";
+import { ActionForm, type ActionFn } from "../_components/action-form";
 import type { getBaselineDesa } from "./queries";
 import {UnsavedGuard} from "@/app/(main)/_components/unsaved-guard";
 
@@ -17,14 +18,14 @@ export function DesaForm({
                              action,
                              defaults,
                          }: {
-    action: (formData: FormData) => Promise<void>;
+    action: ActionFn;
     defaults?: DesaDefaults;
 }) {
     const kb = (jenis: string) => defaults?.kebijakan.find((x) => x.jenis === jenis);
     const lm = (jenis: string) => defaults?.kelembagaan.find((x) => x.jenis === jenis);
 
     return (
-        <form action={action} className="space-y-6">
+        <ActionForm action={action} className="space-y-6">
             <UnsavedGuard />
             {/* A - DATA DESA / WILAYAH */}
             <Section title="A - Data Desa / Wilayah">
@@ -34,7 +35,7 @@ export function DesaForm({
                     </SubSection>
                     <SubSection title="Umum">
                         <Grid>
-                            <Field label="Tahun Pendataan" name="tahunPendataan" type="number" required defaultValue={defaults?.tahunPendataan} />
+                            <Field label="Tahun Pendataan" name="tahunPendataan" type="number" integer required defaultValue={defaults?.tahunPendataan} />
                             <Field label="Sumber Data" name="sumberData" defaultValue={blankStr(defaults?.sumberData)} />
                         </Grid>
                     </SubSection>
@@ -154,6 +155,6 @@ export function DesaForm({
             <div className="flex justify-end pb-10">
                 <SubmitButton />
             </div>
-        </form>
+        </ActionForm>
     );
 }

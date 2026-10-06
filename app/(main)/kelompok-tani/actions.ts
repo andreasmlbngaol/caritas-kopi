@@ -91,20 +91,21 @@ export async function updateKelompokTani(
 }
 
 // ---------- DELETE ----------
-// Tidak redirect - DeleteButton me-refresh halaman. Melempar error bila masih dipakai.
+// Tidak redirect - DeleteButton me-refresh halaman. Kembalikan { error } bila
+// masih dipakai (pesan throw disensor Next.js di produksi).
 export async function deleteKelompokTani(id: string) {
     const session = await auth();
-    if (!session?.user) throw new Error("Unauthorized");
+    if (!session?.user) return { error: "Unauthorized" };
 
     const kt = await prisma.kelompokTani.findUnique({
         where: { id },
         include: { _count: { select: { petani: true } } },
     });
-    if (!kt) throw new Error("Data tidak ditemukan");
+    if (!kt) return { error: "Data tidak ditemukan" };
     if (kt._count.petani > 0) {
-        throw new Error(
-            `Kelompok ini masih dipakai oleh ${kt._count.petani} petani. Lepaskan dulu petani-petaninya dari kelompok ini (lewat edit petani).`
-        );
+        return {
+            error: `Kelompok ini masih dipakai oleh ${kt._count.petani} petani. Lepaskan dulu petani-petaninya dari kelompok ini (lewat edit petani).`,
+        };
     }
 
     await prisma.kelompokTani.delete({ where: { id } });

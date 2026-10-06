@@ -66,11 +66,12 @@ export function Grid({ children }: { children: ReactNode }) {
 }
 
 export function Field({
-                          label, name, type = "text", required, hint, unit, defaultValue, allowNegative,
+                          label, name, type = "text", required, hint, unit, defaultValue, allowNegative, integer,
                       }: {
     label: string; name: string; type?: string; required?: boolean; hint?: string; unit?: string;
     defaultValue?: string | number;
     allowNegative?: boolean; // true → tanpa min=0 (untuk latitude/longitude)
+    integer?: boolean;       // true → step=1, samakan dengan validasi zod .int()
 }) {
     return (
         <div>
@@ -80,9 +81,9 @@ export function Field({
             <div className="relative">
                 <input
                     id={name} name={name} type={type} required={required}
-                    step={type === "number" ? "any" : undefined}
+                    step={type === "number" ? (integer ? "1" : "any") : undefined}
                     min={type === "number" && !allowNegative ? 0 : undefined}
-                    inputMode={type === "number" ? "decimal" : undefined}
+                    inputMode={type === "number" ? (integer ? "numeric" : "decimal") : undefined}
                     className={`${inputCls} ${unit ? "pr-16" : ""}`}
                     defaultValue={defaultValue}
                 />

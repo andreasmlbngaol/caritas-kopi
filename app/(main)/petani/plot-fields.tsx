@@ -47,19 +47,19 @@ let counter = 0;
 const nextKey = () => `k${++counter}`;
 
 function MiniField({
-                       label, name, type = "text", placeholder, hint, defaultValue,
+                       label, name, type = "text", placeholder, hint, defaultValue, integer,
                    }: {
     label: string; name: string; type?: string; placeholder?: string; hint?: string;
-    defaultValue?: string | number;
+    defaultValue?: string | number; integer?: boolean;
 }) {
     return (
         <div>
             <label htmlFor={name} className="mb-1 block text-xs font-medium text-gray-600">{label}</label>
             <input
                 id={name} name={name} type={type}
-                step={type === "number" ? "any" : undefined}
+                step={type === "number" ? (integer ? "1" : "any") : undefined}
                 min={type === "number" ? 0 : undefined}
-                inputMode={type === "number" ? "decimal" : undefined}
+                inputMode={type === "number" ? (integer ? "numeric" : "decimal") : undefined}
                 placeholder={placeholder}
                 data-label={label}
                 defaultValue={defaultValue}
@@ -243,9 +243,9 @@ function NaunganCard({
             </div>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 <MiniField label="Jenis Naungan/Sela/Tegakan" name={n("jenis")} defaultValue={blankStr(d?.jenis)} />
-                <MiniField label="Jumlah" name={n("jumlah")} type="number" defaultValue={blankNum(d?.jumlah)} />
+                <MiniField label="Jumlah" name={n("jumlah")} type="number" integer defaultValue={blankNum(d?.jumlah)} />
                 <MiniField label="Fungsi" name={n("fungsi")} placeholder="Naungan, pupuk hijau…" defaultValue={blankStr(d?.fungsi)} />
-                <MiniField label="Tahun Tanam" name={n("tahunTanam")} type="number" defaultValue={blankNum(d?.tahunTanam)} />
+                <MiniField label="Tahun Tanam" name={n("tahunTanam")} type="number" integer defaultValue={blankNum(d?.tahunTanam)} />
                 <div>
                     <span className="mb-1 block text-xs font-medium text-gray-600">Apakah Dilakukan Pemangkasan</span>
                     <Segmented
@@ -376,7 +376,7 @@ function PlotCard({
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     <MiniField label="Nama / Hamparan" name={p("namaHamparan")} defaultValue={blankStr(d?.namaHamparan)} />
                     <VarietasFields plotIndex={index} defaults={d?.varietas} />
-                    <MiniField label="Tahun Tanam" name={p("tahunTanam")} type="number" defaultValue={blankNum(d?.tahunTanam)} />
+                    <MiniField label="Tahun Tanam" name={p("tahunTanam")} type="number" integer defaultValue={blankNum(d?.tahunTanam)} />
                     <MiniField label="Kode GPS" name={p("kodeGps")} defaultValue={blankStr(d?.kodeGps)} />
                     <MiniField label="Elevasi (mdpl)" name={p("elevasiMdpl")} type="number" defaultValue={blankNum(d?.elevasiMdpl)} />
                     <MiniField label="Kemiringan (%)" name={p("kemiringanPersen")} type="number" defaultValue={blankNum(d?.kemiringanPersen)} />
@@ -394,9 +394,9 @@ function PlotCard({
                 />
 
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                    <MiniField label="Jumlah Tanaman Baru (< 2 tahun)" name={p("tanamanBaru")} type="number" defaultValue={blankNum(d?.tanamanBaru)} />
-                    <MiniField label="Jumlah Pohon Produktif" name={p("pohonProduktif")} type="number" defaultValue={blankNum(d?.pohonProduktif)} />
-                    <MiniField label="Jumlah Pohon Tidak Produktif" name={p("pohonTidakProduktif")} type="number" defaultValue={blankNum(d?.pohonTidakProduktif)} />
+                    <MiniField label="Jumlah Tanaman Baru (< 2 tahun)" name={p("tanamanBaru")} type="number" integer defaultValue={blankNum(d?.tanamanBaru)} />
+                    <MiniField label="Jumlah Pohon Produktif" name={p("pohonProduktif")} type="number" integer defaultValue={blankNum(d?.pohonProduktif)} />
+                    <MiniField label="Jumlah Pohon Tidak Produktif" name={p("pohonTidakProduktif")} type="number" integer defaultValue={blankNum(d?.pohonTidakProduktif)} />
                 </div>
 
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">

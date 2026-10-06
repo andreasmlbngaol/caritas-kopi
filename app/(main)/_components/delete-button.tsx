@@ -12,7 +12,9 @@ export function DeleteButton({
                                  title,
                                  message,
                              }: {
-    action: (id: string) => Promise<void>; // server action harus me-redirect setelah hapus
+    // Server action: kembalikan { error } bila gagal (pesan throw disensor di
+    // produksi, jadi jangan pakai throw). Boleh redirect bila sukses.
+    action: (id: string) => Promise<{ error?: string } | void>;
     id: string;
     title: string;      // judul modal, mis. "Hapus data baseline?"
     message: React.ReactNode; // isi konfirmasi (boleh mengandung <strong>)
@@ -26,7 +28,12 @@ export function DeleteButton({
         setPending(true);
         setError(null);
         try {
-            await action(id);
+            const result = await action(id);
+            if (result?.error) {
+                setError(result.error);
+                setPending(false);
+                return;
+            }
             // action me-redirect - baris ini hanya jalan sebagai fallback
             setOpen(false);
             router.refresh(); // untuk action yang tidak redirect (mis. kelola kelompok tani)

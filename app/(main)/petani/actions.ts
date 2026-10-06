@@ -7,6 +7,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { GAP_ITEMS, KONDISI_KEBUN, PRODUK, PASAR, TAHUN_PRODUKSI } from "./constants";
+import { formatZodError } from "@/lib/zod-error";
 import type { ActionState } from "../_components/action-form";
 import type {
     StatusKepemilikanLahan,
@@ -169,8 +170,7 @@ function plotRows(formData: FormData) {
 
         const parsed = plotSchema.safeParse(raw);
         if (!parsed.success) {
-            console.error(parsed.error.flatten());
-            throw new Error(`Data tidak valid pada Plot ${i + 1}.`);
+            throw new Error(formatZodError(parsed.error, `Plot ${i + 1}`));
         }
 
         const naungan: z.infer<typeof naunganSchema>[] = [];
@@ -186,8 +186,9 @@ function plotRows(formData: FormData) {
 
             const nparsed = naunganSchema.safeParse(nraw);
             if (!nparsed.success) {
-                console.error(nparsed.error.flatten());
-                throw new Error(`Data tidak valid pada tanaman naungan Plot ${i + 1}.`);
+                throw new Error(
+                    formatZodError(nparsed.error, `Tanaman naungan Plot ${i + 1} baris ${j + 1}`)
+                );
             }
             naungan.push(nparsed.data);
         }
@@ -368,12 +369,16 @@ function childrenPayload(formData: FormData) {
     };
 }
 
-// Helper: parsing yang bisa gagal → dikonversi jadi pesan error untuk form
+// Konversi error apa pun (termasuk ZodError mentah dari num.parse) jadi pesan form
+function toActionError(e: unknown): string {
+    if (e instanceof z.ZodError) return formatZodError(e);
+    return e instanceof Error ? e.message : "Data tidak valid";
+}
+
 function parseAll(formData: FormData) {
     const parsed = schema.safeParse(Object.fromEntries(formData));
     if (!parsed.success) {
-        console.error(parsed.error.flatten());
-        throw new Error("Data tidak valid: " + parsed.error.issues[0].path.join("."));
+        throw new Error(formatZodError(parsed.error, "Data identitas petani"));
     }
     const kodePetani = buildKodePetani(formData);
     const children = childrenPayload(formData);
@@ -393,7 +398,7 @@ export async function createPetani(
         ({ scalars, kodePetani, children } = parseAll(formData));
         kelompokTaniId = await resolveKelompokTaniId(formData, scalars.desaKode);
     } catch (e) {
-        return { error: e instanceof Error ? e.message : "Data tidak valid" };
+        return { error: toActionError(e) };
     }
 
     if (kodePetani) {
@@ -436,7 +441,7 @@ export async function updatePetani(
         ({ scalars, kodePetani, children } = parseAll(formData));
         kelompokTaniId = await resolveKelompokTaniId(formData, scalars.desaKode);
     } catch (e) {
-        return { error: e instanceof Error ? e.message : "Data tidak valid" };
+        return { error: toActionError(e) };
     }
 
     if (kodePetani && kodePetani !== existing.kodePetani) {
@@ -467,15 +472,15 @@ export async function updatePetani(
 }
 
 // ---------- DELETE ----------
-// Tetap melempar error - ditangkap DeleteButton dan ditampilkan di modal
+// Kembalikan { error } bila gagal - pesan throw disensor Next.js di produksi.
 export async function deletePetani(id: string) {
     const session = await auth();
-    if (!session?.user) throw new Error("Unauthorized");
+    if (!session?.user) return { error: "Unauthorized" };
 
     const existing = await prisma.petani.findUnique({ where: { id } });
-    if (!existing) throw new Error("Data tidak ditemukan");
+    if (!existing) return { error: "Data tidak ditemukan" };
     if (session.user.role !== "ADMIN" && existing.createdById !== session.user.id) {
-        throw new Error("Forbidden");
+        return { error: "Forbidden" };
     }
 
     await prisma.petani.delete({ where: { id } });
