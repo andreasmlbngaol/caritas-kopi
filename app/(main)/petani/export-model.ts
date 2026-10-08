@@ -123,7 +123,7 @@ export function buildPetaniExportModel(p: FullPetani, appUrl: string) {
             return {
                 label: k.label,
                 jawaban: row?.jawaban ?? false,
-                keterangan: row?.jawaban ? fmt(row.keterangan) : "-",
+                keterangan: fmt(row?.keterangan),
             };
         }),
     };

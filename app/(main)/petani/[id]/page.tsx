@@ -182,8 +182,10 @@ export default async function PetaniDetailPage({
                 </Card>
 
                 {/* B.2 - Tanaman naungan tingkat petani */}
-                {p.naungan.length > 0 && (
-                    <Card title="B.2 - Tanaman Naungan / Sela / Tegakan">
+                <Card title="B.2 - Tanaman Naungan / Sela / Tegakan">
+                    {p.naungan.length === 0 ? (
+                        <p className="text-sm text-gray-500">Tidak ada Tanaman Naungan, Sela, Tegakan.</p>
+                    ) : (
                         <div className="overflow-x-auto">
                             <table className="w-full min-w-[640px] text-sm">
                                 <thead>
@@ -212,8 +214,8 @@ export default async function PetaniDetailPage({
                                 </tbody>
                             </table>
                         </div>
-                    </Card>
-                )}
+                    )}
+                </Card>
 
                 {/* C */}
                 <Card title="C - Praktik GAP Kebun">
@@ -326,7 +328,7 @@ export default async function PetaniDetailPage({
                                 <div key={k.jenis} className="grid grid-cols-[1fr_80px_1fr] items-center gap-3 py-2 text-sm">
                                     <span className="text-gray-700">{k.label}</span>
                                     <span className="font-medium text-gray-900">{bool(row?.jawaban)}</span>
-                                    <span className="text-gray-500">{row?.jawaban ? fmt(row.keterangan) : ""}</span>
+                                    <span className="text-gray-500">{fmt(row?.keterangan)}</span>
                                 </div>
                             );
                         })}

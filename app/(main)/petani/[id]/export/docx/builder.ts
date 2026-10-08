@@ -183,8 +183,10 @@ export async function buildPetaniDocx(m: PetaniExportModel): Promise<Buffer> {
         );
     }
 
-    if (m.sectionB2.length > 0) {
-        bChildren.push(heading("B.2 - DATA TANAMAN NAUNGAN / SELA / TEGAKAN (TINGKAT PETANI)"));
+    bChildren.push(heading("B.2 - DATA TANAMAN NAUNGAN / SELA / TEGAKAN (TINGKAT PETANI)"));
+    if (m.sectionB2.length === 0) {
+        bChildren.push(new Paragraph({ children: [txt("Tidak ada Tanaman Naungan, Sela, Tegakan.")] }));
+    } else {
         bChildren.push(
             new Table({
                 width: { size: 100, type: WidthType.PERCENTAGE },

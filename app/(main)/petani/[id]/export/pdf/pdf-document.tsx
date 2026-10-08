@@ -262,8 +262,10 @@ export function PetaniPdf({ m }: { m: PetaniExportModel }) {
                     </Section>
                 )}
 
-                {m.sectionB2.length > 0 && (
-                    <Section title="B.2 - DATA TANAMAN NAUNGAN / SELA / TEGAKAN (TINGKAT PETANI)">
+                <Section title="B.2 - DATA TANAMAN NAUNGAN / SELA / TEGAKAN (TINGKAT PETANI)">
+                    {m.sectionB2.length === 0 ? (
+                        <Text>Tidak ada Tanaman Naungan, Sela, Tegakan.</Text>
+                    ) : (
                         <View style={s.table}>
                             <View style={s.row} wrap={false}>
                                 <Head width="6%">No.</Head>
@@ -286,8 +288,8 @@ export function PetaniPdf({ m }: { m: PetaniExportModel }) {
                                 </View>
                             ))}
                         </View>
-                    </Section>
-                )}
+                    )}
+                </Section>
                 {pageNum}
             </Page>
 
