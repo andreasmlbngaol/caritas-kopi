@@ -183,12 +183,15 @@ export function ProportionBarX({
 
 // ---------- Garis (tren waktu) ----------
 export function LineChartX({
-    data, xKey, lines, height = 300, unit = "",
+    data, xKey, lines, height = 300, unit = "", scale = "linear",
 }: {
     data: Record<string, unknown>[];
     xKey: string;
     lines: { key: string; label: string; color?: string }[];
     height?: number; unit?: string;
+    // "sqrt" agar seri bernilai jauh lebih kecil tetap terlihat (mis. green bean
+    // di samping cherry) tanpa celah garis yang ditimbulkan skala log pada nilai 0.
+    scale?: "linear" | "sqrt";
 }) {
     const dark = useIsDark();
     const t = chartTheme(dark);
@@ -197,7 +200,10 @@ export function LineChartX({
             <LineChart data={data} margin={{ top: 8, right: 12, left: -8, bottom: 0 }}>
                 <CartesianGrid vertical={false} stroke={t.GRID} />
                 <XAxis dataKey={xKey} tick={{ fill: t.MUTED, fontSize: 11 }} axisLine={{ stroke: t.AXIS }} tickLine={false} />
-                <YAxis tick={{ fill: t.MUTED, fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={fmtNum} width={56} />
+                <YAxis
+                    tick={{ fill: t.MUTED, fontSize: 11 }} axisLine={false} tickLine={false}
+                    tickFormatter={fmtNum} width={56} scale={scale}
+                />
                 <Tooltip contentStyle={tooltipStyle(dark)}
                     itemStyle={tooltipItemStyle(dark)}
                     formatter={(v, n) => [`${fmtNum(v)}${unit ? " " + unit : ""}`, n]} />

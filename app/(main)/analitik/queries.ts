@@ -47,41 +47,34 @@ function tally<T>(rows: T[], get: (row: T) => string | null | undefined): { nama
 export async function getRingkasan() {
     const [
         jumlahPetani, jumlahDesa, jumlahKelompok,
-        areal, plot, petaniKopiDesa, produksiTahun, harga,
+        areal, plot, produksiTahun,
     ] = await Promise.all([
         prisma.petani.count(),
         prisma.baselineDesa.count(),
         prisma.kelompokTani.count(),
         prisma.baselineDesa.aggregate({ _sum: { luasArealKopiHa: true } }),
         prisma.plotPetani.aggregate({ _sum: { luasKopiHa: true, pohonProduktif: true } }),
-        prisma.baselineDesa.aggregate({ _sum: { jumlahPetaniKopi: true } }),
         prisma.riwayatProduksi.groupBy({
             by: ["tahun"],
             _sum: { cherry: true, gabahBasah: true, greenBean: true, gabahKering: true },
             orderBy: { tahun: "asc" },
         }),
-        prisma.baselineDesa.aggregate({
-            _avg: { hargaCherryRp: true, hargaGreenBeanRpKg: true, produktivitasKgHaTahun: true },
-        }),
     ]);
 
     const terbaru = produksiTahun.at(-1);
+    const luasPlotHa = num(plot._sum.luasKopiHa);
+    const volumeTerbaru = terbaru
+        ? num(terbaru._sum.cherry) + num(terbaru._sum.gabahBasah)
+          + num(terbaru._sum.gabahKering) + num(terbaru._sum.greenBean)
+        : 0;
     return {
         jumlahPetani, jumlahDesa, jumlahKelompok,
         luasArealKopiHa: num(areal._sum.luasArealKopiHa),
-        luasPlotHa: num(plot._sum.luasKopiHa),
+        luasPlotHa,
         pohonProduktif: num(plot._sum.pohonProduktif),
-        petaniKopiDesa: num(petaniKopiDesa._sum.jumlahPetaniKopi),
         tahunTerbaru: terbaru?.tahun ?? null,
-        produksiTerbaru: {
-            cherry: num(terbaru?._sum.cherry),
-            greenBean: num(terbaru?._sum.greenBean),
-            gabahBasah: num(terbaru?._sum.gabahBasah),
-            gabahKering: num(terbaru?._sum.gabahKering),
-        },
-        hargaRataCherry: num(harga._avg.hargaCherryRp),
-        hargaRataGreenBean: num(harga._avg.hargaGreenBeanRpKg),
-        produktivitasRata: num(harga._avg.produktivitasKgHaTahun),
+        // Produktivitas nyata (kg/ha) = total volume tahun terbaru / luas plot.
+        produktivitasRata: luasPlotHa > 0 ? volumeTerbaru / luasPlotHa : 0,
         trenProduksi: produksiTahun.map((t) => ({
             tahun: String(t.tahun),
             cherry: num(t._sum.cherry),
@@ -124,11 +117,10 @@ export async function getGapAdoption() {
 
 // ---------- Produksi ----------
 export async function getProduksi() {
-    const [byTahun, terbaruRows] = await Promise.all([
+    const [byTahun, terbaruRows, plotArea, allRiwayat] = await Promise.all([
         prisma.riwayatProduksi.groupBy({
             by: ["tahun"],
             _sum: { cherry: true, gabahBasah: true, gabahKering: true, greenBean: true },
-            _avg: { produktivitas: true },
             _count: true,
             orderBy: { tahun: "asc" },
         }),
@@ -138,7 +130,29 @@ export async function getProduksi() {
                 petani: { select: { desa: { select: { nama: true } } } },
             },
         }),
+        // Luas kopi per petani (untuk produktivitas nyata kg/ha per tahun).
+        prisma.plotPetani.groupBy({ by: ["petaniId"], _sum: { luasKopiHa: true } }),
+        prisma.riwayatProduksi.findMany({
+            select: { tahun: true, petaniId: true, cherry: true, gabahBasah: true, gabahKering: true, greenBean: true },
+        }),
     ]);
+
+    // Produktivitas per tahun = total volume / total luas plot petani yang
+    // melaporkan tahun itu. Bukan rata-rata nilai tersimpan (yang dulu salah
+    // karena `produktivitas` tersimpan sebagai jumlah 4 kolom, bukan kg/ha).
+    const areaOf = new Map(plotArea.map((p) => [p.petaniId, num(p._sum.luasKopiHa)]));
+    const perTahun = new Map<string, { volume: number; area: number }>();
+    for (const r of allRiwayat) {
+        const key = String(r.tahun);
+        const e = perTahun.get(key) ?? { volume: 0, area: 0 };
+        e.volume += num(r.cherry) + num(r.gabahBasah) + num(r.gabahKering) + num(r.greenBean);
+        e.area += areaOf.get(r.petaniId) ?? 0;
+        perTahun.set(key, e);
+    }
+    const produktivitas = (tahun: number) => {
+        const e = perTahun.get(String(tahun));
+        return e && e.area > 0 ? e.volume / e.area : 0;
+    };
 
     const tahunTerbaru = byTahun.at(-1)?.tahun ?? null;
     const perDesa = new Map<string, { nama: string; cherry: number; gabahBasah: number; gabahKering: number; greenBean: number }>();
@@ -165,7 +179,7 @@ export async function getProduksi() {
             gabahBasah: num(t._sum.gabahBasah),
             gabahKering: num(t._sum.gabahKering),
             greenBean: num(t._sum.greenBean),
-            produktivitasRata: num(t._avg.produktivitas),
+            produktivitasRata: produktivitas(t.tahun),
             jumlahPetani: t._count,
         })),
         topDesa,

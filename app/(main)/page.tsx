@@ -104,6 +104,12 @@ export default async function HomePage() {
     // ============ ADMIN: dashboard analitik ============
     const r = await getRingkasan();
 
+    const ENTITAS = [
+        { label: "Total petani", value: r.jumlahPetani, href: "/petani", addHref: "/petani/baru", highlight: true },
+        { label: "Desa terdata", value: r.jumlahDesa, href: "/desa", addHref: "/desa/baru", highlight: false },
+        { label: "Kelompok tani", value: r.jumlahKelompok, href: "/kelompok-tani", addHref: "/kelompok-tani/baru", highlight: false },
+    ];
+
     return (
         <main className={pageWide}>
             <header>
@@ -113,18 +119,40 @@ export default async function HomePage() {
                 </p>
             </header>
 
-            {/* Info besar */}
-            <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                <StatTile label="Total petani" value={r.jumlahPetani} highlight />
-                <StatTile label="Desa terdata" value={r.jumlahDesa} />
-                <StatTile label="Kelompok tani" value={r.jumlahKelompok} />
-                <StatTile label="Luas areal kopi" value={fmt(r.luasArealKopiHa)} unit="ha" hint={`${fmt(r.luasPlotHa)} ha dari plot petani`} />
+            {/* Entitas utama + aksi */}
+            <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {ENTITAS.map((e) => (
+                    <div key={e.label} className={`flex flex-col rounded-2xl p-6 shadow-sm ${
+                        e.highlight ? "bg-jade-800 text-white" : "bg-white ring-1 ring-gray-950/5"
+                    }`}>
+                        <p className={`text-[11px] font-semibold uppercase tracking-wider ${
+                            e.highlight ? "text-jade-200" : "text-gray-500"
+                        }`}>{e.label}</p>
+                        <p className="mt-2 text-3xl font-semibold tracking-tight">{idNum.format(e.value)}</p>
+                        <div className="mt-5 flex flex-wrap items-center gap-2">
+                            <Link href={e.href}
+                                className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium transition-colors ${
+                                    e.highlight ? "bg-white/15 text-white hover:bg-white/25" : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                                }`}>
+                                Lihat semua
+                                <ArrowUpRight size={13} />
+                            </Link>
+                            <Link href={e.addHref}
+                                className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium transition-colors ${
+                                    e.highlight ? "text-jade-100 hover:bg-white/10" : "text-gray-600 hover:bg-gray-50"
+                                }`}>
+                                <Plus size={13} /> Tambah
+                            </Link>
+                        </div>
+                    </div>
+                ))}
             </div>
-            <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                <StatTile label={`Green bean ${r.tahunTerbaru ?? ""}`} value={fmt(r.produksiTerbaru.greenBean)} unit="kg" />
-                <StatTile label="Produktivitas rata-rata" value={fmt(r.produktivitasRata, 1)} unit="kg/ha" />
-                <StatTile label="Harga rata-rata cherry" value={fmt(r.hargaRataCherry)} unit="Rp/kg" />
-                <StatTile label="Pohon produktif" value={fmt(r.pohonProduktif)} />
+
+            {/* Angka umum */}
+            <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                <StatTile label="Luas areal kopi" value={fmt(r.luasArealKopiHa)} unit="ha" hint={`${fmt(r.luasPlotHa)} ha dari plot petani`} />
+                <StatTile label="Produktivitas rata-rata" value={fmt(r.produktivitasRata, 1)} unit="kg/ha" hint={`Tahun ${r.tahunTerbaru ?? "-"}`} />
+                <StatTile label="Pohon produktif" value={fmt(r.pohonProduktif)} hint="Dari seluruh plot petani" />
             </div>
 
             {/* Kategori */}
@@ -145,42 +173,24 @@ export default async function HomePage() {
             </div>
 
             {/* Mini chart */}
-            <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
-                <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-950/5 lg:col-span-2">
-                    <div className="mb-4">
-                        <h2 className="text-sm font-semibold tracking-tight">Tren produksi</h2>
-                        <p className="mt-0.5 text-xs text-gray-500">Total volume (kg) per tahun</p>
-                    </div>
-                    <LineChartX
-                        data={r.trenProduksi}
-                        xKey="tahun"
-                        lines={[
-                            { key: "cherry", label: "Cherry" },
-                            { key: "gabahBasah", label: "Gabah basah" },
-                            { key: "gabahKering", label: "Gabah kering" },
-                            { key: "greenBean", label: "Green bean" },
-                        ]}
-                        unit="kg"
-                        height={260}
-                    />
+            <div className="mt-6 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-950/5">
+                <div className="mb-4">
+                    <h2 className="text-sm font-semibold tracking-tight">Tren produksi</h2>
+                    <p className="mt-0.5 text-xs text-gray-500">Total volume (kg) per tahun, skala akar agar volume kecil tetap terlihat</p>
                 </div>
-                <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-950/5">
-                    <h2 className="text-sm font-semibold tracking-tight">Akses cepat</h2>
-                    <div className="mt-4 space-y-2">
-                        <Link href="/petani/baru" className="flex items-center gap-3 rounded-xl bg-jade-800 px-4 py-3 text-sm font-medium text-white transition-colors hover:bg-jade-900">
-                            <Plus size={16} /> Input Data Petani
-                        </Link>
-                        <Link href="/desa/baru" className="flex items-center gap-3 rounded-xl bg-gray-100 px-4 py-3 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-200">
-                            <Plus size={16} /> Input Data Desa
-                        </Link>
-                        <Link href="/petani" className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-gray-600 ring-1 ring-gray-200 transition-colors hover:bg-gray-50">
-                            <UserRound size={16} /> Lihat Semua Petani
-                        </Link>
-                        <Link href="/desa" className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-gray-600 ring-1 ring-gray-200 transition-colors hover:bg-gray-50">
-                            <MapPin size={16} /> Lihat Semua Desa
-                        </Link>
-                    </div>
-                </div>
+                <LineChartX
+                    data={r.trenProduksi}
+                    xKey="tahun"
+                    lines={[
+                        { key: "cherry", label: "Cherry" },
+                        { key: "gabahBasah", label: "Gabah basah" },
+                        { key: "gabahKering", label: "Gabah kering" },
+                        { key: "greenBean", label: "Green bean" },
+                    ]}
+                    unit="kg"
+                    scale="sqrt"
+                    height={260}
+                />
             </div>
         </main>
     );

@@ -36,7 +36,7 @@ export default async function ProduksiPage() {
             </div>
 
             <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
-                <ChartCard title="Tren produksi per tahun" desc="Total volume (kg) menurut jenis olahan">
+                <ChartCard title="Tren produksi per tahun" desc="Total volume (kg) menurut jenis olahan, skala akar agar volume kecil tetap terlihat">
                     <LineChartX
                         data={byTahun}
                         xKey="tahun"
@@ -47,6 +47,7 @@ export default async function ProduksiPage() {
                             { key: "greenBean", label: "Green bean" },
                         ]}
                         unit="kg"
+                        scale="sqrt"
                     />
                 </ChartCard>
                 <ChartCard title="Produktivitas rata-rata" desc="kg per hektar per tahun">
@@ -80,7 +81,7 @@ export default async function ProduksiPage() {
                                     <th className="py-2 pr-3 text-right">Gabah basah</th>
                                     <th className="py-2 pr-3 text-right">Gabah kering</th>
                                     <th className="py-2 pr-3 text-right">Green bean</th>
-                                    <th className="py-2 pr-3 text-right">Produktivitas</th>
+                                    <th className="py-2 pr-3 text-right">Produktivitas (kg/ha)</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-100">

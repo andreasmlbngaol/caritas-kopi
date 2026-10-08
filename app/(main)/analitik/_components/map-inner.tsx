@@ -1,7 +1,7 @@
 // app/(main)/analitik/_components/map-inner.tsx
 "use client";
 
-import { MapContainer, TileLayer, CircleMarker, Popup, Tooltip } from "react-leaflet";
+import { MapContainer, TileLayer, Circle, Popup, Tooltip } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { ACCENT, SERIES } from "./palette";
 
@@ -18,9 +18,10 @@ export type PlotPoint = {
     petani: string; desa: string;
 };
 
-// radius proporsional (akar) supaya area ∝ nilai, dengan lantai minimum
-const radius = (v: number, max: number, min = 6, scale = 18) =>
-    min + (max > 0 ? Math.sqrt(Math.max(v, 0) / max) * scale : 0);
+// Radius lingkaran (meter) dari luas (ha) agar area peta sebanding dengan
+// luas sebenarnya: r = √(A / π). Lantai minimum agar titik kecil tetap terlihat.
+const areaRadiusM = (ha: number, minM = 50) =>
+    Math.max(minM, Math.sqrt(Math.max(ha, 0) * 10000 / Math.PI));
 
 export function MapInner({ desa, plot }: { desa: DesaPoint[]; plot: PlotPoint[] }) {
     const points = [...desa.map((d) => [d.lat, d.lng]), ...plot.map((p) => [p.lat, p.lng])] as [number, number][];
@@ -28,7 +29,6 @@ export function MapInner({ desa, plot }: { desa: DesaPoint[]; plot: PlotPoint[] 
         ? [points.reduce((s, p) => s + p[0], 0) / points.length, points.reduce((s, p) => s + p[1], 0) / points.length]
         : [-2.5, 118];
     const zoom = points.length === 1 ? 12 : points.length ? 8 : 5;
-    const maxLuas = Math.max(1, ...desa.map((d) => d.luasArealKopiHa));
 
     return (
         <div className="isolate">
@@ -38,10 +38,10 @@ export function MapInner({ desa, plot }: { desa: DesaPoint[]; plot: PlotPoint[] 
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
                 {desa.map((d, i) => (
-                    <CircleMarker
+                    <Circle
                         key={`d${i}`}
                         center={[d.lat, d.lng]}
-                        radius={radius(d.luasArealKopiHa, maxLuas)}
+                        radius={areaRadiusM(d.luasArealKopiHa)}
                         pathOptions={{ color: ACCENT, fillColor: ACCENT, fillOpacity: 0.35, weight: 2 }}
                     >
                         <Tooltip direction="top">{d.nama}</Tooltip>
@@ -55,13 +55,13 @@ export function MapInner({ desa, plot }: { desa: DesaPoint[]; plot: PlotPoint[] 
                                 {d.ketinggian != null && <p>Ketinggian: <b>{fmt(d.ketinggian)} mdpl</b></p>}
                             </div>
                         </Popup>
-                    </CircleMarker>
+                    </Circle>
                 ))}
                 {plot.map((p, i) => (
-                    <CircleMarker
+                    <Circle
                         key={`p${i}`}
                         center={[p.lat, p.lng]}
-                        radius={8}
+                        radius={areaRadiusM(p.luasKopiHa)}
                         pathOptions={{ color: SERIES[2], fillColor: SERIES[2], fillOpacity: 0.6, weight: 2 }}
                     >
                         <Tooltip direction="top">{p.petani}</Tooltip>
@@ -73,7 +73,7 @@ export function MapInner({ desa, plot }: { desa: DesaPoint[]; plot: PlotPoint[] 
                                 {p.varietas && <p>Varietas: <b>{p.varietas}</b></p>}
                             </div>
                         </Popup>
-                    </CircleMarker>
+                    </Circle>
                 ))}
             </MapContainer>
         </div>
