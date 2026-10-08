@@ -162,8 +162,7 @@ export default async function PetaniDetailPage({
                                             ["Nama / Hamparan", fmt(pl.namaHamparan)],
                                             ["Varietas", fmt(pl.varietas)],
                                             ["Tahun Tanam Kopi", pl.tahunTanam.length ? pl.tahunTanam.join(", ") : "-"],
-                                            ["Kode GPS", fmt(pl.kodeGps)],
-                                            ["Elevasi (mdpl)", num(pl.elevasiMdpl)],
+                                                            ["Elevasi (mdpl)", num(pl.elevasiMdpl)],
                                             ["Kemiringan (%)", num(pl.kemiringanPersen)],
                                             ["Luas Kopi (Ha)", num(pl.luasKopiHa)],
                                             ["Status Kepemilikan", statusLabel(pl.statusKepemilikan)],
@@ -173,7 +172,7 @@ export default async function PetaniDetailPage({
                                             ["Pohon Produktif", num(pl.pohonProduktif)],
                                             ["Pohon Tidak Produktif", num(pl.pohonTidakProduktif)],
                                             ["Pestisida Terakhir", pestisidaLabel(pl.pestisidaNama, pl.pestisidaBulanTahun)],
-                                            ["Koordinat Foto", pl.fotoLatitude != null && pl.fotoLongitude != null ? `${pl.fotoLatitude}, ${pl.fotoLongitude}` : "-"],
+                                            ["Koordinat (lat, lng)", pl.fotoLatitude != null && pl.fotoLongitude != null ? `${pl.fotoLatitude.toString()}, ${pl.fotoLongitude.toString()}` : "-"],
                                         ]} />
                                     </div>
                                 </div>
@@ -189,6 +188,7 @@ export default async function PetaniDetailPage({
                             <table className="w-full min-w-[640px] text-sm">
                                 <thead>
                                 <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500">
+                                    <th className="py-1.5 pr-3">No.</th>
                                     <th className="py-1.5 pr-3">Jenis Naungan/Sela/Tegakan</th>
                                     <th className="py-1.5 pr-3">Jumlah</th>
                                     <th className="py-1.5 pr-3">Fungsi</th>
@@ -198,14 +198,15 @@ export default async function PetaniDetailPage({
                                 </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-100">
-                                {p.naungan.map((n) => (
+                                {p.naungan.map((n, i) => (
                                     <tr key={n.id}>
+                                        <td className="py-1.5 pr-3">{i + 1}</td>
                                         <td className="py-1.5 pr-3">{fmt(n.jenis)}</td>
                                         <td className="py-1.5 pr-3">{num(n.jumlah)}</td>
                                         <td className="py-1.5 pr-3">{fmt(n.fungsi)}</td>
                                         <td className="py-1.5 pr-3">{bool(n.pemangkasan)}</td>
                                         <td className="py-1.5 pr-3">{fmt(n.produksiPerTahun)}</td>
-                                        <td className="py-1.5">{num(n.tahunTanam)}</td>
+                                        <td className="py-1.5">{fmt(n.tahunTanam)}</td>
                                     </tr>
                                 ))}
                                 </tbody>

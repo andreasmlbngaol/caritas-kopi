@@ -61,7 +61,7 @@ function Head({ width, children }: { width: string; children: string }) {
     return <Cell width={width} fill={C.header} bold center>{children}</Cell>;
 }
 
-function LinkCell({ width, src, text, sub }: { width: string; src: string | null; text: string; sub?: string | null }) {
+function LinkCell({ width, src, text }: { width: string; src: string | null; text: string }) {
     return (
         <View
             style={{
@@ -73,7 +73,6 @@ function LinkCell({ width, src, text, sub }: { width: string; src: string | null
             {src ? (
                 <>
                     <Link src={src} style={s.link}>{text}</Link>
-                    {sub && <Text style={{ fontSize: 7, color: "#666" }}>{sub}</Text>}
                 </>
             ) : (
                 <Text>-</Text>
@@ -244,7 +243,7 @@ export function PetaniPdf({ m }: { m: PetaniExportModel }) {
                             {m.sectionB1b.map((r, i) => (
                                 <View key={i} style={s.row} wrap={false}>
                                     <Cell width="5%" center>{r.no}</Cell>
-                                    <LinkCell width="13%" src={r.fotoUrl} text="Lihat foto" sub={r.fotoKoordinat} />
+                                    <LinkCell width="13%" src={r.fotoUrl} text="Lihat foto" />
                                     <Cell width="12%" center>{r.status}</Cell>
                                     <Cell width="10%" center>{r.sistem}</Cell>
                                     <Cell width="18%">{r.konservasi}</Cell>
@@ -267,21 +266,23 @@ export function PetaniPdf({ m }: { m: PetaniExportModel }) {
                     <Section title="B.2 - DATA TANAMAN NAUNGAN / SELA / TEGAKAN (TINGKAT PETANI)">
                         <View style={s.table}>
                             <View style={s.row} wrap={false}>
-                                <Head width="22%">Jenis Naungan/Sela/Tegakan</Head>
-                                <Head width="10%">Jumlah</Head>
-                                <Head width="22%">Fungsi</Head>
-                                <Head width="16%">Apakah dilakukan pemangkasan</Head>
+                                <Head width="6%">No.</Head>
+                                <Head width="20%">Jenis Naungan/Sela/Tegakan</Head>
+                                <Head width="9%">Jumlah</Head>
+                                <Head width="20%">Fungsi</Head>
+                                <Head width="15%">Apakah dilakukan pemangkasan</Head>
                                 <Head width="18%">Produksi/Tahun</Head>
                                 <Head width="12%">Tahun Tanam</Head>
                             </View>
                             {m.sectionB2.map((r, i) => (
                                 <View key={i} style={s.row} wrap={false}>
-                                    <Cell width="22%">{r[0]}</Cell>
-                                    <Cell width="10%" center>{r[1]}</Cell>
-                                    <Cell width="22%">{r[2]}</Cell>
-                                    <Cell width="16%" center>{r[3]}</Cell>
-                                    <Cell width="18%">{r[4]}</Cell>
-                                    <Cell width="12%" center>{r[5]}</Cell>
+                                    <Cell width="6%" center>{r[0]}</Cell>
+                                    <Cell width="20%">{r[1]}</Cell>
+                                    <Cell width="9%" center>{r[2]}</Cell>
+                                    <Cell width="20%">{r[3]}</Cell>
+                                    <Cell width="15%" center>{r[4]}</Cell>
+                                    <Cell width="18%">{r[5]}</Cell>
+                                    <Cell width="12%" center>{r[6]}</Cell>
                                 </View>
                             ))}
                         </View>

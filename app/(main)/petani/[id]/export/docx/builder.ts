@@ -52,7 +52,7 @@ function heading(text: string) {
 
 const spacer = () => new Paragraph({ children: [], spacing: { after: 60 } });
 
-function fotoCell(r: { fotoUrl: string | null; fotoKoordinat: string | null }) {
+function fotoCell(r: { fotoUrl: string | null }) {
     const children: Paragraph[] = [];
     if (r.fotoUrl) {
         children.push(
@@ -66,14 +66,6 @@ function fotoCell(r: { fotoUrl: string | null; fotoKoordinat: string | null }) {
                 ],
             })
         );
-        if (r.fotoKoordinat) {
-            children.push(
-                new Paragraph({
-                    alignment: AlignmentType.CENTER,
-                    children: [new TextRun({ text: r.fotoKoordinat, size: 14, color: "666666", font: "Calibri" })],
-                })
-            );
-        }
     } else {
         children.push(new Paragraph({ alignment: AlignmentType.CENTER, children: [txt("-")] }));
     }
@@ -200,20 +192,21 @@ export async function buildPetaniDocx(m: PetaniExportModel): Promise<Buffer> {
                     new TableRow({
                         tableHeader: true,
                         children: [
-                            head("Jenis Naungan/Sela/Tegakan", 22), head("Jumlah", 10),
-                            head("Fungsi", 22), head("Apakah dilakukan pemangkasan", 16),
+                            head("No.", 6), head("Jenis Naungan/Sela/Tegakan", 20), head("Jumlah", 9),
+                            head("Fungsi", 20), head("Apakah dilakukan pemangkasan", 15),
                             head("Produksi/Tahun", 18), head("Tahun Tanam", 12),
                         ],
                     }),
                     ...m.sectionB2.map((r) =>
                         new TableRow({
                             children: [
-                                cell(r[0], { width: 22 }),
-                                cell(r[1], { width: 10, align: AlignmentType.CENTER }),
-                                cell(r[2], { width: 22 }),
-                                cell(r[3], { width: 16, align: AlignmentType.CENTER }),
-                                cell(r[4], { width: 18 }),
-                                cell(r[5], { width: 12, align: AlignmentType.CENTER }),
+                                cell(r[0], { width: 6, align: AlignmentType.CENTER }),
+                                cell(r[1], { width: 20 }),
+                                cell(r[2], { width: 9, align: AlignmentType.CENTER }),
+                                cell(r[3], { width: 20 }),
+                                cell(r[4], { width: 15, align: AlignmentType.CENTER }),
+                                cell(r[5], { width: 18 }),
+                                cell(r[6], { width: 12, align: AlignmentType.CENTER }),
                             ],
                         })
                     ),

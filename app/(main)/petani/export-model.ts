@@ -54,7 +54,9 @@ export function buildPetaniExportModel(p: FullPetani, appUrl: string) {
             fmt(pl.namaHamparan),
             fmt(pl.varietas),
             pl.tahunTanam.length ? pl.tahunTanam.join(", ") : "-",
-            fmt(pl.kodeGps),
+            pl.fotoLatitude != null && pl.fotoLongitude != null
+                ? `${pl.fotoLatitude.toFixed(6)}, ${pl.fotoLongitude.toFixed(6)}`
+                : "-",
             num(pl.elevasiMdpl),
             num(pl.kemiringanPersen),
             num(pl.luasKopiHa),
@@ -62,10 +64,6 @@ export function buildPetaniExportModel(p: FullPetani, appUrl: string) {
         sectionB1b: p.plot.map((pl) => ({
             no: String(pl.nomor),
             fotoUrl: pl.fotoKey ? `${appUrl}/api/foto/${pl.fotoKey}` : null,
-            fotoKoordinat:
-                pl.fotoLatitude != null && pl.fotoLongitude != null
-                    ? `${pl.fotoLatitude}, ${pl.fotoLongitude}`
-                    : null,
             status: kode(pl.statusKepemilikan),
             sistem: kode(pl.sistemBudidaya),
             konservasi: fmt(pl.areaKonservasi),
@@ -76,14 +74,15 @@ export function buildPetaniExportModel(p: FullPetani, appUrl: string) {
                 [pl.pestisidaNama, pl.pestisidaBulanTahun ? fmtBulanTahun(pl.pestisidaBulanTahun) : null]
                     .filter(Boolean).join(" - ") || "-",
         })),
-        sectionB2: p.naungan.map((n) => [
+        sectionB2: p.naungan.map((n, i) => [
+            String(i + 1),
             fmt(n.jenis),
             num(n.jumlah),
             fmt(n.fungsi),
             bool(n.pemangkasan),
             fmt(n.produksiPerTahun),
-            num(n.tahunTanam),
-        ] as [string, string, string, string, string, string]),
+            fmt(n.tahunTanam),
+        ] as [string, string, string, string, string, string, string]),
         sectionC: GAP_GROUPS.map((g) => ({
             kelompok: g.kelompok,
             rows: g.items.map((item) => {

@@ -89,7 +89,6 @@ const schema = z.object({
 const plotSchema = z.object({
     namaHamparan: str,
     tahunTanam: z.array(z.number().int().min(1900).max(new Date().getFullYear())),
-    kodeGps: strOpt,
     elevasiMdpl: num,
     kemiringanPersen: num,
     luasKopiHa: num,
@@ -134,7 +133,7 @@ function hasAnyWithPrefix(formData: FormData, prefix: string) {
 }
 
 const PLOT_FIELDS = [
-    "namaHamparan", "kodeGps", "elevasiMdpl",
+    "namaHamparan", "elevasiMdpl",
     "kemiringanPersen", "luasKopiHa", "fotoKey", "fotoLatitude", "fotoLongitude",
     "statusKepemilikan", "sistemBudidaya", "areaKonservasi", "tanamanBaru",
     "pohonProduktif", "pohonTidakProduktif", "pestisidaNama", "pestisidaBulanTahun",
@@ -350,7 +349,6 @@ function childrenPayload(formData: FormData) {
                 namaHamparan: p.namaHamparan,
                 varietas: p.varietas,
                 tahunTanam: p.tahunTanam,
-                kodeGps: p.kodeGps,
                 elevasiMdpl: p.elevasiMdpl,
                 kemiringanPersen: p.kemiringanPersen,
                 luasKopiHa: p.luasKopiHa,

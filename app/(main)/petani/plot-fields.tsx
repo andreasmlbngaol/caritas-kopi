@@ -21,7 +21,6 @@ export type PlotDefaults = {
     namaHamparan: string | null;
     varietas: string | null;
     tahunTanam: number[];
-    kodeGps: string | null;
     elevasiMdpl: number | null;
     kemiringanPersen: number | null;
     luasKopiHa: number | null;
@@ -375,7 +374,6 @@ function PlotCard({ index, entry, onRemove }: { index: number; entry: Entry<Plot
                     <MiniField label="Nama / Hamparan" name={p("namaHamparan")} defaultValue={blankStr(d?.namaHamparan)} />
                     <VarietasFields plotIndex={index} defaults={d?.varietas} />
                     <TahunTanamFields plotIndex={index} defaults={d?.tahunTanam ?? []} />
-                    <MiniField label="Kode GPS" name={p("kodeGps")} defaultValue={blankStr(d?.kodeGps)} />
                     <MiniField label="Elevasi (mdpl)" name={p("elevasiMdpl")} type="number" defaultValue={blankNum(d?.elevasiMdpl)} />
                     <MiniField label="Kemiringan (%)" name={p("kemiringanPersen")} type="number" defaultValue={blankNum(d?.kemiringanPersen)} />
                     <MiniField label="Luas Kopi (Ha)" name={p("luasKopiHa")} type="number" defaultValue={blankNum(d?.luasKopiHa)} />
