@@ -133,13 +133,24 @@ export function DatePicker({
                             <ChevronLeft size={16} />
                         </button>
                         <div className="flex items-center gap-1">
-                            <span className="text-sm font-semibold text-gray-900">{BULAN_ID[view.m]}</span>
+                            <div className="relative">
+                                <select
+                                    value={view.m}
+                                    onChange={(e) => setView((v) => ({ ...v, m: Number(e.target.value) }))}
+                                    className="select-flat cursor-pointer appearance-none rounded-md bg-transparent py-0.5 pl-1.5 pr-5 text-sm font-semibold text-gray-900 outline-none hover:bg-gray-100"
+                                >
+                                    {BULAN_ID.map((nama, i) => (
+                                        <option key={nama} value={i}>{nama}</option>
+                                    ))}
+                                </select>
+                                <ChevronDown size={12} className="pointer-events-none absolute right-1 top-1/2 -translate-y-1/2 text-gray-500" />
+                            </div>
                             {yearRange ? (
                                 <div className="relative">
                                     <select
                                         value={view.y}
                                         onChange={(e) => setView((v) => ({ ...v, y: Number(e.target.value) }))}
-                                        className="cursor-pointer appearance-none rounded-md bg-transparent py-0.5 pl-1.5 pr-5 text-sm font-semibold text-gray-900 outline-none hover:bg-gray-100"
+                                        className="select-flat cursor-pointer appearance-none rounded-md bg-transparent py-0.5 pl-1.5 pr-5 text-sm font-semibold text-gray-900 outline-none hover:bg-gray-100"
                                     >
                                         {years.map((y) => (
                                             <option key={y} value={y}>{y}</option>

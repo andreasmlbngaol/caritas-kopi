@@ -104,6 +104,12 @@ select {
   padding-right: 2.5rem;
 }
 
+/* Dropdown kompak yang memakai ikon panah sendiri (mis. header kalender). */
+select.select-flat {
+  background-image: none;
+  padding-right: 1.25rem;
+}
+
 /* Fokus keyboard yang terlihat & konsisten di seluruh app. */
 :focus-visible {
   outline: 2px solid var(--color-jade-600);

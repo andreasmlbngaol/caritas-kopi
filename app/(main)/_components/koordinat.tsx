@@ -14,6 +14,7 @@ const DIRS: Record<Kind, { pos: string; neg: string }> = {
     lat: { pos: "N", neg: "S" },
     lng: { pos: "E", neg: "W" },
 };
+const DEG_MAX: Record<Kind, number> = { lat: 90, lng: 180 };
 
 const round = (n: number) => Math.round(n * 1e8) / 1e8;
 
@@ -22,8 +23,12 @@ const parseNum = (v: string) => {
     const n = parseFloat(v.replace(",", "."));
     return Number.isFinite(n) ? n : 0;
 };
-// Hanya izinkan angka, titik, koma.
-const onlyNumeric = (v: string) => v.replace(/[^0-9.,]/g, "");
+// Hanya izinkan angka, titik, koma (minus opsional, hanya di awal).
+const onlyNumeric = (v: string, allowMinus = false) => {
+    let s = v.replace(allowMinus ? /[^0-9.,-]/g : /[^0-9.,]/g, "");
+    if (allowMinus) s = s.replace(/(?!^)-/g, "");
+    return s;
+};
 
 function toDMS(dec: number) {
     const abs = Math.abs(dec);
@@ -35,26 +40,33 @@ function toDMS(dec: number) {
     return { d, m, s };
 }
 
+// Baris satu koordinat. `value` = derajat desimal (string), sumber kebenaran ada di parent.
+// Diberi key={mode} oleh parent agar remount + inisialisasi ulang saat format diganti.
 function KoordinatRow({
-                          label, name, kind, mode, defaultValue,
+                          label, kind, mode, value, onChange,
                       }: {
     label: string;
-    name: string; // hidden input - nilai derajat desimal, dikirim ke server
     kind: Kind;
     mode: "desimal" | "dms";
-    defaultValue?: number | null;
+    value: string;
+    onChange: (v: string) => void;
 }) {
-    const init = defaultValue != null ? toDMS(defaultValue) : null;
-    const [deg, setDeg] = useState(defaultValue != null ? String(defaultValue) : "");
-    const [d, setD] = useState(init ? String(init.d) : "");
-    const [m, setM] = useState(init ? String(init.m) : "");
-    const [s, setS] = useState(init ? String(init.s) : "");
+    const dec = parseNum(value);
+    const init = toDMS(dec);
+
+    const [d, setD] = useState(value ? String(init.d) : "");
+    const [m, setM] = useState(value ? String(init.m) : "");
+    const [s, setS] = useState(value ? String(init.s) : "");
     const [dir, setDir] = useState<string>(
-        defaultValue != null && defaultValue < 0 ? DIRS[kind].neg : DIRS[kind].pos
+        value && dec < 0 ? DIRS[kind].neg : DIRS[kind].pos
     );
 
     function updateDMS(part: "d" | "m" | "s" | "dir", val: string) {
-        const clean = part === "dir" ? val : onlyNumeric(val);
+        let clean = part === "dir" ? val : onlyNumeric(val);
+        // Batasi: derajat <= 90 (lat) / 180 (lng), menit & detik <= 60.
+        const max = part === "d" ? DEG_MAX[kind] : 60;
+        if (part !== "dir" && parseNum(clean) > max) clean = String(max);
+
         const nd = part === "d" ? clean : d;
         const nm = part === "m" ? clean : m;
         const ns = part === "s" ? clean : s;
@@ -63,8 +75,9 @@ function KoordinatRow({
         else if (part === "m") setM(clean);
         else if (part === "s") setS(clean);
         else setDir(clean);
+
         const sign = ndir === DIRS[kind].neg ? -1 : 1;
-        setDeg(
+        onChange(
             nd || nm || ns
                 ? String(round(sign * (parseNum(nd) + parseNum(nm) / 60 + parseNum(ns) / 3600)))
                 : ""
@@ -74,14 +87,12 @@ function KoordinatRow({
     return (
         <div>
             <label className="mb-1 block text-xs font-medium text-gray-600">{label}</label>
-            {/* server terima satu angka desimal bertitik */}
-            <input type="hidden" name={name} value={deg.replace(",", ".")} data-label={label} />
 
             {mode === "desimal" ? (
                 <input
                     type="text" inputMode="decimal"
-                    value={deg}
-                    onChange={(e) => setDeg(onlyNumeric(e.target.value))}
+                    value={value}
+                    onChange={(e) => onChange(onlyNumeric(e.target.value, true))}
                     placeholder={kind === "lat" ? "1.516556" : "99.278667"}
                     aria-label={`${label} (derajat desimal)`}
                     className={inputCls}
@@ -134,6 +145,8 @@ export function KoordinatPair({
     latDefault?: number | null; lngDefault?: number | null;
 }) {
     const [mode, setMode] = useState<"desimal" | "dms">("desimal");
+    const [lat, setLat] = useState(latDefault != null ? String(latDefault) : "");
+    const [lng, setLng] = useState(lngDefault != null ? String(lngDefault) : "");
 
     return (
         <div className="space-y-3">
@@ -150,8 +163,18 @@ export function KoordinatPair({
                 />
             </div>
 
-            <KoordinatRow label={latLabel} name={latName} kind="lat" mode={mode} defaultValue={latDefault} />
-            <KoordinatRow label={lngLabel} name={lngName} kind="lng" mode={mode} defaultValue={lngDefault} />
+            {/* server terima satu angka desimal bertitik */}
+            <input type="hidden" name={latName} value={lat.replace(",", ".")} data-label={latLabel} />
+            <input type="hidden" name={lngName} value={lng.replace(",", ".")} data-label={lngLabel} />
+
+            <KoordinatRow
+                key={`lat-${mode}`} label={latLabel} kind="lat" mode={mode}
+                value={lat} onChange={setLat}
+            />
+            <KoordinatRow
+                key={`lng-${mode}`} label={lngLabel} kind="lng" mode={mode}
+                value={lng} onChange={setLng}
+            />
 
             <p className="text-[11px] text-gray-500">
                 {mode === "desimal"
