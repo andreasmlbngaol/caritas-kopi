@@ -264,26 +264,24 @@ export function PetaniPdf({ m }: { m: PetaniExportModel }) {
                 )}
 
                 {m.sectionB2.length > 0 && (
-                    <Section title="B.2 - DATA FISIK LOKASI PLOT (lanjutan) - TANAMAN NAUNGAN, SELA, TEGAKAN">
+                    <Section title="B.2 - DATA TANAMAN NAUNGAN / SELA / TEGAKAN (TINGKAT PETANI)">
                         <View style={s.table}>
                             <View style={s.row} wrap={false}>
-                                <Head width="6%">Plot No.</Head>
-                                <Head width="20%">Jenis Naungan/Sela/Tegakan</Head>
+                                <Head width="22%">Jenis Naungan/Sela/Tegakan</Head>
                                 <Head width="10%">Jumlah</Head>
-                                <Head width="20%">Fungsi</Head>
-                                <Head width="16%">Apakah di lakukan Pemangkasan</Head>
-                                <Head width="16%">Produksi/Tahun</Head>
+                                <Head width="22%">Fungsi</Head>
+                                <Head width="16%">Apakah dilakukan pemangkasan</Head>
+                                <Head width="18%">Produksi/Tahun</Head>
                                 <Head width="12%">Tahun Tanam</Head>
                             </View>
                             {m.sectionB2.map((r, i) => (
                                 <View key={i} style={s.row} wrap={false}>
-                                    <Cell width="6%" center>{r[0]}</Cell>
-                                    <Cell width="20%">{r[1]}</Cell>
-                                    <Cell width="10%" center>{r[2]}</Cell>
-                                    <Cell width="20%">{r[3]}</Cell>
-                                    <Cell width="16%" center>{r[4]}</Cell>
-                                    <Cell width="16%">{r[5]}</Cell>
-                                    <Cell width="12%" center>{r[6]}</Cell>
+                                    <Cell width="22%">{r[0]}</Cell>
+                                    <Cell width="10%" center>{r[1]}</Cell>
+                                    <Cell width="22%">{r[2]}</Cell>
+                                    <Cell width="16%" center>{r[3]}</Cell>
+                                    <Cell width="18%">{r[4]}</Cell>
+                                    <Cell width="12%" center>{r[5]}</Cell>
                                 </View>
                             ))}
                         </View>

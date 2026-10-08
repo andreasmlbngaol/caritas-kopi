@@ -25,7 +25,7 @@ export default async function AgronomiPage() {
     const varietasData = a.varietas.map((v) => ({ label: short(v.nama), jumlah: v.jumlah }));
     const sistemData = a.sistemBudidaya.map((s) => ({ nama: labelOf(SISTEM_BUDIDAYA, s.nama), jumlah: s.jumlah }));
     const kepemilikanData = a.kepemilikan.map((k) => ({ nama: labelOf(STATUS_KEPEMILIKAN, k.nama), jumlah: k.jumlah }));
-    const naunganData = a.naungan.map((n) => ({ label: short(n.nama), plot: n.plot }));
+    const naunganData = a.naungan.map((n) => ({ label: short(n.nama), petani: n.petani }));
 
     return (
         <main className={pageWide}>
@@ -56,11 +56,11 @@ export default async function AgronomiPage() {
                 <ChartCard title="Status kepemilikan lahan">
                     <DonutChartX data={kepemilikanData} nameKey="nama" valueKey="jumlah" height={300} />
                 </ChartCard>
-                <ChartCard title="Umur tanaman" desc="Distribusi plot per umur">
-                    <BarChartX data={a.umur} xKey="label" yKey="jumlah" unit="plot" valueLabel="Plot" height={300} />
+                <ChartCard title="Umur tanaman" desc="Jumlah tahun tanam (kohort) per kelompok umur">
+                    <BarChartX data={a.umur} xKey="label" yKey="jumlah" unit="tahun tanam" valueLabel="Tahun tanam" height={300} />
                 </ChartCard>
-                <ChartCard title="Tanaman naungan" desc="Jumlah plot per jenis naungan">
-                    <HBarChartX data={naunganData} yKey="label" xKey="plot" unit="plot" valueLabel="Plot" height={300} />
+                <ChartCard title="Tanaman naungan" desc="Jumlah petani per jenis naungan">
+                    <HBarChartX data={naunganData} yKey="label" xKey="petani" unit="petani" valueLabel="Petani" height={300} />
                 </ChartCard>
             </div>
 
@@ -71,7 +71,7 @@ export default async function AgronomiPage() {
                             <thead>
                                 <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500">
                                     <th className="py-2 pr-3">Jenis</th>
-                                    <th className="py-2 pr-3 text-right">Plot</th>
+                                    <th className="py-2 pr-3 text-right">Petani</th>
                                     <th className="py-2 pr-3 text-right">Total pohon</th>
                                     <th className="py-2 pr-3 text-right">Dipangkas</th>
                                 </tr>
@@ -80,7 +80,7 @@ export default async function AgronomiPage() {
                                 {a.naungan.map((n) => (
                                     <tr key={n.nama}>
                                         <td className="py-2 pr-3 text-gray-700">{n.nama}</td>
-                                        <td className="py-2 pr-3 text-right tabular-nums">{fmt(n.plot)}</td>
+                                        <td className="py-2 pr-3 text-right tabular-nums">{fmt(n.petani)}</td>
                                         <td className="py-2 pr-3 text-right tabular-nums text-gray-500">{fmt(n.pohon)}</td>
                                         <td className="py-2 pr-3 text-right tabular-nums text-gray-500">{fmt(n.dipangkas)}</td>
                                     </tr>

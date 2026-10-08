@@ -53,7 +53,7 @@ export function buildPetaniExportModel(p: FullPetani, appUrl: string) {
             String(pl.nomor),
             fmt(pl.namaHamparan),
             fmt(pl.varietas),
-            num(pl.tahunTanam),
+            pl.tahunTanam.length ? pl.tahunTanam.join(", ") : "-",
             fmt(pl.kodeGps),
             num(pl.elevasiMdpl),
             num(pl.kemiringanPersen),
@@ -76,17 +76,14 @@ export function buildPetaniExportModel(p: FullPetani, appUrl: string) {
                 [pl.pestisidaNama, pl.pestisidaBulanTahun ? fmtBulanTahun(pl.pestisidaBulanTahun) : null]
                     .filter(Boolean).join(" - ") || "-",
         })),
-        sectionB2: p.plot.flatMap((pl) =>
-            pl.naungan.map((n) => [
-                String(pl.nomor),
-                fmt(n.jenis),
-                num(n.jumlah),
-                fmt(n.fungsi),
-                bool(n.pemangkasan),
-                fmt(n.produksiPerTahun),
-                num(n.tahunTanam),
-            ] as [string, string, string, string, string, string, string])
-        ),
+        sectionB2: p.naungan.map((n) => [
+            fmt(n.jenis),
+            num(n.jumlah),
+            fmt(n.fungsi),
+            bool(n.pemangkasan),
+            fmt(n.produksiPerTahun),
+            num(n.tahunTanam),
+        ] as [string, string, string, string, string, string]),
         sectionC: GAP_GROUPS.map((g) => ({
             kelompok: g.kelompok,
             rows: g.items.map((item) => {

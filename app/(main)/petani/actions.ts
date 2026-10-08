@@ -88,7 +88,7 @@ const schema = z.object({
 // B.1 - varietas ditangani terpisah (multi-entry, digabung ", ")
 const plotSchema = z.object({
     namaHamparan: str,
-    tahunTanam: intOpt,
+    tahunTanam: z.array(z.number().int().min(1900).max(new Date().getFullYear())),
     kodeGps: strOpt,
     elevasiMdpl: num,
     kemiringanPersen: num,
@@ -134,7 +134,7 @@ function hasAnyWithPrefix(formData: FormData, prefix: string) {
 }
 
 const PLOT_FIELDS = [
-    "namaHamparan", "tahunTanam", "kodeGps", "elevasiMdpl",
+    "namaHamparan", "kodeGps", "elevasiMdpl",
     "kemiringanPersen", "luasKopiHa", "fotoKey", "fotoLatitude", "fotoLongitude",
     "statusKepemilikan", "sistemBudidaya", "areaKonservasi", "tanamanBaru",
     "pohonProduktif", "pohonTidakProduktif", "pestisidaNama", "pestisidaBulanTahun",
@@ -157,7 +157,6 @@ function varietasGabung(formData: FormData, i: number): string {
 function plotRows(formData: FormData) {
     const rows: (z.infer<typeof plotSchema> & {
         varietas: string;
-        naungan: z.infer<typeof naunganSchema>[];
     })[] = [];
 
     for (let i = 0; ; i++) {
@@ -165,35 +164,43 @@ function plotRows(formData: FormData) {
 
         const raw: Record<string, string | undefined> = {};
         for (const f of PLOT_FIELDS) raw[f] = get(formData, `plot_${i}_${f}`);
+        const yearPrefix = `plot_${i}_tahunTanam_`;
+        const yearKeys = [...formData.keys()]
+            .filter((key) => key.startsWith(yearPrefix))
+            .sort((a, b) => Number(a.slice(yearPrefix.length)) - Number(b.slice(yearPrefix.length)));
+        const years: number[] = [];
+        for (const key of yearKeys) {
+            const rawYear = get(formData, key);
+            if (rawYear === undefined) continue;
+            const parsedYear = z.coerce.number().int().min(1900).max(new Date().getFullYear()).safeParse(rawYear);
+            if (!parsedYear.success) throw new Error(`Plot ${i + 1}: tahun tanam harus antara 1900 dan ${new Date().getFullYear()}.`);
+            years.push(parsedYear.data);
+        }
+        const uniqueYears = [...new Set(years)].sort((a, b) => a - b);
+        raw.tahunTanam = undefined;
         const varietas = varietasGabung(formData, i);
-        if (Object.values(raw).every((v) => v === undefined) && varietas === "-") continue;
+        if (Object.values(raw).every((v) => v === undefined) && varietas === "-" && uniqueYears.length === 0) continue;
 
-        const parsed = plotSchema.safeParse(raw);
+        const parsed = plotSchema.safeParse({ ...raw, tahunTanam: uniqueYears });
         if (!parsed.success) {
             throw new Error(formatZodError(parsed.error, `Plot ${i + 1}`));
         }
+        rows.push({ ...parsed.data, varietas });
+    }
+    return rows;
+}
 
-        const naungan: z.infer<typeof naunganSchema>[] = [];
-        for (let j = 0; ; j++) {
-            if (!hasAnyWithPrefix(formData, `naung_${i}_${j}_`)) break;
-            const nraw: Record<string, string | undefined> = {};
-            for (const f of NAUNGAN_FIELDS) nraw[f] = get(formData, `naung_${i}_${j}_${f}`);
-            // baris yang hanya berisi segmented pemangkasan (default "false") dianggap kosong
-            const bermakna = NAUNGAN_FIELDS.some(
-                (f) => f !== "pemangkasan" && nraw[f] !== undefined
-            );
-            if (!bermakna) continue;
-
-            const nparsed = naunganSchema.safeParse(nraw);
-            if (!nparsed.success) {
-                throw new Error(
-                    formatZodError(nparsed.error, `Tanaman naungan Plot ${i + 1} baris ${j + 1}`)
-                );
-            }
-            naungan.push(nparsed.data);
-        }
-
-        rows.push({ ...parsed.data, varietas, naungan });
+function naunganRows(formData: FormData) {
+    const rows: z.infer<typeof naunganSchema>[] = [];
+    for (let i = 0; ; i++) {
+        if (!hasAnyWithPrefix(formData, `naung_${i}_`)) break;
+        const raw: Record<string, string | undefined> = {};
+        for (const f of NAUNGAN_FIELDS) raw[f] = get(formData, `naung_${i}_${f}`);
+        const bermakna = NAUNGAN_FIELDS.some((f) => f !== "pemangkasan" && raw[f] !== undefined);
+        if (!bermakna) continue;
+        const parsed = naunganSchema.safeParse(raw);
+        if (!parsed.success) throw new Error(formatZodError(parsed.error, `Tanaman naungan baris ${i + 1}`));
+        rows.push(parsed.data);
     }
     return rows;
 }
@@ -358,9 +365,9 @@ function childrenPayload(formData: FormData) {
                 pohonTidakProduktif: p.pohonTidakProduktif,
                 pestisidaNama: p.pestisidaNama,
                 pestisidaBulanTahun: p.pestisidaBulanTahun,
-                naungan: { create: p.naungan },
             })),
         },
+        naungan: { create: naunganRows(formData) },
         praktikGap: { create: gapRows(formData) },
         produksi: { create: produksiRows(formData) },
         produk: { create: produkRows(formData) },
@@ -451,6 +458,7 @@ export async function updatePetani(
 
     await prisma.$transaction([
         prisma.plotPetani.deleteMany({ where: { petaniId: id } }),
+        prisma.tanamanNaungan.deleteMany({ where: { petaniId: id } }),
         prisma.praktikGap.deleteMany({ where: { petaniId: id } }),
         prisma.riwayatProduksi.deleteMany({ where: { petaniId: id } }),
         prisma.produkDijual.deleteMany({ where: { petaniId: id } }),

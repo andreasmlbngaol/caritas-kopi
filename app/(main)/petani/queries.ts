@@ -5,7 +5,8 @@ export async function getPetani(id: string) {
     return prisma.petani.findUnique({
         where: { id },
         include: {
-            plot: { include: { naungan: true }, orderBy: { nomor: "asc" } },
+            plot: { orderBy: { nomor: "asc" } },
+            naungan: true,
             praktikGap: true,
             produksi: true,
             produk: true,
@@ -20,7 +21,8 @@ export async function getPetaniFull(id: string) {
     return prisma.petani.findUnique({
         where: { id },
         include: {
-            plot: { include: { naungan: true }, orderBy: { nomor: "asc" } },
+            plot: { orderBy: { nomor: "asc" } },
+            naungan: true,
             praktikGap: true,
             produksi: true,
             produk: true,

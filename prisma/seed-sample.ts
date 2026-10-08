@@ -182,12 +182,22 @@ async function main() {
                 desaKode: d.desaKode,
                 kelompokTaniId: kt.id,
                 createdById: admin.id,
+                naungan: {
+                    create: Array.from({ length: rint(1, 3) }, () => ({
+                        jenis: pick(NAUNGAN),
+                        jumlah: rint(10, 200),
+                        fungsi: pick(["Peneduh", "Kayu", "Buah"]),
+                        pemangkasan: Math.random() > 0.4,
+                        produksiPerTahun: pick(["-", "50 kg", "100 kg"]),
+                        tahunTanam: rint(2000, 2020),
+                    })),
+                },
                 plot: {
                     create: Array.from({ length: rint(1, 2) }, (_, i) => ({
                         nomor: i + 1,
                         namaHamparan: `Hamparan ${i + 1}`,
                         varietas: [...new Set([pick(VARIETAS), pick(VARIETAS)])].join(", "),
-                        tahunTanam: rint(2005, 2022),
+                        tahunTanam: [...new Set([rint(2005, 2022), ...(Math.random() > 0.5 ? [rint(2005, 2022)] : [])])].sort((a, b) => a - b),
                         kodeGps: `GP${rint(1000, 9999)}`,
                         elevasiMdpl: d.ketinggian + rint(-50, 50),
                         kemiringanPersen: rint(5, 40),
@@ -202,16 +212,6 @@ async function main() {
                         pohonTidakProduktif: rint(0, 120),
                         pestisidaNama: Math.random() > 0.5 ? pick(PESTISIDA) : null,
                         pestisidaBulanTahun: `2025-0${rint(1, 9)}`,
-                        naungan: {
-                            create: Array.from({ length: rint(1, 3) }, () => ({
-                                jenis: pick(NAUNGAN),
-                                jumlah: rint(10, 200),
-                                fungsi: pick(["Peneduh", "Kayu", "Buah"]),
-                                pemangkasan: Math.random() > 0.4,
-                                produksiPerTahun: pick(["-", "50 kg", "100 kg"]),
-                                tahunTanam: rint(2000, 2020),
-                            })),
-                        },
                     })),
                 },
                 praktikGap: {

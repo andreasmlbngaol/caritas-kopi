@@ -323,6 +323,7 @@ model Petani {
   kelompokTani   KelompokTani? @relation(fields: [kelompokTaniId], references: [id])
 
   plot         PlotPetani[]
+  naungan      TanamanNaungan[]
   praktikGap   PraktikGap[]
   produksi     RiwayatProduksi[]
   produk       ProdukDijual[]
@@ -345,7 +346,7 @@ model PlotPetani {
 
   namaHamparan        String?                 @map("nama_hamparan")
   varietas            String?
-  tahunTanam          Int?                    @map("tahun_tanam")
+  tahunTanam          Int[]                   @default([]) @map("tahun_tanam")
   kodeGps             String?                 @map("kode_gps")
   elevasiMdpl         Float?                  @map("elevasi_mdpl")
   kemiringanPersen    Float?                  @map("kemiringan_persen")
@@ -362,16 +363,14 @@ model PlotPetani {
   pestisidaNama       String?                 @map("pestisida_nama")
   pestisidaBulanTahun String?                 @map("pestisida_bulan_tahun") // "YYYY-MM" dari input type=month
 
-  naungan TanamanNaungan[]
-
   @@index([petaniId])
   @@map("plot_petani")
 }
 
 model TanamanNaungan {
   id               String     @id @default(uuid())
-  plot             PlotPetani @relation(fields: [plotId], references: [id], onDelete: Cascade)
-  plotId           String     @map("plot_id")
+  petani           Petani   @relation(fields: [petaniId], references: [id], onDelete: Cascade)
+  petaniId         String   @map("petani_id")
   jenis            String?
   jumlah           Int?
   fungsi           String?
@@ -379,7 +378,7 @@ model TanamanNaungan {
   produksiPerTahun String?    @map("produksi_per_tahun")
   tahunTanam       Int?       @map("tahun_tanam")
 
-  @@index([plotId])
+  @@index([petaniId])
   @@map("tanaman_naungan")
 }
 

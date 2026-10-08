@@ -386,15 +386,17 @@ export async function getWilayah() {
 
 // ---------- Agronomi Plot (varietas, budidaya, naungan, pestisida) ----------
 export async function getAgronomi() {
-    const [plots, totalPetani] = await Promise.all([
+    const [plots, shadeRows, totalPetani] = await Promise.all([
         prisma.plotPetani.findMany({
             select: {
                 varietas: true, sistemBudidaya: true, statusKepemilikan: true, areaKonservasi: true,
                 tahunTanam: true, luasKopiHa: true, pohonProduktif: true, pohonTidakProduktif: true,
                 tanamanBaru: true, elevasiMdpl: true, kemiringanPersen: true,
                 pestisidaNama: true, pestisidaBulanTahun: true,
-                naungan: { select: { jenis: true, jumlah: true, pemangkasan: true } },
             },
+        }),
+        prisma.tanamanNaungan.findMany({
+            select: { jenis: true, jumlah: true, pemangkasan: true, petaniId: true },
         }),
         prisma.petani.count(),
     ]);
@@ -418,25 +420,23 @@ export async function getAgronomi() {
         .map((e) => ({ nama: pickSpelling(e.spell), jumlah: e.jumlah }))
         .sort((a, b) => b.jumlah - a.jumlah).slice(0, 12);
 
-    const naunganMap = new Map<string, { spell: Map<string, number>; plot: number; pohon: number; dipangkas: number }>();
-    for (const p of plots) {
-        for (const n of p.naungan) {
-            const v = clean(n.jenis) ?? "(tanpa nama)";
-            const e = naunganMap.get(ci(v)) ?? { spell: new Map<string, number>(), plot: 0, pohon: 0, dipangkas: 0 };
-            e.spell.set(v, (e.spell.get(v) ?? 0) + 1);
-            e.plot += 1;
-            e.pohon += n.jumlah ?? 0;
-            if (n.pemangkasan) e.dipangkas += 1;
-            naunganMap.set(ci(v), e);
-        }
+    const naunganMap = new Map<string, { spell: Map<string, number>; petani: Set<string>; pohon: number; dipangkas: number }>();
+    for (const n of shadeRows) {
+        const v = clean(n.jenis) ?? "(tanpa nama)";
+        const e = naunganMap.get(ci(v)) ?? { spell: new Map<string, number>(), petani: new Set<string>(), pohon: 0, dipangkas: 0 };
+        e.spell.set(v, (e.spell.get(v) ?? 0) + 1);
+        e.petani.add(n.petaniId);
+        e.pohon += n.jumlah ?? 0;
+        if (n.pemangkasan) e.dipangkas += 1;
+        naunganMap.set(ci(v), e);
     }
     const naungan = [...naunganMap.values()]
-        .map((e) => ({ nama: pickSpelling(e.spell), plot: e.plot, pohon: e.pohon, dipangkas: e.dipangkas }))
-        .sort((a, b) => b.plot - a.plot);
+        .map((e) => ({ nama: pickSpelling(e.spell), petani: e.petani.size, pohon: e.pohon, dipangkas: e.dipangkas }))
+        .sort((a, b) => b.petani - a.petani);
 
     const pestisida = counter((p) => p.pestisidaNama).slice(0, 12);
 
-    // Distribusi umur tanaman (tahun tanam → umur)
+    // Distribusi umur per catatan tahun tanam (kohort), bukan per plot.
     const nowYear = new Date().getFullYear();
     const umurMap = new Map<string, number>();
     let totalPohonProduktif = 0, totalPohonTidakProduktif = 0, totalTanamanBaru = 0, totalLuas = 0;
@@ -445,8 +445,9 @@ export async function getAgronomi() {
         totalPohonTidakProduktif += p.pohonTidakProduktif ?? 0;
         totalTanamanBaru += p.tanamanBaru ?? 0;
         totalLuas += p.luasKopiHa ?? 0;
-        if (p.tahunTanam) {
-            const umur = nowYear - p.tahunTanam;
+        for (const tahun of p.tahunTanam) {
+            if (tahun < 1900 || tahun > nowYear) continue;
+            const umur = nowYear - tahun;
             const bucket = umur < 3 ? "< 3 th" : umur < 7 ? "3-6 th" : umur < 15 ? "7-14 th" : "≥ 15 th";
             umurMap.set(bucket, (umurMap.get(bucket) ?? 0) + 1);
         }

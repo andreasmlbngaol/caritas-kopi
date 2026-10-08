@@ -101,7 +101,7 @@ export function PetaniForm({
 
             {/* B - DATA FISIK LOKASI PLOT */}
             <Section title="B - Data Fisik Lokasi Plot">
-                <PlotFields defaults={defaults?.plot} />
+                <PlotFields defaults={defaults?.plot} naunganDefaults={defaults?.naungan} />
             </Section>
 
             {/* C - PRAKTIK GAP KEBUN */}

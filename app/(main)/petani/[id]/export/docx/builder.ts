@@ -192,7 +192,7 @@ export async function buildPetaniDocx(m: PetaniExportModel): Promise<Buffer> {
     }
 
     if (m.sectionB2.length > 0) {
-        bChildren.push(heading("B.2 - DATA FISIK LOKASI PLOT (lanjutan) - TANAMAN NAUNGAN, SELA, TEGAKAN"));
+        bChildren.push(heading("B.2 - DATA TANAMAN NAUNGAN / SELA / TEGAKAN (TINGKAT PETANI)"));
         bChildren.push(
             new Table({
                 width: { size: 100, type: WidthType.PERCENTAGE },
@@ -200,21 +200,20 @@ export async function buildPetaniDocx(m: PetaniExportModel): Promise<Buffer> {
                     new TableRow({
                         tableHeader: true,
                         children: [
-                            head("Plot No.", 6), head("Jenis Naungan/Sela/Tegakan", 20), head("Jumlah", 10),
-                            head("Fungsi", 20), head("Apakah di lakukan Pemangkasan", 16),
-                            head("Produksi/Tahun", 16), head("Tahun Tanam", 12),
+                            head("Jenis Naungan/Sela/Tegakan", 22), head("Jumlah", 10),
+                            head("Fungsi", 22), head("Apakah dilakukan pemangkasan", 16),
+                            head("Produksi/Tahun", 18), head("Tahun Tanam", 12),
                         ],
                     }),
                     ...m.sectionB2.map((r) =>
                         new TableRow({
                             children: [
-                                cell(r[0], { width: 6, align: AlignmentType.CENTER }),
-                                cell(r[1], { width: 20 }),
-                                cell(r[2], { width: 10, align: AlignmentType.CENTER }),
-                                cell(r[3], { width: 20 }),
-                                cell(r[4], { width: 16, align: AlignmentType.CENTER }),
-                                cell(r[5], { width: 16 }),
-                                cell(r[6], { width: 12, align: AlignmentType.CENTER }),
+                                cell(r[0], { width: 22 }),
+                                cell(r[1], { width: 10, align: AlignmentType.CENTER }),
+                                cell(r[2], { width: 22 }),
+                                cell(r[3], { width: 16, align: AlignmentType.CENTER }),
+                                cell(r[4], { width: 18 }),
+                                cell(r[5], { width: 12, align: AlignmentType.CENTER }),
                             ],
                         })
                     ),

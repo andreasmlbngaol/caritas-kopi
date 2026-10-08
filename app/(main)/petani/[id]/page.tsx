@@ -161,7 +161,7 @@ export default async function PetaniDetailPage({
                                         <KVGrid items={[
                                             ["Nama / Hamparan", fmt(pl.namaHamparan)],
                                             ["Varietas", fmt(pl.varietas)],
-                                            ["Tahun Tanam", num(pl.tahunTanam)],
+                                            ["Tahun Tanam Kopi", pl.tahunTanam.length ? pl.tahunTanam.join(", ") : "-"],
                                             ["Kode GPS", fmt(pl.kodeGps)],
                                             ["Elevasi (mdpl)", num(pl.elevasiMdpl)],
                                             ["Kemiringan (%)", num(pl.kemiringanPersen)],
@@ -176,39 +176,43 @@ export default async function PetaniDetailPage({
                                             ["Koordinat Foto", pl.fotoLatitude != null && pl.fotoLongitude != null ? `${pl.fotoLatitude}, ${pl.fotoLongitude}` : "-"],
                                         ]} />
                                     </div>
-                                    {pl.naungan.length > 0 && (
-                                        <div className="mt-4 overflow-x-auto">
-                                            <table className="w-full min-w-[640px] text-sm">
-                                                <thead>
-                                                <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500">
-                                                    <th className="py-1.5 pr-3">Jenis Naungan/Sela/Tegakan</th>
-                                                    <th className="py-1.5 pr-3">Jumlah</th>
-                                                    <th className="py-1.5 pr-3">Fungsi</th>
-                                                    <th className="py-1.5 pr-3">Pemangkasan</th>
-                                                    <th className="py-1.5 pr-3">Produksi/Tahun</th>
-                                                    <th className="py-1.5">Tahun Tanam</th>
-                                                </tr>
-                                                </thead>
-                                                <tbody className="divide-y divide-gray-100">
-                                                {pl.naungan.map((n) => (
-                                                    <tr key={n.id}>
-                                                        <td className="py-1.5 pr-3">{fmt(n.jenis)}</td>
-                                                        <td className="py-1.5 pr-3">{num(n.jumlah)}</td>
-                                                        <td className="py-1.5 pr-3">{fmt(n.fungsi)}</td>
-                                                        <td className="py-1.5 pr-3">{bool(n.pemangkasan)}</td>
-                                                        <td className="py-1.5 pr-3">{fmt(n.produksiPerTahun)}</td>
-                                                        <td className="py-1.5">{num(n.tahunTanam)}</td>
-                                                    </tr>
-                                                ))}
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    )}
                                 </div>
                             ))}
                         </div>
                     )}
                 </Card>
+
+                {/* B.2 - Tanaman naungan tingkat petani */}
+                {p.naungan.length > 0 && (
+                    <Card title="B.2 - Tanaman Naungan / Sela / Tegakan">
+                        <div className="overflow-x-auto">
+                            <table className="w-full min-w-[640px] text-sm">
+                                <thead>
+                                <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500">
+                                    <th className="py-1.5 pr-3">Jenis Naungan/Sela/Tegakan</th>
+                                    <th className="py-1.5 pr-3">Jumlah</th>
+                                    <th className="py-1.5 pr-3">Fungsi</th>
+                                    <th className="py-1.5 pr-3">Pemangkasan</th>
+                                    <th className="py-1.5 pr-3">Produksi/Tahun</th>
+                                    <th className="py-1.5">Tahun Tanam</th>
+                                </tr>
+                                </thead>
+                                <tbody className="divide-y divide-gray-100">
+                                {p.naungan.map((n) => (
+                                    <tr key={n.id}>
+                                        <td className="py-1.5 pr-3">{fmt(n.jenis)}</td>
+                                        <td className="py-1.5 pr-3">{num(n.jumlah)}</td>
+                                        <td className="py-1.5 pr-3">{fmt(n.fungsi)}</td>
+                                        <td className="py-1.5 pr-3">{bool(n.pemangkasan)}</td>
+                                        <td className="py-1.5 pr-3">{fmt(n.produksiPerTahun)}</td>
+                                        <td className="py-1.5">{num(n.tahunTanam)}</td>
+                                    </tr>
+                                ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </Card>
+                )}
 
                 {/* C */}
                 <Card title="C - Praktik GAP Kebun">
