@@ -297,11 +297,11 @@ export function PetaniPdf({ m }: { m: PetaniExportModel }) {
                     <View style={s.table}>
                         <View style={s.row} wrap={false}>
                             <Head width="16%"> </Head>
-                            <Head width="40%">Jenis Praktik</Head>
+                            <Head width="35%">Jenis Praktik</Head>
                             <Head width="7%">Ya</Head>
                             <Head width="8%">Tidak</Head>
                             <Head width="9%">Kadang</Head>
-                            <Head width="20%">Keterangan</Head>
+                            <Head width="25%">Keterangan</Head>
                         </View>
                     </View>
                     {m.sectionC.map((g) => (
@@ -336,11 +336,11 @@ export function PetaniPdf({ m }: { m: PetaniExportModel }) {
                                         ]}
                                         wrap={false}
                                     >
-                                        <Cell width="47.6%">{r.label}</Cell>
+                                        <Cell width="41.7%">{r.label}</Cell>
                                         <TickCell width="8.4%" on={r.jawaban === "YA"} />
                                         <TickCell width="9.5%" on={r.jawaban === "TIDAK"} />
                                         <TickCell width="10.7%" on={r.jawaban === "KADANG"} />
-                                        <Cell width="23.8%">{r.keterangan}</Cell>
+                                        <Cell width="29.7%">{r.keterangan}</Cell>
                                     </View>
                                 ))}
                             </View>

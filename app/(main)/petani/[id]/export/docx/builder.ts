@@ -222,8 +222,8 @@ export async function buildPetaniDocx(m: PetaniExportModel): Promise<Buffer> {
             new TableRow({
                 tableHeader: true,
                 children: [
-                    head(" ", 16), head("Jenis Praktik", 40), head("Ya", 7),
-                    head("Tidak", 8), head("Kadang", 9), head("Keterangan", 20),
+                    head(" ", 16), head("Jenis Praktik", 35), head("Ya", 7),
+                    head("Tidak", 8), head("Kadang", 9), head("Keterangan", 25),
                 ],
             }),
             ...m.sectionC.flatMap((g) =>
@@ -231,11 +231,11 @@ export async function buildPetaniDocx(m: PetaniExportModel): Promise<Buffer> {
                     new TableRow({
                         children: [
                             ...(i === 0 ? [cell(g.kelompok, { bold: true, width: 16, rowSpan: g.rows.length })] : []),
-                            cell(r.label, { width: 40 }),
+                            cell(r.label, { width: 35 }),
                             tick(r.jawaban === "YA", 7),
                             tick(r.jawaban === "TIDAK", 8),
                             tick(r.jawaban === "KADANG", 9),
-                            cell(r.keterangan, { width: 20 }),
+                            cell(r.keterangan, { width: 25 }),
                         ],
                     })
                 )
