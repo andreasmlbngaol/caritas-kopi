@@ -93,6 +93,17 @@ input[type="number"] {
   appearance: textfield;
 }
 
+/* Select: panah sendiri supaya tidak mepet tepi kanan (seragam di semua dropdown). */
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%236b7280' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 6l4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1rem;
+  padding-right: 2.5rem;
+}
+
 /* Fokus keyboard yang terlihat & konsisten di seluruh app. */
 :focus-visible {
   outline: 2px solid var(--color-jade-600);

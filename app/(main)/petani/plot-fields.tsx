@@ -4,6 +4,7 @@
 import {useEffect, useRef, useState} from "react";
 import {Calendar, ChevronLeft, ChevronRight, ImagePlus, Loader2, Plus, X} from "lucide-react";
 import { inputCls } from "../_components/ui";
+import { KoordinatPair } from "../_components/koordinat";
 import { Segmented } from "../_components/yes-no";
 import {STATUS_KEPEMILIKAN, SISTEM_BUDIDAYA, BULAN_ID} from "./constants";
 
@@ -194,26 +195,11 @@ function FotoUpload({
                         />
                     </label>
                     {error && <p className="text-[11px] text-red-600">{error}</p>}
-                    <div className="grid grid-cols-2 gap-2">
-                        <div>
-                            <label htmlFor={`plot_${index}_fotoLatitude`} className="mb-1 block text-[11px] text-gray-500">Latitude foto</label>
-                            <input
-                                id={`plot_${index}_fotoLatitude`}
-                                name={`plot_${index}_fotoLatitude`} type="number" step="any" inputMode="decimal"
-                                placeholder="-7.1234" data-label="Koordinat foto - Latitude"
-                                defaultValue={defaultLat ?? ""} className={inputCls}
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor={`plot_${index}_fotoLongitude`} className="mb-1 block text-[11px] text-gray-500">Longitude foto</label>
-                            <input
-                                id={`plot_${index}_fotoLongitude`}
-                                name={`plot_${index}_fotoLongitude`} type="number" step="any" inputMode="decimal"
-                                placeholder="110.4567" data-label="Koordinat foto - Longitude"
-                                defaultValue={defaultLng ?? ""} className={inputCls}
-                            />
-                        </div>
-                    </div>
+                    <KoordinatPair
+                        latLabel="Latitude foto" lngLabel="Longitude foto"
+                        latName={`plot_${index}_fotoLatitude`} lngName={`plot_${index}_fotoLongitude`}
+                        latDefault={defaultLat} lngDefault={defaultLng}
+                    />
                 </div>
             </div>
         </div>

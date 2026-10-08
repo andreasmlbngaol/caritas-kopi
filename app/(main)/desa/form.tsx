@@ -5,6 +5,7 @@ import { MusimFields } from "./musim-fields";
 import { KEBIJAKAN, LEMBAGA } from "./constants";
 import { SubmitButton } from "./submit-button";
 import { ActionForm, type ActionFn } from "../_components/action-form";
+import { KoordinatPair } from "../_components/koordinat";
 import type { getBaselineDesa } from "./queries";
 import {UnsavedGuard} from "@/app/(main)/_components/unsaved-guard";
 
@@ -47,8 +48,12 @@ export function DesaForm({
                             <Field label="Jumlah Petani Kopi" name="jumlahPetaniKopi" type="number" unit="orang" defaultValue={blankNum(defaults?.jumlahPetaniKopi)} />
                             <Field label="Luas Areal Kopi" name="luasArealKopiHa" type="number" unit="Ha" defaultValue={blankNum(defaults?.luasArealKopiHa)} />
                             <Field label="Luas Area Komoditi Lainnya" name="luasKomoditiLainHa" type="number" unit="Ha" defaultValue={blankNum(defaults?.luasKomoditiLainHa)} />
-                            <Field label="Latitude" name="latitude" type="number" allowNegative hint="Pakai titik (.), mis. -7.1234" defaultValue={defaults?.latitude ?? ""} />
-                            <Field label="Longitude" name="longitude" type="number" allowNegative hint="Pakai titik (.), mis. 110.4567" defaultValue={defaults?.longitude ?? ""} />
+                            <div className="sm:col-span-2 lg:col-span-3">
+                                <KoordinatPair
+                                    latName="latitude" lngName="longitude"
+                                    latDefault={defaults?.latitude} lngDefault={defaults?.longitude}
+                                />
+                            </div>
                         </Grid>
                     </SubSection>
                     <SubSection title="Kondisi Fisik & Iklim">
