@@ -85,6 +85,51 @@ export async function getRingkasan() {
     };
 }
 
+// ---------- Ringkasan dashboard enumerator (hanya data miliknya) ----------
+// Semua query di-scope lewat createdById, jadi enumerator tidak pernah
+// melihat data enumerator lain.
+export async function getRingkasanSaya(userId: string) {
+    const scope = { createdById: userId };
+    const [
+        jumlahPetani, jumlahDesa, jumlahKelompok,
+        areal, plot, produksiTahun,
+    ] = await Promise.all([
+        prisma.petani.count({ where: scope }),
+        prisma.baselineDesa.count({ where: scope }),
+        prisma.kelompokTani.count({ where: { petani: { some: scope } } }),
+        prisma.baselineDesa.aggregate({ where: scope, _sum: { luasArealKopiHa: true } }),
+        prisma.plotPetani.aggregate({ where: { petani: scope }, _sum: { luasKopiHa: true, pohonProduktif: true } }),
+        prisma.riwayatProduksi.groupBy({
+            by: ["tahun"],
+            where: { petani: scope },
+            _sum: { cherry: true, gabahBasah: true, greenBean: true, gabahKering: true },
+            orderBy: { tahun: "asc" },
+        }),
+    ]);
+
+    const terbaru = produksiTahun.at(-1);
+    const luasPlotHa = num(plot._sum.luasKopiHa);
+    const volumeTerbaru = terbaru
+        ? num(terbaru._sum.cherry) + num(terbaru._sum.gabahBasah)
+          + num(terbaru._sum.gabahKering) + num(terbaru._sum.greenBean)
+        : 0;
+    return {
+        jumlahPetani, jumlahDesa, jumlahKelompok,
+        luasArealKopiHa: num(areal._sum.luasArealKopiHa),
+        luasPlotHa,
+        pohonProduktif: num(plot._sum.pohonProduktif),
+        tahunTerbaru: terbaru?.tahun ?? null,
+        produktivitasRata: luasPlotHa > 0 ? volumeTerbaru / luasPlotHa : 0,
+        trenProduksi: produksiTahun.map((t) => ({
+            tahun: String(t.tahun),
+            cherry: num(t._sum.cherry),
+            greenBean: num(t._sum.greenBean),
+            gabahBasah: num(t._sum.gabahBasah),
+            gabahKering: num(t._sum.gabahKering),
+        })),
+    };
+}
+
 // ---------- GAP: tingkat adopsi 21 praktik ----------
 export async function getGapAdoption() {
     const [totalPetani, rows] = await Promise.all([

@@ -8,10 +8,10 @@ import { prisma } from "@/lib/prisma";
 import { Prisma } from "@/app/generated/prisma/client";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { Plus, FileText, FileDown, Pencil, Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { Plus, Search, ChevronLeft, ChevronRight } from "lucide-react";
 import { pageWide } from "../layout-cls";
-import { DeleteButton } from "./delete-button";
-import { SortHeader, parseSort, nestedOrderBy } from "../_components/sort";
+import { parseSort, nestedOrderBy } from "../_components/sort";
+import { PetaniSelectTable } from "./select-table";
 
 const PER_PAGE = 20;
 
@@ -51,7 +51,7 @@ export default async function PetaniPage({
             : {}),
     };
 
-    const [total, items] = await Promise.all([
+    const [total, items, allIds] = await Promise.all([
         prisma.petani.count({ where }),
         prisma.petani.findMany({
             where,
@@ -64,6 +64,9 @@ export default async function PetaniPage({
                 kelompokTani: true,
             },
         }),
+        // Semua id hasil filter (bukan cuma halaman ini) untuk "pilih semua".
+        // Batasi 1000 agar payload tetap wajar; export di server juga dibatasi.
+        prisma.petani.findMany({ where, select: { id: true }, orderBy: { namaLengkap: "asc" }, take: 1000 }),
     ]);
 
     const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
@@ -112,80 +115,23 @@ export default async function PetaniPage({
                 </div>
             ) : (
                 <>
-                    <div className="mt-6 overflow-x-auto rounded-2xl bg-white shadow-sm ring-1 ring-gray-950/5">
-                        <table className="w-full min-w-[720px] text-sm">
-                            <thead>
-                            <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500">
-                                <SortHeader column="namaLengkap" label="Nama" sort={sort} dir={dir} params={sortParams} basePath="/petani" />
-                                <SortHeader column="kodePetani" label="Kode Petani" sort={sort} dir={dir} params={sortParams} basePath="/petani" />
-                                <SortHeader column="desa.nama" label="Desa" sort={sort} dir={dir} params={sortParams} basePath="/petani" />
-                                <SortHeader column="kelompokTani.nama" label="Kelompok" sort={sort} dir={dir} params={sortParams} basePath="/petani" />
-                                {isAdmin && <SortHeader column="createdBy.fullName" label="Penginput" sort={sort} dir={dir} params={sortParams} basePath="/petani" />}
-                                {/*<th className="px-5 py-3.5">Tanggal Input</th>*/}
-                                <th className="px-5 py-3.5 text-right">Aksi</th>
-                            </tr>
-                            </thead>
-                            <tbody className="divide-y divide-gray-100">
-                            {items.map((p) => (
-                                <tr key={p.id} className="transition-colors hover:bg-gray-50/50">
-                                    <td className="px-5 py-3.5 font-medium">
-                                        <Link
-                                            href={`/petani/${p.id}`}
-                                            className="text-gray-900 underline-offset-2 transition-colors hover:text-jade-800 hover:underline"
-                                        >
-                                            {p.namaLengkap}
-                                        </Link>
-                                    </td>
-                                    <td className="whitespace-nowrap px-5 py-3.5 text-gray-500">{p.kodePetani ?? "-"}</td>
-                                    <td className="px-5 py-3.5 text-gray-500">
-                                        {p.desa.nama}
-                                        <span className="block text-xs text-gray-500">Kec. {p.desa.kecamatan.nama}</span>
-                                    </td>
-                                    <td className="px-5 py-3.5 text-gray-500">
-                                        {p.kelompokTani ? p.kelompokTani.nama : "-"}
-                                        {p.kelompokTani?.kode && (
-                                            <span className="block text-xs text-gray-500">{p.kelompokTani.kode}</span>
-                                        )}
-                                    </td>
-                                    {isAdmin && (
-                                        <td className="px-5 py-3.5 text-gray-500">
-                                            {p.createdBy.fullName ?? p.createdBy.username}
-                                        </td>
-                                    )}
-                                    {/*<td className="whitespace-nowrap px-5 py-3.5 text-gray-500">*/}
-                                    {/*    {p.createdAt.toLocaleDateString("id-ID")}*/}
-                                    {/*</td>*/}
-                                    <td className="px-5 py-3.5">
-                                        <div className="flex items-center justify-end gap-1">
-                                            <a
-                                                href={`/petani/${p.id}/export/pdf`}
-                                                title="Unduh PDF"
-                                                className="rounded-lg p-2 text-red-500 transition-colors hover:bg-red-50"
-                                            >
-                                                <FileDown size={16} />
-                                            </a>
-                                            <a
-                                                href={`/petani/${p.id}/export/docx`}
-                                                title="Unduh Word"
-                                                className="rounded-lg p-2 text-blue-500 transition-colors hover:bg-blue-50"
-                                            >
-                                                <FileText size={16} />
-                                            </a>
-                                    <Link
-                                                href={`/petani/${p.id}/edit`} title="Edit"
-                                                className="rounded-lg p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-jade-800"
-                                            >
-                                                <Pencil size={16} />
-                                            </Link>
-                                            <DeleteButton
-                                                id={p.id} nama={p.namaLengkap} />
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
-                            </tbody>
-                        </table>
-                    </div>
+                    <PetaniSelectTable
+                        rows={items.map((p) => ({
+                            id: p.id,
+                            namaLengkap: p.namaLengkap,
+                            kodePetani: p.kodePetani,
+                            desaNama: p.desa.nama,
+                            kecamatanNama: p.desa.kecamatan.nama,
+                            kelompokNama: p.kelompokTani?.nama ?? null,
+                            kelompokKode: p.kelompokTani?.kode ?? null,
+                            penginput: p.createdBy.fullName ?? p.createdBy.username,
+                        }))}
+                        allIds={allIds.map((a) => a.id)}
+                        isAdmin={isAdmin}
+                        sort={sort}
+                        dir={dir}
+                        sortParams={sortParams}
+                    />
 
                     {totalPages > 1 && (
                         <div className="mt-4 flex items-center justify-between text-sm text-gray-500">
