@@ -1,5 +1,7 @@
 // app/api/foto/[...key]/route.ts
-import { auth } from "@/auth";
+// Route publik: foto plot bisa dibuka tanpa login (key berupa UUID acak,
+// jadi berperan sebagai capability URL). Tetap tolak path traversal & key
+// di luar prefix petani.
 import { getR2 } from "@/lib/r2";
 
 export const runtime = "nodejs";
@@ -8,9 +10,6 @@ export async function GET(
     _req: Request,
     { params }: { params: Promise<{ key: string[] }> }
 ) {
-    const session = await auth();
-    if (!session?.user) return new Response("Unauthorized", { status: 401 });
-
     const { key } = await params;
     const objectKey = key.join("/");
     // Tolak path traversal & key di luar prefix petani
