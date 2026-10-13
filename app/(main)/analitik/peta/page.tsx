@@ -13,9 +13,8 @@ import { MapView } from "../_components/map";
 export default async function PetaPage() {
     const session = await auth();
     if (!session?.user) redirect("/login");
-    if (session.user.role !== "ADMIN") redirect("/");
 
-    const { desa, plot } = await getLokasi();
+    const { desa, plot } = await getLokasi(session.user.role === "ADMIN" ? undefined : session.user.id);
     const totalLuas = desa.reduce((s, d) => s + d.luasArealKopiHa, 0);
 
     return (

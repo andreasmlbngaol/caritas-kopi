@@ -14,9 +14,10 @@ import { HBarChartX, DonutChartX } from "../_components/charts";
 export default async function PasarPage() {
     const session = await auth();
     if (!session?.user) redirect("/login");
-    if (session.user.role !== "ADMIN") redirect("/");
 
-    const { produk, pasar, totalPetani } = await getPasarProduk();
+    const { produk, pasar, totalPetani } = await getPasarProduk(
+        session.user.role === "ADMIN" ? undefined : session.user.id,
+    );
 
     const produkLabel = new Map<string, string>(PRODUK.map((p) => [p.jenis, p.label]));
     const pasarLabel = new Map<string, string>(PASAR.map((p) => [p.kategori, p.label]));

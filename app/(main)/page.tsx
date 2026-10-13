@@ -121,6 +121,24 @@ export default async function HomePage() {
                         />
                     </div>
                 )}
+
+                {/* Analitik data Anda sendiri */}
+                <h2 className="mt-10 text-sm font-semibold tracking-tight">Analitik data Anda</h2>
+                <p className="mt-1 text-xs text-gray-500">Hanya menghitung data yang Anda inputkan.</p>
+                <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    {KATEGORI.map((k) => (
+                        <Link key={k.href} href={k.href}
+                            className="group flex items-start justify-between gap-4 rounded-2xl bg-white p-5 shadow-sm ring-1 ring-gray-950/5 transition-all hover:-translate-y-0.5 hover:shadow-md hover:ring-jade-700/40">
+                            <div>
+                                <p className="text-sm font-semibold text-gray-900">{k.label}</p>
+                                <p className="mt-1 text-xs text-gray-500">{k.desc}</p>
+                            </div>
+                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-jade-50 text-jade-800 transition-colors group-hover:bg-jade-100">
+                                <k.icon size={18} />
+                            </div>
+                        </Link>
+                    ))}
+                </div>
             </main>
         );
     }

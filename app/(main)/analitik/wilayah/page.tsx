@@ -14,9 +14,8 @@ import { HBarChartX, DonutChartX, BarChartX } from "../_components/charts";
 export default async function WilayahPage() {
     const session = await auth();
     if (!session?.user) redirect("/login");
-    if (session.user.role !== "ADMIN") redirect("/");
 
-    const w = await getWilayah();
+    const w = await getWilayah(session.user.role === "ADMIN" ? undefined : session.user.id);
     const lembagaLabel = new Map(LEMBAGA.map((l) => [l.jenis, l.label]));
     const kebijakanLabel = new Map(KEBIJAKAN.map((k) => [k.jenis, k.label]));
     const short = (s: string) => (s.length > 28 ? s.slice(0, 26).trimEnd() + "…" : s);

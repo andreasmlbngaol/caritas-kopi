@@ -17,9 +17,8 @@ const labelOf = (opts: readonly { value: string; label: string }[], v: string) =
 export default async function AgronomiPage() {
     const session = await auth();
     if (!session?.user) redirect("/login");
-    if (session.user.role !== "ADMIN") redirect("/");
 
-    const a = await getAgronomi();
+    const a = await getAgronomi(session.user.role === "ADMIN" ? undefined : session.user.id);
     const short = (s: string) => (s.length > 26 ? s.slice(0, 24).trimEnd() + "…" : s);
 
     const varietasData = a.varietas.map((v) => ({ label: short(v.nama), jumlah: v.jumlah }));

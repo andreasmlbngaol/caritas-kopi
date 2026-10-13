@@ -13,9 +13,10 @@ import { LineChartX, BarChartX, StackedBarChartX } from "../_components/charts";
 export default async function ProduksiPage() {
     const session = await auth();
     if (!session?.user) redirect("/login");
-    if (session.user.role !== "ADMIN") redirect("/");
 
-    const { byTahun, topDesa, tahunTerbaru } = await getProduksi();
+    const { byTahun, topDesa, tahunTerbaru } = await getProduksi(
+        session.user.role === "ADMIN" ? undefined : session.user.id,
+    );
     const terbaru = byTahun.at(-1);
     const totalTerbaru = terbaru
         ? terbaru.cherry + terbaru.gabahBasah + terbaru.gabahKering + terbaru.greenBean

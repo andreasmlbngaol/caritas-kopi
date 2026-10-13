@@ -2,6 +2,7 @@
 // Agregasi server-side untuk dashboard & halaman analitik (khusus ADMIN).
 import { prisma } from "@/lib/prisma";
 import type { JenisPraktikGap } from "@/app/generated/prisma/enums";
+import type { PetaniWhereInput, BaselineDesaWhereInput } from "@/app/generated/prisma/models";
 
 const num = (v: unknown): number => (v == null ? 0 : Number(v));
 
@@ -28,6 +29,18 @@ function pickSpelling(variants: Map<string, number>): string {
     }
     return best;
 }
+
+// Scope data: `userId` diisi untuk ENUMERATOR (hanya data miliknya), `undefined`
+// untuk ADMIN (seluruh data). Dipakai di semua query analitik.
+const petaniWhere = (userId?: string): PetaniWhereInput =>
+    userId ? { createdById: userId } : {};
+const desaWhere = (userId?: string): BaselineDesaWhereInput =>
+    userId ? { createdById: userId } : {};
+// Filter relasi ke Petani (dipakai untuk model anak: plot, produksi, produk, dst).
+const relPetani = (userId?: string): { petani: PetaniWhereInput } | undefined =>
+    userId ? { petani: { createdById: userId } } : undefined;
+const relBaseline = (userId?: string): { baseline: BaselineDesaWhereInput } | undefined =>
+    userId ? { baseline: { createdById: userId } } : undefined;
 
 // Hitung frekuensi teks bebas secara case-insensitive; kembalikan [{nama, jumlah}].
 function tally<T>(rows: T[], get: (row: T) => string | null | undefined): { nama: string; jumlah: number }[] {
@@ -133,10 +146,11 @@ export async function getRingkasanSaya(userId: string) {
 }
 
 // ---------- GAP: tingkat adopsi 21 praktik ----------
-export async function getGapAdoption() {
+export async function getGapAdoption(userId?: string) {
+    const rel = relPetani(userId);
     const [totalPetani, rows] = await Promise.all([
-        prisma.petani.count(),
-        prisma.praktikGap.groupBy({ by: ["jenis", "jawaban"], _count: true }),
+        prisma.petani.count({ where: petaniWhere(userId) }),
+        prisma.praktikGap.groupBy({ by: ["jenis", "jawaban"], where: rel, _count: true }),
     ]);
 
     const map = new Map<string, { ya: number; tidak: number; kadang: number }>();
@@ -163,23 +177,27 @@ export async function getGapAdoption() {
 }
 
 // ---------- Produksi ----------
-export async function getProduksi() {
+export async function getProduksi(userId?: string) {
+    const rel = relPetani(userId);
     const [byTahun, terbaruRows, plotArea, allRiwayat] = await Promise.all([
         prisma.riwayatProduksi.groupBy({
             by: ["tahun"],
+            where: rel,
             _sum: { cherry: true, gabahBasah: true, gabahKering: true, greenBean: true },
             _count: true,
             orderBy: { tahun: "asc" },
         }),
         prisma.riwayatProduksi.findMany({
+            where: rel,
             select: {
                 tahun: true, cherry: true, gabahBasah: true, gabahKering: true, greenBean: true,
                 petani: { select: { desa: { select: { nama: true } } } },
             },
         }),
         // Luas kopi per petani (untuk produktivitas nyata kg/ha per tahun).
-        prisma.plotPetani.groupBy({ by: ["petaniId"], _sum: { luasKopiHa: true } }),
+        prisma.plotPetani.groupBy({ by: ["petaniId"], where: rel, _sum: { luasKopiHa: true } }),
         prisma.riwayatProduksi.findMany({
+            where: rel,
             select: { tahun: true, petaniId: true, cherry: true, gabahBasah: true, gabahKering: true, greenBean: true },
         }),
     ]);
@@ -234,19 +252,20 @@ export async function getProduksi() {
 }
 
 // ---------- Pasar & Produk ----------
-export async function getPasarProduk() {
+export async function getPasarProduk(userId?: string) {
+    const rel = relPetani(userId);
     const [produk, pasar, totalPetani, volumeByJenis] = await Promise.all([
         prisma.produkDijual.findMany({
-            where: { dijual: true },
+            where: { dijual: true, ...rel },
             select: { jenis: true, labelCustom: true, volumeKgTahun: true },
         }),
         prisma.pasarPetani.findMany({
-            where: { aktif: true },
+            where: { aktif: true, ...rel },
             select: { kategori: true, labelCustom: true, persentase: true, profilPenjual: true },
         }),
-        prisma.petani.count(),
+        prisma.petani.count({ where: petaniWhere(userId) }),
         // volume "lainnya" yang mungkin tercatat walau baris tidak ditandai dijual
-        prisma.produkDijual.groupBy({ by: ["jenis"], _sum: { volumeKgTahun: true } }),
+        prisma.produkDijual.groupBy({ by: ["jenis"], where: rel, _sum: { volumeKgTahun: true } }),
     ]);
 
     // Kelompokkan: label tetap + tiap labelCustom "Lainnya" jadi barisnya sendiri.
@@ -292,16 +311,21 @@ export async function getPasarProduk() {
 }
 
 // ---------- Konservasi & Kondisi Kebun ----------
-export async function getKonservasi() {
+export async function getKonservasi(userId?: string) {
+    const pRel = relPetani(userId);
+    const pScope = petaniWhere(userId);
+    const dScope = desaWhere(userId);
     const [kondisi, totalPetani, desa, desaRows] = await Promise.all([
-        prisma.kondisiKebun.groupBy({ by: ["jenis"], where: { jawaban: true }, _count: true }),
-        prisma.petani.count(),
+        prisma.kondisiKebun.groupBy({ by: ["jenis"], where: { jawaban: true, ...pRel }, _count: true }),
+        prisma.petani.count({ where: pScope }),
         prisma.baselineDesa.aggregate({
+            where: dScope,
             _sum: { luasPenyanggaHa: true, luasAPLHa: true, tutupanHutan: true, tutupanAgroforestry: true },
             _avg: { jarakKonservasiKm: true },
             _count: true,
         }),
         prisma.baselineDesa.findMany({
+            where: dScope,
             select: {
                 rawanLongsor: true, rawanErosi: true, konflikSatwa: true, berbatasanKonservasi: true,
                 jenisSatwaKonflik: true, namaKawasanKonservasi: true, praktikKonservasi: true,
@@ -350,11 +374,14 @@ export async function getKonservasi() {
 }
 
 // ---------- Wilayah & Kelembagaan ----------
-export async function getWilayah() {
+export async function getWilayah(userId?: string) {
+    const pScope = petaniWhere(userId);
+    const dScope = desaWhere(userId);
     const [perDesa, perGender, desaList, lembaga, kebijakan, petaniLahir] = await Promise.all([
-        prisma.petani.groupBy({ by: ["desaKode"], _count: true }),
-        prisma.petani.groupBy({ by: ["jenisKelamin"], _count: true }),
+        prisma.petani.groupBy({ by: ["desaKode"], where: pScope, _count: true }),
+        prisma.petani.groupBy({ by: ["jenisKelamin"], where: pScope, _count: true }),
         prisma.baselineDesa.findMany({
+            where: dScope,
             select: {
                 jumlahPenduduk: true, luasArealKopiHa: true, jumlahPetaniKopi: true, jumlahKK: true,
                 luasWilayahHa: true, luasKomoditiLainHa: true,
@@ -365,9 +392,9 @@ export async function getWilayah() {
                 wilayah: { select: { nama: true, kecamatan: { select: { nama: true } } } },
             },
         }),
-        prisma.kelembagaanDesa.groupBy({ by: ["jenis"], _sum: { jumlah: true }, _count: true }),
-        prisma.kebijakanDesa.groupBy({ by: ["jenis"], where: { ada: true }, _count: true }),
-        prisma.petani.findMany({ where: { tanggalLahir: { not: null } }, select: { tanggalLahir: true } }),
+        prisma.kelembagaanDesa.groupBy({ by: ["jenis"], where: relBaseline(userId), _sum: { jumlah: true }, _count: true }),
+        prisma.kebijakanDesa.groupBy({ by: ["jenis"], where: { ada: true, ...relBaseline(userId) }, _count: true }),
+        prisma.petani.findMany({ where: { tanggalLahir: { not: null }, ...pScope }, select: { tanggalLahir: true } }),
     ]);
 
     const desaKodeSet = new Set(perDesa.map((d) => d.desaKode));
@@ -446,9 +473,11 @@ export async function getWilayah() {
 }
 
 // ---------- Agronomi Plot (varietas, budidaya, naungan, pestisida) ----------
-export async function getAgronomi() {
+export async function getAgronomi(userId?: string) {
+    const rel = relPetani(userId);
     const [plots, shadeRows, totalPetani] = await Promise.all([
         prisma.plotPetani.findMany({
+            where: rel,
             select: {
                 varietas: true, sistemBudidaya: true, statusKepemilikan: true, areaKonservasi: true,
                 tahunTanam: true, luasKopiHa: true, pohonProduktif: true, pohonTidakProduktif: true,
@@ -457,9 +486,10 @@ export async function getAgronomi() {
             },
         }),
         prisma.tanamanNaungan.findMany({
+            where: rel,
             select: { jenis: true, jumlah: true, pemangkasan: true, petaniId: true },
         }),
-        prisma.petani.count(),
+        prisma.petani.count({ where: petaniWhere(userId) }),
     ]);
 
     const counter = (get: (p: (typeof plots)[number]) => string | null | undefined) =>
@@ -530,10 +560,12 @@ export async function getAgronomi() {
 }
 
 // ---------- Lokasi (koordinat untuk peta) ----------
-export async function getLokasi() {
+export async function getLokasi(userId?: string) {
+    const pRel = relPetani(userId);
+    const dScope = desaWhere(userId);
     const [desa, plots] = await Promise.all([
         prisma.baselineDesa.findMany({
-            where: { latitude: { not: null }, longitude: { not: null } },
+            where: { latitude: { not: null }, longitude: { not: null }, ...dScope },
             select: {
                 latitude: true, longitude: true, luasArealKopiHa: true, jumlahPetaniKopi: true, jumlahPenduduk: true,
                 ketinggianMdpl: true,
@@ -541,7 +573,7 @@ export async function getLokasi() {
             },
         }),
         prisma.plotPetani.findMany({
-            where: { fotoLatitude: { not: null }, fotoLongitude: { not: null } },
+            where: { fotoLatitude: { not: null }, fotoLongitude: { not: null }, ...pRel },
             select: {
                 fotoLatitude: true, fotoLongitude: true, luasKopiHa: true, varietas: true, namaHamparan: true,
                 petani: { select: { namaLengkap: true, desa: { select: { nama: true } } } },

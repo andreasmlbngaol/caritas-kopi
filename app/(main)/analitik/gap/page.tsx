@@ -14,9 +14,10 @@ import { ProportionBarX } from "../_components/charts";
 export default async function GapPage() {
     const session = await auth();
     if (!session?.user) redirect("/login");
-    if (session.user.role !== "ADMIN") redirect("/");
 
-    const { totalPetani, items, adopsiKeseluruhan } = await getGapAdoption();
+    const { totalPetani, items, adopsiKeseluruhan } = await getGapAdoption(
+        session.user.role === "ADMIN" ? undefined : session.user.id,
+    );
     const labelOf = new Map(GAP_GROUPS.flatMap((g) => g.items).map((i) => [i.jenis, i.label]));
     const itemOf = new Map(items.map((i) => [i.jenis, i]));
 

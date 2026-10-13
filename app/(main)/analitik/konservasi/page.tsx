@@ -14,9 +14,8 @@ import { HBarChartX } from "../_components/charts";
 export default async function KonservasiPage() {
     const session = await auth();
     if (!session?.user) redirect("/login");
-    if (session.user.role !== "ADMIN") redirect("/");
 
-    const k = await getKonservasi();
+    const k = await getKonservasi(session.user.role === "ADMIN" ? undefined : session.user.id);
     const labelOf = new Map(KONDISI_KEBUN.map((c) => [c.jenis, c.label]));
     const short = (s: string) => (s.length > 40 ? s.slice(0, 38).trimEnd() + "…" : s);
 

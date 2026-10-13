@@ -27,7 +27,7 @@ const menus = [
     { href: "/admin/users", label: "Kelola Pengguna", icon: Key, adminOnly: true },
 ];
 
-// Menu analitik - khusus ADMIN, dipisah per kategori domain.
+// Menu analitik - tersedia untuk ADMIN (semua data) & ENUMERATOR (data sendiri).
 const analyticsMenus = [
     { href: "/analitik/gap", label: "GAP", icon: Sprout },
     { href: "/analitik/agronomi", label: "Agronomi Plot", icon: Leaf },
@@ -111,18 +111,14 @@ export function NavRail({ user, defaultExpanded = false }: { user: NavUser; defa
                 )}
                 {visibleMenus.map((menu) => renderItem(menu, collapsed))}
 
-                {isAdmin && (
-                    <>
-                        {!collapsed ? (
-                            <p className="px-3 pb-1 pt-4 text-[11px] font-semibold uppercase tracking-wider text-gray-500">
-                                Analitik
-                            </p>
-                        ) : (
-                            <div className="my-3 border-t border-gray-100" />
-                        )}
-                        {analyticsMenus.map((menu) => renderItem(menu, collapsed))}
-                    </>
+                {!collapsed ? (
+                    <p className="px-3 pb-1 pt-4 text-[11px] font-semibold uppercase tracking-wider text-gray-500">
+                        Analitik
+                    </p>
+                ) : (
+                    <div className="my-3 border-t border-gray-100" />
                 )}
+                {analyticsMenus.map((menu) => renderItem(menu, collapsed))}
             </>
         );
     }
