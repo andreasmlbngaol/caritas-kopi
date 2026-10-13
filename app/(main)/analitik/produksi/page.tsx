@@ -17,6 +17,9 @@ export default async function ProduksiPage() {
 
     const { byTahun, topDesa, tahunTerbaru } = await getProduksi();
     const terbaru = byTahun.at(-1);
+    const totalTerbaru = terbaru
+        ? terbaru.cherry + terbaru.gabahBasah + terbaru.gabahKering + terbaru.greenBean
+        : 0;
 
     return (
         <main className={pageWide}>
@@ -32,7 +35,7 @@ export default async function ProduksiPage() {
                 <StatTile label={`Cherry ${tahunTerbaru ?? "-"}`} value={fmt(terbaru?.cherry ?? 0)} unit="kg" />
                 <StatTile label={`Gabah basah ${tahunTerbaru ?? "-"}`} value={fmt(terbaru?.gabahBasah ?? 0)} unit="kg" />
                 <StatTile label={`Gabah kering ${tahunTerbaru ?? "-"}`} value={fmt(terbaru?.gabahKering ?? 0)} unit="kg" />
-                <StatTile label="Produktivitas rata-rata" value={fmt(terbaru?.produktivitasRata ?? 0, 1)} unit="kg/ha" hint={`Tahun ${tahunTerbaru ?? "-"}`} highlight />
+                <StatTile label="Produktivitas" value={fmt(totalTerbaru)} unit="kg" hint={`Rata-rata ${fmt(terbaru?.produktivitasRata ?? 0, 1)} kg/ha tahun ${tahunTerbaru ?? "-"}`} highlight />
             </div>
 
             <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">

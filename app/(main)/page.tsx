@@ -95,8 +95,8 @@ export default async function HomePage() {
                 {/* Ringkasan data yang Anda inputkan (bukan data enumerator lain) */}
                 <h2 className="mt-10 text-sm font-semibold tracking-tight">Ringkasan data Anda</h2>
                 <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                    <StatTile label="Luas areal kopi" value={fmt(r.luasArealKopiHa)} unit="ha" hint={`${fmt(r.luasPlotHa)} ha dari plot petani`} />
-                    <StatTile label="Produktivitas rata-rata" value={fmt(r.produktivitasRata, 1)} unit="kg/ha" hint={`Tahun ${r.tahunTerbaru ?? "-"}`} highlight />
+                    <StatTile label="Luas areal kopi" value={fmt(r.luasPlotHa)} unit="ha" hint="Dari plot petani" />
+                    <StatTile label="Produktivitas" value={fmt(r.volumeTerbaru)} unit="kg" hint={`Rata-rata ${fmt(r.produktivitasRata, 1)} kg/ha tahun ${r.tahunTerbaru ?? "-"}`} highlight />
                     <StatTile label="Pohon produktif" value={fmt(r.pohonProduktif)} hint="Dari seluruh plot petani Anda" />
                 </div>
 
@@ -175,7 +175,7 @@ export default async function HomePage() {
             {/* Angka umum */}
                 <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     <StatTile label="Luas areal kopi" value={fmt(r.luasPlotHa)} unit="ha" hint="Dari plot petani" />
-                    <StatTile label="Produktivitas" value={fmt(r.produktivitasRata, 1)} unit="kg/ha" hint={`Rata-rata tahun ${r.tahunTerbaru ?? "-"}`} />
+                    <StatTile label="Produktivitas" value={fmt(r.volumeTerbaru)} unit="kg" hint={`Rata-rata ${fmt(r.produktivitasRata, 1)} kg/ha tahun ${r.tahunTerbaru ?? "-"}`} />
                     <StatTile label="Pohon produktif" value={fmt(r.pohonProduktif)} hint="Dari seluruh plot petani" />
                 </div>
 

@@ -73,6 +73,7 @@ export async function getRingkasan() {
         luasPlotHa,
         pohonProduktif: num(plot._sum.pohonProduktif),
         tahunTerbaru: terbaru?.tahun ?? null,
+        volumeTerbaru,
         // Produktivitas nyata (kg/ha) = total volume tahun terbaru / luas plot.
         produktivitasRata: luasPlotHa > 0 ? volumeTerbaru / luasPlotHa : 0,
         trenProduksi: produksiTahun.map((t) => ({
@@ -119,6 +120,7 @@ export async function getRingkasanSaya(userId: string) {
         luasPlotHa,
         pohonProduktif: num(plot._sum.pohonProduktif),
         tahunTerbaru: terbaru?.tahun ?? null,
+        volumeTerbaru,
         produktivitasRata: luasPlotHa > 0 ? volumeTerbaru / luasPlotHa : 0,
         trenProduksi: produksiTahun.map((t) => ({
             tahun: String(t.tahun),
