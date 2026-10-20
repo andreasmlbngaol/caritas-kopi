@@ -31,7 +31,7 @@ export default async function PetaniPage({
 }: {
     searchParams: Promise<{
         q?: string; page?: string; sort?: string; dir?: string;
-        wilayah?: string; penginput?: string; perPage?: string;
+        wilayah?: string; perPage?: string;
     }>;
 }) {
     const session = await auth();
@@ -39,10 +39,12 @@ export default async function PetaniPage({
 
     const isAdmin = session.user.role === "ADMIN";
     const sp = await searchParams;
-    const { q = "", page = "1", wilayah = "", penginput = "" } = sp;
-    // Satu filter wilayah: hanya boleh desa ATAU kelompok tani.
+    const { q = "", page = "1", wilayah = "" } = sp;
+    // Satu filter saja: desa ATAU kelompok tani ATAU penginput (saling eksklusif,
+    // karena kelompok tani terikat ke desa dan penginput mencakup satu kabupaten).
     const desaFilter = wilayah.startsWith("desa:") ? wilayah.slice(5) : "";
     const kelompokFilter = wilayah.startsWith("kelompok:") ? wilayah.slice(9) : "";
+    const penginputFilter = wilayah.startsWith("penginput:") ? wilayah.slice(10) : "";
     const requestedPerPage = Number(sp.perPage);
     const perPage = PER_PAGE_OPTIONS.includes(requestedPerPage as (typeof PER_PAGE_OPTIONS)[number])
         ? requestedPerPage
@@ -53,7 +55,7 @@ export default async function PetaniPage({
     const scope: Prisma.PetaniWhereInput = isAdmin ? {} : { createdById: session.user.id };
     const where: Prisma.PetaniWhereInput = {
         ...scope,
-        ...(isAdmin && penginput ? { createdById: penginput } : {}),
+        ...(isAdmin && penginputFilter ? { createdById: penginputFilter } : {}),
         ...(desaFilter ? { desaKode: desaFilter } : {}),
         ...(kelompokFilter ? { kelompokTaniId: kelompokFilter } : {}),
         ...(q
@@ -118,12 +120,11 @@ export default async function PetaniPage({
         perPage: String(perPage),
         ...(q ? { q } : {}),
         ...(wilayah ? { wilayah } : {}),
-        ...(penginput ? { penginput } : {}),
     };
     const pageUrl = (p: number) =>
         `/petani?${new URLSearchParams({ ...filterParams, page: String(p) })}`;
     const sortParams: Record<string, string> = { ...filterParams };
-    const hasQueryFilter = Boolean(q || wilayah || penginput);
+    const hasQueryFilter = Boolean(q || wilayah);
     const hasFilter = hasQueryFilter || perPage !== DEFAULT_PER_PAGE;
 
     return (
@@ -153,9 +154,9 @@ export default async function PetaniPage({
                         />
                     </div>
 
-                    <div className="w-full sm:w-60">
-                        <FilterSelect name="wilayah" value={wilayah} label="Filter desa atau kelompok tani">
-                            <option value="">Semua wilayah</option>
+                    <div className="w-full sm:w-64">
+                        <FilterSelect name="wilayah" value={wilayah} label="Filter desa, kelompok tani, atau penginput">
+                            <option value="">Semua desa / kelompok / penginput</option>
                             <optgroup label="Desa">
                                 {desaOptions.map((d) => (
                                     <option key={`desa:${d.kode}`} value={`desa:${d.kode}`}>
@@ -170,15 +171,13 @@ export default async function PetaniPage({
                                     </option>
                                 ))}
                             </optgroup>
-                        </FilterSelect>
-                    </div>
-
-                    <div className="w-full sm:w-44">
-                        <FilterSelect name="penginput" value={penginput} label="Filter penginput">
-                            <option value="">Semua penginput</option>
-                            {penginputOptions.map((u) => (
-                                <option key={u.id} value={u.id}>{u.fullName ?? u.username}</option>
-                            ))}
+                            <optgroup label="Penginput">
+                                {penginputOptions.map((u) => (
+                                    <option key={`penginput:${u.id}`} value={`penginput:${u.id}`}>
+                                        {u.fullName ?? u.username}
+                                    </option>
+                                ))}
+                            </optgroup>
                         </FilterSelect>
                     </div>
 
