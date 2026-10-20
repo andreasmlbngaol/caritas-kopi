@@ -15,6 +15,10 @@
 [![Cloudflare R2](https://img.shields.io/badge/Cloudflare%20R2-F38020?style=for-the-badge&logo=cloudflare&logoColor=white)](https://developers.cloudflare.com/r2/)
 [![ESLint](https://img.shields.io/badge/ESLint-9-4034EA?style=for-the-badge&logo=eslint&logoColor=white)](https://eslint.org/)
 
+<br />
+
+[![Live App](https://img.shields.io/badge/Live%20App-caritas--kopi.vercel.app-0F766E?style=for-the-badge&logo=vercel&logoColor=white)](https://caritas-kopi.vercel.app)
+
 </div>
 
 Database Kopi is a web application for collecting **baseline data of coffee
@@ -28,8 +32,33 @@ Prisma, NextAuth, and Cloudflare R2 for photo storage.
 
 ---
 
+## Preview
+
+Aplikasi berjalan di **[caritas-kopi.vercel.app](https://caritas-kopi.vercel.app)**.
+Akun dibuat oleh admin, jadi halaman di dalam aplikasi hanya bisa dibuka
+setelah login.
+
+[![Dashboard Database Kopi](docs/preview/dashboard.webp)](https://caritas-kopi.vercel.app)
+
+| Analitik Produksi | Analitik GAP |
+|:-----------------:|:------------:|
+| [![Analitik Produksi](https://raw.githubusercontent.com/andreasmlbngaol/caritas-kopi/main/docs/preview/analitik-produksi.webp)](https://raw.githubusercontent.com/andreasmlbngaol/caritas-kopi/main/docs/preview/analitik-produksi.webp) | [![Analitik GAP](https://raw.githubusercontent.com/andreasmlbngaol/caritas-kopi/main/docs/preview/analitik-gap.webp)](https://raw.githubusercontent.com/andreasmlbngaol/caritas-kopi/main/docs/preview/analitik-gap.webp) |
+| **Analitik Agronomi Plot** | **Peta Sebaran** |
+| [![Analitik Agronomi Plot](https://raw.githubusercontent.com/andreasmlbngaol/caritas-kopi/main/docs/preview/analitik-agronomi.webp)](https://raw.githubusercontent.com/andreasmlbngaol/caritas-kopi/main/docs/preview/analitik-agronomi.webp) | [![Peta Sebaran](https://raw.githubusercontent.com/andreasmlbngaol/caritas-kopi/main/docs/preview/analitik-peta.webp)](https://raw.githubusercontent.com/andreasmlbngaol/caritas-kopi/main/docs/preview/analitik-peta.webp) |
+| **Data Petani** | **Halaman Masuk** |
+| [![Data Petani](https://raw.githubusercontent.com/andreasmlbngaol/caritas-kopi/main/docs/preview/petani.webp)](https://raw.githubusercontent.com/andreasmlbngaol/caritas-kopi/main/docs/preview/petani.webp) | [![Halaman Masuk](https://raw.githubusercontent.com/andreasmlbngaol/caritas-kopi/main/docs/preview/login.webp)](https://raw.githubusercontent.com/andreasmlbngaol/caritas-kopi/main/docs/preview/login.webp) |
+
+<p align="center">
+  <img src="docs/preview/dashboard-mobile.webp" width="240" alt="Dashboard pada layar kecil" />
+  <br />
+  <sub>Tampilan responsif di layar kecil</sub>
+</p>
+
+---
+
 ## Table of Contents
 
+- [Preview](#preview)
 - [Overview](#overview)
 - [Features](#features)
 - [Tech Stack](#tech-stack)
@@ -90,14 +119,14 @@ and a **responsive navigation** that collapses to a drawer on small screens.
 | **GAP practice tracking**      | Per-farmer checklist of 21 Good Agricultural Practice items (pruning, weeding, harvesting, etc.) grouped into 5 categories, with Ya/Tidak/Kadang responses and optional notes.                |
 | **Production & sales history** | Year-by-year production records with configurable units, plus product and market-channel tracking with percentages and buyer profiles.                                        |
 | **Garden condition audit**     | Binary yes/no checklist of 10 conservation / risk conditions (erosion, landfires, wildlife conflict, protected-area buffer, etc.) with optional notes.                        |
-| **Analytics dashboard** *(admin)* | Aggregate, read-only analytics across 7 categories — **GAP** (per-practice proportion bars), **Agronomi** (varieties, shade trees, age), **Produksi** (multi-year volume & productivity), **Pasar & Produk** (products, market channels), **Konservasi** (garden conditions, wildlife conflict, protected areas), **Wilayah** (demographics, institutions, policies), and **Peta** (Leaflet map of village & plot coordinates). Charts via `recharts`; free-text fields are grouped case-insensitively and placeholder "-" values excluded. |
+| **Analytics dashboard** *(admin)* | Aggregate, read-only analytics across 7 categories — **GAP** (per-practice proportion bars), **Agronomi** (varieties, shade trees, age), **Produksi** (multi-year volume & productivity), **Pasar & Produk** (products, market channels), **Konservasi** (garden conditions, wildlife conflict, protected areas), **Wilayah** (demographics, institutions, policies), and **Peta** (Leaflet map of village & plot coordinates). Setiap halaman punya filter desa (semua desa digabung atau satu desa), dihitung ulang di server tanpa cache. Charts via `recharts`; free-text fields are grouped case-insensitively and placeholder "-" values excluded. |
 | **Dark mode**                  | Class-based light/dark theme that follows the OS by default with a manual toggle (persisted in `localStorage`), applied before paint to avoid flashes. No `dark:` sprawl — the palette tokens are remapped in one place. |
 | **Responsive navigation**      | Collapsible icon/expanded rail on desktop with remembered state; on small screens it becomes a hamburger-triggered drawer.                                                       |
 | **Accessible & polished UI**   | Managed dialogs (focus trap, Esc, focus restore, ARIA), keyboard focus rings, reduced-motion support, per-route page titles, and skeleton loading states.                       |
 | **Photo upload**               | Authenticated image upload (JPG/PNG/WebP/HEIC, 10 MB max) processed via Sharp and stored on Cloudflare R2; served back through an authenticated `/api/foto/[key]` proxy.     |
 | **PDF exports**                | Per-record PDF generation via `@react-pdf/renderer` for both desa and petani, including embedded photos pulled through the auth-protected foto endpoint.                     |
 | **DOCX exports**               | Per-record Microsoft Word (`.docx`) generation via the `docx` library for both desa and petani.                                                                               |
-| **Search & pagination**        | Server-side search with `LIKE ILIKE` on petani and kelompok-tani lists; paginated farmer table (20 per page).                                                                  |
+| **Search & pagination**        | Server-side search on petani and kelompok-tani lists; farmer table with 10/20/40 rows per page, jump-to-page, and a single combined filter (desa, kelompok tani, or penginput). |
 | **Collapsible sidebar**        | Icon-only / expanded navigation rail with remembered state (1-year cookie) and per-user avatar initials; hamburger drawer on mobile.                                          |
 
 ## Tech Stack
@@ -128,7 +157,7 @@ and a **responsive navigation** that collapses to a drawer on small screens.
 - **PostgreSQL 16** — primary datastore via a managed connection (Supabase connection pooler in production).
 - **Prisma 6** — with the `@prisma/adapter-pg` (`PrismaPg`) engine-less adapter (no native query engine binary needed); schema, migrations, and seeding all driven by Prisma.
 - **Hikari-free pooling** — the `PrismaPg` adapter uses the lightweight `pg` driver with built-in connection pooling.
-- **6 migrations** — covering users, wilayah hierarchy, baseline desa, kelompok tani, and the full petani model (plots, naungan, GAP, produksi, produk, pasar, kondisi kebun).
+- **8 migrations** — covering users, wilayah hierarchy, baseline desa, kelompok tani, the full petani model (plots, naungan, GAP, produksi, produk, pasar, kondisi kebun), and a composite index for analytics scoping (`petani.created_by_id + desa_kode`).
 - **Automatic seed** — `npm run seed` creates the admin user from env vars; `npm run seed:wilayah` populates the region hierarchy from a SQL dump.
 
 ### Storage
@@ -251,9 +280,11 @@ Database Kopi/
 │  ├─ seed-sample.ts                 # Sample data (5 desa/petani/kelompok, SAMPEL- prefix)
 │  ├─ data/
 │  │  └─ wilayah.sql                 # Full Indonesian region codes + names dump
-│  └─ migrations/                    # 6 sequential migration folders
+│  └─ migrations/                    # 8 sequential migration folders
 ├─ public/
 │  └─ caritas_icon.webp              # App logo / favicon
+├─ docs/
+│  └─ preview/                       # Screenshot aplikasi untuk README (WebP)
 ├─ auth.ts                          # NextAuth instance (Credentials provider + role callbacks)
 ├─ auth.config.ts                   # NextAuth config (pages, JWT strategy, callbacks)
 ├─ proxy.ts                         # NextAuth middleware (route protection)
@@ -330,7 +361,9 @@ npm start                   # starts the production server
 ```
 
 For a production deployment, serve on a platform that supports Next.js App
-Router (Vercel, your own Node.js server, or a PM2-backed VPS). Ensure:
+Router (Vercel, your own Node.js server, or a PM2-backed VPS). The live instance
+runs on **Vercel** with a **Supabase** Postgres pooler and **Cloudflare R2** for
+photo storage: <https://caritas-kopi.vercel.app>. Ensure:
 
 - `DATABASE_URL` points to a managed PostgreSQL instance (with connection
   pooling if needed).
