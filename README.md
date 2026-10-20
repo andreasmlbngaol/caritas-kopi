@@ -34,18 +34,18 @@ Prisma, NextAuth, and Cloudflare R2 for photo storage.
 
 ## Preview
 
-Aplikasi berjalan di **[caritas-kopi.vercel.app](https://caritas-kopi.vercel.app)**.
-Akun dibuat oleh admin, jadi halaman di dalam aplikasi hanya bisa dibuka
-setelah login.
+The app is live at **[caritas-kopi.vercel.app](https://caritas-kopi.vercel.app)**.
+Accounts are provisioned by an admin, so the pages inside the app are only
+reachable after signing in.
 
 [![Dashboard Database Kopi](docs/preview/dashboard.webp)](https://caritas-kopi.vercel.app)
 
-| Analitik Produksi | Halaman Masuk |
-|:-----------------:|:-------------:|
-| [![Analitik Produksi](https://raw.githubusercontent.com/andreasmlbngaol/caritas-kopi/main/docs/preview/analitik-produksi.webp)](https://raw.githubusercontent.com/andreasmlbngaol/caritas-kopi/main/docs/preview/analitik-produksi.webp) | [![Halaman Masuk](https://raw.githubusercontent.com/andreasmlbngaol/caritas-kopi/main/docs/preview/login.webp)](https://raw.githubusercontent.com/andreasmlbngaol/caritas-kopi/main/docs/preview/login.webp) |
+| Production analytics | Sign-in page |
+|:--------------------:|:------------:|
+| [![Production analytics](https://raw.githubusercontent.com/andreasmlbngaol/caritas-kopi/main/docs/preview/analitik-produksi.webp)](https://raw.githubusercontent.com/andreasmlbngaol/caritas-kopi/main/docs/preview/analitik-produksi.webp) | [![Sign-in page](https://raw.githubusercontent.com/andreasmlbngaol/caritas-kopi/main/docs/preview/login.webp)](https://raw.githubusercontent.com/andreasmlbngaol/caritas-kopi/main/docs/preview/login.webp) |
 
-<sub>Screenshot diambil dari aplikasi live. Angka dan label data pada gambar
-disamarkan; data asli tidak ditampilkan di repositori ini.</sub>
+<sub>Screenshots taken from the live app. Numbers and data labels are blurred —
+no real records are published in this repository.</sub>
 
 ---
 
@@ -112,7 +112,7 @@ and a **responsive navigation** that collapses to a drawer on small screens.
 | **GAP practice tracking**      | Per-farmer checklist of 21 Good Agricultural Practice items (pruning, weeding, harvesting, etc.) grouped into 5 categories, with Ya/Tidak/Kadang responses and optional notes.                |
 | **Production & sales history** | Year-by-year production records with configurable units, plus product and market-channel tracking with percentages and buyer profiles.                                        |
 | **Garden condition audit**     | Binary yes/no checklist of 10 conservation / risk conditions (erosion, landfires, wildlife conflict, protected-area buffer, etc.) with optional notes.                        |
-| **Analytics dashboard** *(admin)* | Aggregate, read-only analytics across 7 categories — **GAP** (per-practice proportion bars), **Agronomi** (varieties, shade trees, age), **Produksi** (multi-year volume & productivity), **Pasar & Produk** (products, market channels), **Konservasi** (garden conditions, wildlife conflict, protected areas), **Wilayah** (demographics, institutions, policies), and **Peta** (Leaflet map of village & plot coordinates). Setiap halaman punya filter desa (semua desa digabung atau satu desa), dihitung ulang di server tanpa cache. Charts via `recharts`; free-text fields are grouped case-insensitively and placeholder "-" values excluded. |
+| **Analytics dashboard** *(admin)* | Aggregate, read-only analytics across 7 categories — **GAP** (per-practice proportion bars), **Agronomi** (varieties, shade trees, age), **Produksi** (multi-year volume & productivity), **Pasar & Produk** (products, market channels), **Konservasi** (garden conditions, wildlife conflict, protected areas), **Wilayah** (demographics, institutions, policies), and **Peta** (Leaflet map of village & plot coordinates). Every page has a village filter (all villages combined or a single village) that re-queries on the server, with no caching. Charts via `recharts`; free-text fields are grouped case-insensitively and placeholder "-" values excluded. |
 | **Dark mode**                  | Class-based light/dark theme that follows the OS by default with a manual toggle (persisted in `localStorage`), applied before paint to avoid flashes. No `dark:` sprawl — the palette tokens are remapped in one place. |
 | **Responsive navigation**      | Collapsible icon/expanded rail on desktop with remembered state; on small screens it becomes a hamburger-triggered drawer.                                                       |
 | **Accessible & polished UI**   | Managed dialogs (focus trap, Esc, focus restore, ARIA), keyboard focus rings, reduced-motion support, per-route page titles, and skeleton loading states.                       |
@@ -277,7 +277,7 @@ Database Kopi/
 ├─ public/
 │  └─ caritas_icon.webp              # App logo / favicon
 ├─ docs/
-│  └─ preview/                       # Screenshot aplikasi untuk README (WebP)
+│  └─ preview/                       # App screenshots for the README (WebP)
 ├─ auth.ts                          # NextAuth instance (Credentials provider + role callbacks)
 ├─ auth.config.ts                   # NextAuth config (pages, JWT strategy, callbacks)
 ├─ proxy.ts                         # NextAuth middleware (route protection)
