@@ -6,33 +6,52 @@ export const metadata: Metadata = { title: "Analitik Agronomi Plot" };
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { pageWide } from "../../layout-cls";
-import { getAgronomi } from "../queries";
+import { getAgronomi, getDesaOptions } from "../queries";
 import { STATUS_KEPEMILIKAN, SISTEM_BUDIDAYA } from "../../petani/constants";
 import { ChartCard, StatTile, fmt } from "../_components/analytics-ui";
 import { HBarChartX, DonutChartX, BarChartX } from "../_components/charts";
+import { DesaFilter } from "../_components/desa-filter";
 
 const labelOf = (opts: readonly { value: string; label: string }[], v: string) =>
     opts.find((o) => o.value === v)?.label ?? v;
 
-export default async function AgronomiPage() {
+export default async function AgronomiPage({
+    searchParams,
+}: {
+    searchParams: Promise<{ desa?: string }>;
+}) {
     const session = await auth();
     if (!session?.user) redirect("/login");
 
-    const a = await getAgronomi(session.user.role === "ADMIN" ? undefined : session.user.id);
+    const scope = session.user.role === "ADMIN" ? undefined : session.user.id;
+    const { desa } = await searchParams;
+    const [a, desaOptions] = await Promise.all([
+        getAgronomi(scope, desa),
+        getDesaOptions(scope),
+    ]);
     const short = (s: string) => (s.length > 26 ? s.slice(0, 24).trimEnd() + "…" : s);
 
     const varietasData = a.varietas.map((v) => ({ label: short(v.nama), jumlah: v.jumlah }));
-    const sistemData = a.sistemBudidaya.map((s) => ({ nama: labelOf(SISTEM_BUDIDAYA, s.nama), jumlah: s.jumlah }));
+    const sistemData = a.sistemBudidaya
+        .filter((s) => s.jumlah > 0)
+        .map((s) => ({
+            nama: s.nama === "KOSONG" ? "Belum terisi" : labelOf(SISTEM_BUDIDAYA, s.nama),
+            jumlah: s.jumlah,
+        }));
+    const sistemKosong = sistemData.find((s) => s.nama === "Belum terisi")?.jumlah ?? 0;
     const kepemilikanData = a.kepemilikan.map((k) => ({ nama: labelOf(STATUS_KEPEMILIKAN, k.nama), jumlah: k.jumlah }));
     const naunganData = a.naungan.map((n) => ({ label: short(n.nama), petani: n.petani }));
 
     return (
         <main className={pageWide}>
-            <header>
-                <h1 className="text-lg font-semibold tracking-tight">Analitik Agronomi Plot</h1>
-                <p className="mt-1 text-sm text-gray-500">
-                    Varietas, sistem budidaya, kepemilikan lahan, naungan, dan umur tanaman.
-                </p>
+            <header className="flex flex-wrap items-end justify-between gap-4">
+                <div>
+                    <h1 className="text-lg font-semibold tracking-tight">Analitik Agronomi Plot</h1>
+                    <p className="mt-1 text-sm text-gray-500">
+                        Varietas, sistem budidaya, kepemilikan lahan, naungan, dan umur tanaman.
+                    </p>
+                </div>
+                <DesaFilter options={desaOptions} value={desa} />
             </header>
 
             <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -46,8 +65,13 @@ export default async function AgronomiPage() {
                 <ChartCard title="Varietas kopi" desc="Jumlah plot per varietas (multi-varietas dihitung masing-masing)">
                     <HBarChartX data={varietasData} yKey="label" xKey="jumlah" unit="plot" valueLabel="Plot" height={340} />
                 </ChartCard>
-                <ChartCard title="Sistem budidaya">
-                    <DonutChartX data={sistemData} nameKey="nama" valueKey="jumlah" height={340} />
+                <ChartCard title="Sistem budidaya" desc="Jumlah plot per sistem, termasuk yang belum terisi">
+                    <DonutChartX data={sistemData} nameKey="nama" valueKey="jumlah" unit="plot" height={340} />
+                    {sistemKosong > 0 && (
+                        <p className="mt-2 text-center text-xs text-gray-500">
+                            Belum terisi: <span className="font-medium text-gray-700">{fmt(sistemKosong)}</span> plot
+                        </p>
+                    )}
                 </ChartCard>
             </div>
 
@@ -56,7 +80,7 @@ export default async function AgronomiPage() {
                     <DonutChartX data={kepemilikanData} nameKey="nama" valueKey="jumlah" height={300} />
                 </ChartCard>
                 <ChartCard title="Umur tanaman" desc="Jumlah tahun tanam (kohort) per kelompok umur">
-                    <BarChartX data={a.umur} xKey="label" yKey="jumlah" unit="tahun tanam" valueLabel="Tahun tanam" height={300} />
+                    <BarChartX data={a.umur} xKey="label" yKey="jumlah" unit="plot" valueLabel="Tahun tanam" height={300} />
                 </ChartCard>
                 <ChartCard title="Tanaman naungan" desc="Jumlah petani per jenis naungan">
                     <HBarChartX data={naunganData} yKey="label" xKey="petani" unit="petani" valueLabel="Petani" height={300} />

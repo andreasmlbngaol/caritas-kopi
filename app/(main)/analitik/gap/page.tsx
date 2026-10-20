@@ -6,18 +6,26 @@ export const metadata: Metadata = { title: "Analitik GAP" };
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { pageWide } from "../../layout-cls";
-import { getGapAdoption } from "../queries";
+import { getGapAdoption, getDesaOptions } from "../queries";
 import { GAP_GROUPS } from "../../petani/constants";
 import { ChartCard, StatTile, Meter, fmt } from "../_components/analytics-ui";
 import { ProportionBarX } from "../_components/charts";
+import { DesaFilter } from "../_components/desa-filter";
 
-export default async function GapPage() {
+export default async function GapPage({
+    searchParams,
+}: {
+    searchParams: Promise<{ desa?: string }>;
+}) {
     const session = await auth();
     if (!session?.user) redirect("/login");
 
-    const { totalPetani, items, adopsiKeseluruhan } = await getGapAdoption(
-        session.user.role === "ADMIN" ? undefined : session.user.id,
-    );
+    const scope = session.user.role === "ADMIN" ? undefined : session.user.id;
+    const { desa } = await searchParams;
+    const [{ totalPetani, items, adopsiKeseluruhan }, desaOptions] = await Promise.all([
+        getGapAdoption(scope, desa),
+        getDesaOptions(scope),
+    ]);
     const labelOf = new Map(GAP_GROUPS.flatMap((g) => g.items).map((i) => [i.jenis, i.label]));
     const itemOf = new Map(items.map((i) => [i.jenis, i]));
 
@@ -43,11 +51,14 @@ export default async function GapPage() {
 
     return (
         <main className={pageWide}>
-            <header>
-                <h1 className="text-lg font-semibold tracking-tight">Analitik GAP</h1>
-                <p className="mt-1 text-sm text-gray-500">
-                    Tingkat adopsi 21 praktik Good Agricultural Practices pada {fmt(totalPetani)} petani.
-                </p>
+            <header className="flex flex-wrap items-end justify-between gap-4">
+                <div>
+                    <h1 className="text-lg font-semibold tracking-tight">Analitik GAP</h1>
+                    <p className="mt-1 text-sm text-gray-500">
+                        Tingkat adopsi 21 praktik Good Agricultural Practices pada {fmt(totalPetani)} petani.
+                    </p>
+                </div>
+                <DesaFilter options={desaOptions} value={desa} />
             </header>
 
             <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">

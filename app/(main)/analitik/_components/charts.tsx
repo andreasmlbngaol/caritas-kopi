@@ -117,6 +117,142 @@ export function StackedBarChartX({
     );
 }
 
+// ---------- Bar berkelompok bertumpuk ----------
+// Dipakai untuk produksi per desa: tiap desa punya beberapa bar (tahun),
+// dan tiap bar ditumpuk per jenis olahan.
+type StackSeries = { key: string; label: string; color?: string };
+
+function StackTip({
+    active, payload, groups, series, unit,
+}: {
+    active?: boolean;
+    payload?: { dataKey?: string | number; name?: string; payload?: Record<string, unknown> }[];
+    groups: { key: string; label: string }[];
+    series: StackSeries[];
+    unit: string;
+}) {
+    const dark = useIsDark();
+    if (!active || !payload?.length) return null;
+    const row = payload[0]?.payload ?? {};
+    const rawKey = String(payload[0]?.dataKey ?? "");
+    const rawName = String(payload[0]?.name ?? "");
+    const group = groups.find((g) => g.key === rawKey.split("_")[0])
+        ?? groups.find((g) => rawName.startsWith(`${g.label} ·`));
+    if (!group) return null;
+    const entries = series.map((s, i) => ({
+        ...s,
+        color: s.color ?? SERIES[i % SERIES.length],
+        value: Number(row[`${group.key}_${s.key}`]) || 0,
+    }));
+    const total = entries.reduce((sum, e) => sum + e.value, 0);
+    return (
+        <div style={tooltipStyle(dark)}>
+            <div style={{ fontWeight: 600, marginBottom: 4 }}>
+                {String(row.nama ?? "")} · {group.label}
+            </div>
+            {entries.map((e) => (
+                <div key={e.key} style={{ display: "flex", alignItems: "center", gap: 6, lineHeight: 1.7 }}>
+                    <span style={{ width: 9, height: 9, borderRadius: 2, background: e.color, display: "inline-block" }} />
+                    <span style={{ flex: 1 }}>{e.label}</span>
+                    <span style={{ fontVariantNumeric: "tabular-nums" }}>
+                        {fmtNum(e.value)}{unit ? ` ${unit}` : ""}
+                    </span>
+                </div>
+            ))}
+            <div style={{
+                marginTop: 4, borderTop: `1px solid ${chartTheme(dark).GRID}`, paddingTop: 4,
+                display: "flex", justifyContent: "space-between", gap: 12,
+            }}>
+                <span style={{ fontWeight: 600 }}>Total</span>
+                <span style={{ fontVariantNumeric: "tabular-nums", fontWeight: 600 }}>
+                    {fmtNum(total)}{unit ? ` ${unit}` : ""}
+                </span>
+            </div>
+        </div>
+    );
+}
+
+function CategoryLegend({ series }: { series: StackSeries[] }) {
+    const dark = useIsDark();
+    return (
+        <div style={{
+            display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "6px 14px",
+            fontSize: 12, color: chartTheme(dark).INK,
+        }}>
+            {series.map((s, i) => (
+                <span key={s.key} style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+                    <span style={{
+                        width: 9, height: 9, borderRadius: 2, display: "inline-block",
+                        background: s.color ?? SERIES[i % SERIES.length],
+                    }} />
+                    {s.label}
+                </span>
+            ))}
+        </div>
+    );
+}
+
+export function GroupedStackedBarChartX({
+    data, xKey, groups, series, height = 360, unit = "", rotateLabels = false, minWidth, spread = false,
+}: {
+    data: Record<string, unknown>[];
+    xKey: string;
+    groups: { key: string; label: string }[];
+    series: StackSeries[];
+    height?: number; unit?: string;
+    rotateLabels?: boolean;
+    minWidth?: number;
+    spread?: boolean;
+}) {
+    const dark = useIsDark();
+    const t = chartTheme(dark);
+    return (
+        <div style={minWidth ? { minWidth } : undefined}>
+            <ResponsiveContainer width="100%" height={height}>
+                <BarChart
+                    data={data}
+                    margin={{ top: 8, right: 8, left: -8, bottom: rotateLabels ? 8 : 0 }}
+                    barGap={spread ? 12 : 2}
+                    barCategoryGap={spread ? "40%" : "16%"}
+                >
+                    <CartesianGrid vertical={false} stroke={t.GRID} />
+                    <XAxis
+                        dataKey={xKey}
+                        interval={0}
+                        tick={{ fill: t.MUTED, fontSize: 11 }}
+                        axisLine={{ stroke: t.AXIS }}
+                        tickLine={false}
+                        angle={rotateLabels ? -90 : 0}
+                        textAnchor={rotateLabels ? "end" : "middle"}
+                        height={rotateLabels ? 120 : 30}
+                    />
+                    <YAxis tick={{ fill: t.MUTED, fontSize: 11 }} axisLine={false} tickLine={false}
+                        tickFormatter={fmtNum} width={56} />
+                    <Tooltip
+                        shared={false}
+                        cursor={{ fill: "rgba(31,138,100,0.06)" }}
+                        content={<StackTip groups={groups} series={series} unit={unit} />}
+                    />
+                    <Legend content={<CategoryLegend series={series} />} />
+                    {groups.flatMap((g) =>
+                        series.map((s, i) => (
+                            <Bar
+                                key={`${g.key}_${s.key}`}
+                                dataKey={`${g.key}_${s.key}`}
+                                name={`${g.label} · ${s.label}`}
+                                stackId={g.key}
+                                fill={s.color ?? SERIES[i % SERIES.length]}
+                                maxBarSize={spread ? 56 : 18}
+                                radius={i === series.length - 1 ? [3, 3, 0, 0] : undefined}
+                            />
+                        )),
+                    )}
+                </BarChart>
+            </ResponsiveContainer>
+        </div>
+    );
+}
+
 // ---------- Bar proporsi (part-to-whole per baris, horizontal 100%) ----------
 // data: [{ label, ya, kadang, tidak }]; nilai di-plot sebagai proporsi.
 // Urutan sengaja: Tidak, Kadang, Ya - legend & tooltip membaca sama,

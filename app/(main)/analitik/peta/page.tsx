@@ -16,6 +16,7 @@ export default async function PetaPage() {
 
     const { desa, plot } = await getLokasi(session.user.role === "ADMIN" ? undefined : session.user.id);
     const totalLuas = desa.reduce((s, d) => s + d.luasArealKopiHa, 0);
+    const totalWilayah = desa.reduce((s, d) => s + d.luasWilayahHa, 0);
 
     return (
         <main className={pageWide}>
@@ -26,9 +27,10 @@ export default async function PetaPage() {
                 </p>
             </header>
 
-            <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 <StatTile label="Desa terpetakan" value={fmt(desa.length)} highlight />
                 <StatTile label="Plot berkoordinat" value={fmt(plot.length)} />
+                <StatTile label="Luas wilayah (desa)" value={fmt(totalWilayah)} unit="ha" />
                 <StatTile label="Luas areal kopi (desa)" value={fmt(totalLuas)} unit="ha" />
             </div>
 
@@ -50,12 +52,13 @@ export default async function PetaPage() {
                 <div className="mt-6">
                     <ChartCard title="Daftar desa terpetakan">
                         <div className="overflow-x-auto">
-                            <table className="w-full min-w-[560px] text-sm">
+                            <table className="w-full min-w-[720px] text-sm">
                                 <thead>
                                     <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500">
                                         <th className="py-2 pr-3">Desa</th>
                                         <th className="py-2 pr-3">Kecamatan</th>
                                         <th className="py-2 pr-3 text-right">Koordinat</th>
+                                        <th className="py-2 pr-3 text-right">Luas wilayah (ha)</th>
                                         <th className="py-2 pr-3 text-right">Luas kopi (ha)</th>
                                     </tr>
                                 </thead>
@@ -65,6 +68,7 @@ export default async function PetaPage() {
                                             <td className="py-2 pr-3 font-medium text-gray-900">{d.nama}</td>
                                             <td className="py-2 pr-3 text-gray-500">{d.kecamatan}, {d.kabupaten}</td>
                                             <td className="py-2 pr-3 text-right tabular-nums text-gray-500">{d.lat.toFixed(4)}, {d.lng.toFixed(4)}</td>
+                                            <td className="py-2 pr-3 text-right tabular-nums">{fmt(d.luasWilayahHa)}</td>
                                             <td className="py-2 pr-3 text-right tabular-nums">{fmt(d.luasArealKopiHa)}</td>
                                         </tr>
                                     ))}

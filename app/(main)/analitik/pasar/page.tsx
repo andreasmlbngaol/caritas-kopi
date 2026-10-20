@@ -6,18 +6,26 @@ export const metadata: Metadata = { title: "Analitik Pasar & Produk" };
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { pageWide } from "../../layout-cls";
-import { getPasarProduk } from "../queries";
+import { getPasarProduk, getDesaOptions } from "../queries";
 import { PRODUK, PASAR } from "../../petani/constants";
 import { ChartCard, StatTile, fmt } from "../_components/analytics-ui";
 import { HBarChartX, DonutChartX } from "../_components/charts";
+import { DesaFilter } from "../_components/desa-filter";
 
-export default async function PasarPage() {
+export default async function PasarPage({
+    searchParams,
+}: {
+    searchParams: Promise<{ desa?: string }>;
+}) {
     const session = await auth();
     if (!session?.user) redirect("/login");
 
-    const { produk, pasar, totalPetani } = await getPasarProduk(
-        session.user.role === "ADMIN" ? undefined : session.user.id,
-    );
+    const scope = session.user.role === "ADMIN" ? undefined : session.user.id;
+    const { desa } = await searchParams;
+    const [{ produk, pasar, totalPetani }, desaOptions] = await Promise.all([
+        getPasarProduk(scope, desa),
+        getDesaOptions(scope),
+    ]);
 
     const produkLabel = new Map<string, string>(PRODUK.map((p) => [p.jenis, p.label]));
     const pasarLabel = new Map<string, string>(PASAR.map((p) => [p.kategori, p.label]));
@@ -33,11 +41,14 @@ export default async function PasarPage() {
 
     return (
         <main className={pageWide}>
-            <header>
-                <h1 className="text-lg font-semibold tracking-tight">Analitik Pasar & Produk</h1>
-                <p className="mt-1 text-sm text-gray-500">
-                    Sebaran jenis produk yang dijual dan kategori pasar petani (termasuk produk/kategori lainnya).
-                </p>
+            <header className="flex flex-wrap items-end justify-between gap-4">
+                <div>
+                    <h1 className="text-lg font-semibold tracking-tight">Analitik Pasar & Produk</h1>
+                    <p className="mt-1 text-sm text-gray-500">
+                        Sebaran jenis produk yang dijual dan kategori pasar petani (termasuk produk/kategori lainnya).
+                    </p>
+                </div>
+                <DesaFilter options={desaOptions} value={desa} />
             </header>
 
             <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">

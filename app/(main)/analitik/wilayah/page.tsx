@@ -6,16 +6,26 @@ export const metadata: Metadata = { title: "Analitik Wilayah & Kelembagaan" };
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { pageWide } from "../../layout-cls";
-import { getWilayah } from "../queries";
+import { getWilayah, getDesaOptions } from "../queries";
 import { KEBIJAKAN, LEMBAGA } from "../../desa/constants";
 import { ChartCard, StatTile, Meter, fmt } from "../_components/analytics-ui";
 import { HBarChartX, DonutChartX, BarChartX } from "../_components/charts";
+import { DesaFilter } from "../_components/desa-filter";
 
-export default async function WilayahPage() {
+export default async function WilayahPage({
+    searchParams,
+}: {
+    searchParams: Promise<{ desa?: string }>;
+}) {
     const session = await auth();
     if (!session?.user) redirect("/login");
 
-    const w = await getWilayah(session.user.role === "ADMIN" ? undefined : session.user.id);
+    const scope = session.user.role === "ADMIN" ? undefined : session.user.id;
+    const { desa } = await searchParams;
+    const [w, desaOptions] = await Promise.all([
+        getWilayah(scope, desa),
+        getDesaOptions(scope),
+    ]);
     const lembagaLabel = new Map(LEMBAGA.map((l) => [l.jenis, l.label]));
     const kebijakanLabel = new Map(KEBIJAKAN.map((k) => [k.jenis, k.label]));
     const short = (s: string) => (s.length > 28 ? s.slice(0, 26).trimEnd() + "…" : s);
@@ -50,14 +60,25 @@ export default async function WilayahPage() {
                 <ChartCard title="Top 10 desa - jumlah petani" desc="Berdasarkan data petani terinput">
                     <HBarChartX data={desaData} yKey="nama" xKey="petani" unit="petani" valueLabel="Petani" height={360} />
                 </ChartCard>
-                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                    <ChartCard title="Jenis kelamin petani">
-                        <DonutChartX data={genderData} nameKey="nama" valueKey="petani" height={300} />
-                    </ChartCard>
-                    <ChartCard title="Kelompok usia petani">
-                        <BarChartX data={w.usia} xKey="label" yKey="jumlah" unit="orang" valueLabel="Petani" height={300} />
-                    </ChartCard>
-                </div>
+                <ChartCard title="Demografi petani" desc="Jenis kelamin & kelompok usia, mengikuti filter desa">
+                    <div className="mb-4 flex justify-end">
+                        <DesaFilter options={desaOptions} value={desa} />
+                    </div>
+                    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                        <div>
+                            <h3 className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-gray-500">
+                                Jenis kelamin petani
+                            </h3>
+                            <DonutChartX data={genderData} nameKey="nama" valueKey="petani" height={300} />
+                        </div>
+                        <div>
+                            <h3 className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-gray-500">
+                                Kelompok usia petani
+                            </h3>
+                            <BarChartX data={w.usia} xKey="label" yKey="jumlah" unit="orang" valueLabel="Petani" height={300} />
+                        </div>
+                    </div>
+                </ChartCard>
             </div>
 
             <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
