@@ -40,19 +40,12 @@ setelah login.
 
 [![Dashboard Database Kopi](docs/preview/dashboard.webp)](https://caritas-kopi.vercel.app)
 
-| Analitik Produksi | Analitik GAP |
-|:-----------------:|:------------:|
-| [![Analitik Produksi](https://raw.githubusercontent.com/andreasmlbngaol/caritas-kopi/main/docs/preview/analitik-produksi.webp)](https://raw.githubusercontent.com/andreasmlbngaol/caritas-kopi/main/docs/preview/analitik-produksi.webp) | [![Analitik GAP](https://raw.githubusercontent.com/andreasmlbngaol/caritas-kopi/main/docs/preview/analitik-gap.webp)](https://raw.githubusercontent.com/andreasmlbngaol/caritas-kopi/main/docs/preview/analitik-gap.webp) |
-| **Analitik Agronomi Plot** | **Peta Sebaran** |
-| [![Analitik Agronomi Plot](https://raw.githubusercontent.com/andreasmlbngaol/caritas-kopi/main/docs/preview/analitik-agronomi.webp)](https://raw.githubusercontent.com/andreasmlbngaol/caritas-kopi/main/docs/preview/analitik-agronomi.webp) | [![Peta Sebaran](https://raw.githubusercontent.com/andreasmlbngaol/caritas-kopi/main/docs/preview/analitik-peta.webp)](https://raw.githubusercontent.com/andreasmlbngaol/caritas-kopi/main/docs/preview/analitik-peta.webp) |
-| **Data Petani** | **Halaman Masuk** |
-| [![Data Petani](https://raw.githubusercontent.com/andreasmlbngaol/caritas-kopi/main/docs/preview/petani.webp)](https://raw.githubusercontent.com/andreasmlbngaol/caritas-kopi/main/docs/preview/petani.webp) | [![Halaman Masuk](https://raw.githubusercontent.com/andreasmlbngaol/caritas-kopi/main/docs/preview/login.webp)](https://raw.githubusercontent.com/andreasmlbngaol/caritas-kopi/main/docs/preview/login.webp) |
+| Analitik Produksi | Halaman Masuk |
+|:-----------------:|:-------------:|
+| [![Analitik Produksi](https://raw.githubusercontent.com/andreasmlbngaol/caritas-kopi/main/docs/preview/analitik-produksi.webp)](https://raw.githubusercontent.com/andreasmlbngaol/caritas-kopi/main/docs/preview/analitik-produksi.webp) | [![Halaman Masuk](https://raw.githubusercontent.com/andreasmlbngaol/caritas-kopi/main/docs/preview/login.webp)](https://raw.githubusercontent.com/andreasmlbngaol/caritas-kopi/main/docs/preview/login.webp) |
 
-<p align="center">
-  <img src="docs/preview/dashboard-mobile.webp" width="240" alt="Dashboard pada layar kecil" />
-  <br />
-  <sub>Tampilan responsif di layar kecil</sub>
-</p>
+<sub>Screenshot diambil dari aplikasi live. Angka dan label data pada gambar
+disamarkan; data asli tidak ditampilkan di repositori ini.</sub>
 
 ---
 
