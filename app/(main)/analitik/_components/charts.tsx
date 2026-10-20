@@ -193,7 +193,7 @@ function CategoryLegend({ series }: { series: StackSeries[] }) {
 }
 
 export function GroupedStackedBarChartX({
-    data, xKey, groups, series, height = 360, unit = "", rotateLabels = false, minWidth, spread = false,
+    data, xKey, groups, series, height = 360, unit = "", rotateLabels = false, spread = false, yMax,
 }: {
     data: Record<string, unknown>[];
     xKey: string;
@@ -201,14 +201,13 @@ export function GroupedStackedBarChartX({
     series: StackSeries[];
     height?: number; unit?: string;
     rotateLabels?: boolean;
-    minWidth?: number;
     spread?: boolean;
+    yMax?: number;
 }) {
     const dark = useIsDark();
     const t = chartTheme(dark);
     return (
-        <div style={minWidth ? { minWidth } : undefined}>
-            <ResponsiveContainer width="100%" height={height}>
+        <ResponsiveContainer width="100%" height={height}>
                 <BarChart
                     data={data}
                     margin={{ top: 8, right: 8, left: -8, bottom: rotateLabels ? 8 : 0 }}
@@ -227,7 +226,8 @@ export function GroupedStackedBarChartX({
                         height={rotateLabels ? 120 : 30}
                     />
                     <YAxis tick={{ fill: t.MUTED, fontSize: 11 }} axisLine={false} tickLine={false}
-                        tickFormatter={fmtNum} width={56} />
+                        tickFormatter={fmtNum} width={56}
+                        domain={yMax && yMax > 0 ? [0, yMax] : undefined} />
                     <Tooltip
                         shared={false}
                         cursor={{ fill: "rgba(31,138,100,0.06)" }}
@@ -242,14 +242,16 @@ export function GroupedStackedBarChartX({
                                 name={`${g.label} · ${s.label}`}
                                 stackId={g.key}
                                 fill={s.color ?? SERIES[i % SERIES.length]}
-                                maxBarSize={spread ? 56 : 18}
+                                maxBarSize={spread ? 64 : 28}
                                 radius={i === series.length - 1 ? [3, 3, 0, 0] : undefined}
+                                // Area hover setinggi plot, supaya bar yang sangat
+                                // kecil tetap bisa di-hover dan memunculkan tooltip.
+                                background={{ fill: "transparent", pointerEvents: "all" }}
                             />
                         )),
                     )}
                 </BarChart>
             </ResponsiveContainer>
-        </div>
     );
 }
 

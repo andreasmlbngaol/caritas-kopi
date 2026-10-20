@@ -18,6 +18,10 @@ const KATEGORI_PRODUKSI = [
     { key: "greenBean", label: "Green bean" },
 ];
 
+// Maksimal desa per chart agar bar tetap terbaca. Lebih dari ini dipecah
+// menjadi beberapa chart yang ditumpuk ke bawah.
+const DESA_PER_CHART = 5;
+
 export default async function ProduksiPage({
     searchParams,
 }: {
@@ -36,6 +40,26 @@ export default async function ProduksiPage({
     const totalTerbaru = terbaru
         ? terbaru.cherry + terbaru.gabahBasah + terbaru.gabahKering + terbaru.greenBean
         : 0;
+
+    // Bagi rata ke beberapa chart, maksimal DESA_PER_CHART desa per chart.
+    const chunkCount = Math.ceil(perDesaTahun.length / DESA_PER_CHART);
+    const chunkBase = chunkCount > 0 ? Math.floor(perDesaTahun.length / chunkCount) : 0;
+    const chunkRemainder = chunkCount > 0 ? perDesaTahun.length % chunkCount : 0;
+    const desaChunks: { data: typeof perDesaTahun; start: number }[] = [];
+    let offset = 0;
+    for (let i = 0; i < chunkCount; i++) {
+        const size = chunkBase + (i < chunkRemainder ? 1 : 0);
+        desaChunks.push({ data: perDesaTahun.slice(offset, offset + size), start: offset + 1 });
+        offset += size;
+    }
+    // Skala Y disamakan antar-chart agar perbandingan desa tetap adil.
+    const maxPerTahun = perDesaTahun.reduce((max, d) => {
+        const perTahun = tahunDesa.map((t) =>
+            KATEGORI_PRODUKSI.reduce((sum, k) => sum + Number(d[`${t}_${k.key}`] ?? 0), 0),
+        );
+        return Math.max(max, ...perTahun);
+    }, 0);
+    const yMax = maxPerTahun > 0 ? Math.ceil(maxPerTahun * 1.05) : undefined;
 
     return (
         <main className={pageWide}>
@@ -79,19 +103,32 @@ export default async function ProduksiPage({
 
             <div className="mt-6">
                 <ChartCard title="Produksi per desa 2023–2026" desc="4 bar per desa (satu per tahun), tiap bar ditumpuk menurut jenis olahan">
-                    <div className="overflow-x-auto">
-                        <GroupedStackedBarChartX
-                            data={perDesaTahun}
-                            xKey="nama"
-                            groups={tahunDesa.map((t) => ({ key: String(t), label: String(t) }))}
-                            series={KATEGORI_PRODUKSI}
-                            unit="kg"
-                            rotateLabels={!desa}
-                            height={420}
-                            minWidth={desa ? undefined : Math.max(640, perDesaTahun.length * 72)}
-                            spread={Boolean(desa)}
-                        />
-                    </div>
+                    {desaChunks.length === 0 ? (
+                        <p className="py-10 text-center text-sm text-gray-500">Belum ada data produksi per desa.</p>
+                    ) : (
+                        <div className="space-y-6">
+                            {desaChunks.map(({ data, start }, i) => (
+                                <div key={i} className={i > 0 ? "border-t border-gray-100 pt-6" : ""}>
+                                    {desaChunks.length > 1 && (
+                                        <p className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-gray-400">
+                                            Peringkat {start}–{start + data.length - 1}
+                                        </p>
+                                    )}
+                                    <GroupedStackedBarChartX
+                                        data={data}
+                                        xKey="nama"
+                                        groups={tahunDesa.map((t) => ({ key: String(t), label: String(t) }))}
+                                        series={KATEGORI_PRODUKSI}
+                                        unit="kg"
+                                        rotateLabels={!desa}
+                                        height={420}
+                                        spread={Boolean(desa)}
+                                        yMax={yMax}
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </ChartCard>
             </div>
 
