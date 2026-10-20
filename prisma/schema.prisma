@@ -335,6 +335,8 @@ model Petani {
 
   @@index([createdById])
   @@index([desaKode])
+  // Mempercepat filter analitik: enumerator (createdById) + desa tertentu.
+  @@index([createdById, desaKode])
   @@map("petani")
 }
 

@@ -49,17 +49,16 @@ const relBaseline = (userId?: string, desaKode?: string): { baseline: BaselineDe
 
 // Daftar desa yang punya data (petani atau baseline) untuk dropdown filter.
 export async function getDesaOptions(userId?: string) {
-    const [petaniDesa, baseline] = await Promise.all([
-        prisma.petani.groupBy({ by: ["desaKode"], where: petaniWhere(userId) }),
-        prisma.baselineDesa.findMany({ where: desaWhere(userId), select: { desaKode: true } }),
-    ]);
-    const kodes = [...new Set([
-        ...petaniDesa.map((p) => p.desaKode),
-        ...baseline.map((b) => b.desaKode),
-    ])];
-    if (kodes.length === 0) return [];
+    // Satu query: desa yang punya petani ATAU baseline dalam scope user.
     const rows = await prisma.wilayahDesa.findMany({
-        where: { kode: { in: kodes } },
+        where: {
+            OR: [
+                { petani: { some: userId ? { createdById: userId } : {} } },
+                userId
+                    ? { baselineDesa: { is: { createdById: userId } } }
+                    : { baselineDesa: { isNot: null } },
+            ],
+        },
         select: { kode: true, nama: true, kecamatan: { select: { nama: true } } },
         orderBy: { nama: "asc" },
     });
@@ -203,47 +202,61 @@ export async function getGapAdoption(userId?: string, desaKode?: string) {
 // ---------- Produksi ----------
 export async function getProduksi(userId?: string, desaKode?: string) {
     const rel = relPetani(userId, desaKode);
-    const [byTahun, desaRows, plotArea, allRiwayat] = await Promise.all([
-        prisma.riwayatProduksi.groupBy({
-            by: ["tahun"],
-            where: rel,
-            _sum: { cherry: true, gabahBasah: true, gabahKering: true, greenBean: true },
-            _count: true,
-            orderBy: { tahun: "asc" },
-        }),
+    // Satu query untuk semua baris produksi, dipakai untuk rekap per tahun
+    // sekaligus produksi per desa. Luas plot tetap query terpisah untuk kg/ha.
+    const [rows, plotArea] = await Promise.all([
         prisma.riwayatProduksi.findMany({
             where: rel,
             select: {
-                tahun: true, cherry: true, gabahBasah: true, gabahKering: true, greenBean: true,
+                tahun: true, petaniId: true,
+                cherry: true, gabahBasah: true, gabahKering: true, greenBean: true,
                 petani: { select: { desa: { select: { nama: true } } } },
             },
+            orderBy: { tahun: "asc" },
         }),
         // Luas kopi per petani (untuk produktivitas nyata kg/ha per tahun).
         prisma.plotPetani.groupBy({ by: ["petaniId"], where: rel, _sum: { luasKopiHa: true } }),
-        prisma.riwayatProduksi.findMany({
-            where: rel,
-            select: { tahun: true, petaniId: true, cherry: true, gabahBasah: true, gabahKering: true, greenBean: true },
-        }),
     ]);
 
     // Produktivitas per tahun = total volume / total luas plot petani yang
     // melaporkan tahun itu. Bukan rata-rata nilai tersimpan (yang dulu salah
     // karena `produktivitas` tersimpan sebagai jumlah 4 kolom, bukan kg/ha).
     const areaOf = new Map(plotArea.map((p) => [p.petaniId, num(p._sum.luasKopiHa)]));
-    const perTahun = new Map<string, { volume: number; area: number }>();
-    for (const r of allRiwayat) {
+    type TahunAgg = {
+        cherry: number; gabahBasah: number; gabahKering: number; greenBean: number;
+        area: number; jumlahPetani: number;
+    };
+    const perTahun = new Map<string, TahunAgg>();
+    for (const r of rows) {
         const key = String(r.tahun);
-        const e = perTahun.get(key) ?? { volume: 0, area: 0 };
-        e.volume += num(r.cherry) + num(r.gabahBasah) + num(r.gabahKering) + num(r.greenBean);
+        const e = perTahun.get(key) ?? {
+            cherry: 0, gabahBasah: 0, gabahKering: 0, greenBean: 0, area: 0, jumlahPetani: 0,
+        };
+        e.cherry += num(r.cherry);
+        e.gabahBasah += num(r.gabahBasah);
+        e.gabahKering += num(r.gabahKering);
+        e.greenBean += num(r.greenBean);
         e.area += areaOf.get(r.petaniId) ?? 0;
+        e.jumlahPetani += 1;
         perTahun.set(key, e);
     }
-    const produktivitas = (tahun: number) => {
-        const e = perTahun.get(String(tahun));
-        return e && e.area > 0 ? e.volume / e.area : 0;
-    };
+    const byTahun = [...perTahun.entries()]
+        .sort(([a], [b]) => Number(a) - Number(b))
+        .map(([tahun, e]) => {
+            const total = e.cherry + e.gabahBasah + e.gabahKering + e.greenBean;
+            return {
+                tahun,
+                cherry: e.cherry,
+                gabahBasah: e.gabahBasah,
+                gabahKering: e.gabahKering,
+                greenBean: e.greenBean,
+                total,
+                produktivitasRata: e.area > 0 ? total / e.area : 0,
+                jumlahPetani: e.jumlahPetani,
+            };
+        });
 
-    const tahunTerbaru = byTahun.at(-1)?.tahun ?? null;
+    const tahunTerbaru = byTahun.length ? Number(byTahun[byTahun.length - 1].tahun) : null;
 
     // Produksi per desa untuk 4 tahun terakhir. Tiap tahun jadi satu bar
     // bertumpuk (cherry, gabah basah, gabah kering, green bean).
@@ -252,7 +265,7 @@ export async function getProduksi(userId?: string, desaKode?: string) {
     type Kategori = Record<(typeof KATEGORI)[number], number>;
     const emptyKategori = (): Kategori => ({ cherry: 0, gabahBasah: 0, gabahKering: 0, greenBean: 0 });
     const perDesa = new Map<string, { nama: string; total: number; perTahun: Map<number, Kategori> }>();
-    for (const r of desaRows) {
+    for (const r of rows) {
         if (!TAHUN_DESA.includes(r.tahun)) continue;
         const nama = r.petani.desa.nama;
         const e = perDesa.get(nama) ?? { nama, total: 0, perTahun: new Map<number, Kategori>() };
@@ -278,16 +291,7 @@ export async function getProduksi(userId?: string, desaKode?: string) {
 
     return {
         tahunTerbaru,
-        byTahun: byTahun.map((t) => ({
-            tahun: String(t.tahun),
-            cherry: num(t._sum.cherry),
-            gabahBasah: num(t._sum.gabahBasah),
-            gabahKering: num(t._sum.gabahKering),
-            greenBean: num(t._sum.greenBean),
-            total: num(t._sum.cherry) + num(t._sum.gabahBasah) + num(t._sum.gabahKering) + num(t._sum.greenBean),
-            produktivitasRata: produktivitas(t.tahun),
-            jumlahPetani: t._count,
-        })),
+        byTahun,
         perDesaTahun,
         tahunDesa: TAHUN_DESA,
     };
@@ -296,7 +300,7 @@ export async function getProduksi(userId?: string, desaKode?: string) {
 // ---------- Pasar & Produk ----------
 export async function getPasarProduk(userId?: string, desaKode?: string) {
     const rel = relPetani(userId, desaKode);
-    const [produk, pasar, totalPetani, volumeByJenis] = await Promise.all([
+    const [produk, pasar, totalPetani] = await Promise.all([
         prisma.produkDijual.findMany({
             where: { dijual: true, ...rel },
             select: { jenis: true, labelCustom: true, volumeKgTahun: true },
@@ -306,8 +310,6 @@ export async function getPasarProduk(userId?: string, desaKode?: string) {
             select: { kategori: true, labelCustom: true, persentase: true, profilPenjual: true },
         }),
         prisma.petani.count({ where: petaniWhere(userId, desaKode) }),
-        // volume "lainnya" yang mungkin tercatat walau baris tidak ditandai dijual
-        prisma.produkDijual.groupBy({ by: ["jenis"], where: rel, _sum: { volumeKgTahun: true } }),
     ]);
 
     // Kelompokkan: label tetap + tiap labelCustom "Lainnya" jadi barisnya sendiri.
@@ -348,7 +350,6 @@ export async function getPasarProduk(userId?: string, desaKode?: string) {
         pasar: [...pasarMap.values()]
             .map(({ spell, ...p }) => ({ ...p, label: pickSpelling(spell), rataPersen: p.persenN ? p.totalPersen / p.persenN : 0, profil: [...p.profil.values()] }))
             .sort((a, b) => b.petani - a.petani),
-        volumeByJenis: volumeByJenis.map((v) => ({ jenis: v.jenis, volume: num(v._sum.volumeKgTahun) })),
     };
 }
 
@@ -421,8 +422,15 @@ export async function getWilayah(userId?: string, desaKode?: string) {
     const dScope = desaWhere(userId);
     // Filter desa hanya untuk demografi (jenis kelamin & kelompok usia).
     const demoScope = petaniWhere(userId, desaKode);
-    const [perDesa, perGender, desaList, lembaga, kebijakan, petaniLahir] = await Promise.all([
-        prisma.petani.groupBy({ by: ["desaKode"], where: pScope, _count: true }),
+    const [perDesaRows, perGender, desaList, lembaga, kebijakan, petaniLahir] = await Promise.all([
+        prisma.wilayahDesa.findMany({
+            where: { petani: { some: pScope } },
+            select: {
+                nama: true,
+                kecamatan: { select: { nama: true } },
+                _count: { select: { petani: { where: pScope } } },
+            },
+        }),
         prisma.petani.groupBy({ by: ["jenisKelamin"], where: demoScope, _count: true }),
         prisma.baselineDesa.findMany({
             where: dScope,
@@ -441,18 +449,11 @@ export async function getWilayah(userId?: string, desaKode?: string) {
         prisma.petani.findMany({ where: { tanggalLahir: { not: null }, ...demoScope }, select: { tanggalLahir: true } }),
     ]);
 
-    const desaKodeSet = new Set(perDesa.map((d) => d.desaKode));
-    const namaDesa = await prisma.wilayahDesa.findMany({
-        where: { kode: { in: [...desaKodeSet] } },
-        select: { kode: true, nama: true, kecamatan: { select: { nama: true } } },
-    });
-    const namaMap = new Map(namaDesa.map((d) => [d.kode, d]));
-
-    const topDesa = perDesa
+    const topDesa = perDesaRows
         .map((d) => ({
-            nama: namaMap.get(d.desaKode)?.nama ?? d.desaKode,
-            kecamatan: namaMap.get(d.desaKode)?.kecamatan.nama ?? "-",
-            petani: d._count,
+            nama: d.nama,
+            kecamatan: d.kecamatan.nama,
+            petani: d._count.petani,
         }))
         .sort((a, b) => b.petani - a.petani)
         .slice(0, 10);
