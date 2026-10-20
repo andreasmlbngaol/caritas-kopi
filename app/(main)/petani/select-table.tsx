@@ -21,14 +21,12 @@ export type PetaniRow = {
 export function PetaniSelectTable({
     rows,
     allIds,
-    isAdmin,
     sort,
     dir,
     sortParams,
 }: {
     rows: PetaniRow[];
     allIds: string[];
-    isAdmin: boolean;
     sort: string;
     dir: SortDir;
     sortParams: Record<string, string>;
@@ -126,7 +124,7 @@ export function PetaniSelectTable({
                         <SortHeader column="kodePetani" label="Kode Petani" sort={sort} dir={dir} params={sortParams} basePath="/petani" />
                         <SortHeader column="desa.nama" label="Desa" sort={sort} dir={dir} params={sortParams} basePath="/petani" />
                         <SortHeader column="kelompokTani.nama" label="Kelompok" sort={sort} dir={dir} params={sortParams} basePath="/petani" />
-                        {isAdmin && <SortHeader column="createdBy.fullName" label="Penginput" sort={sort} dir={dir} params={sortParams} basePath="/petani" />}
+                        <SortHeader column="createdBy.fullName" label="Penginput" sort={sort} dir={dir} params={sortParams} basePath="/petani" />
                         <th className="px-5 py-3.5 text-right">Aksi</th>
                     </tr>
                     </thead>
@@ -159,7 +157,7 @@ export function PetaniSelectTable({
                                 {p.kelompokNama ?? "-"}
                                 {p.kelompokKode && <span className="block text-xs text-gray-500">{p.kelompokKode}</span>}
                             </td>
-                            {isAdmin && <td className="px-5 py-3.5 text-gray-500">{p.penginput}</td>}
+                            <td className="px-5 py-3.5 text-gray-500">{p.penginput}</td>
                             <td className="px-5 py-3.5">
                                 <div className="flex items-center justify-end gap-1">
                                     <a
